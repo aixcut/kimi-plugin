@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sign out of Aixcut MCP"
+  short_description: "Revoke Aixcut MCP authorization and clear the local OAuth credential"
+  default_prompt: "Use $aixcut-mcp-logout to sign out of Aixcut MCP."

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aixcut.com/plugin-core/plan-context.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["plan_id", "project_id", "timeline_id", "base_revision", "mode", "preserve", "delete_refs", "authorized_actions"],
+  "properties": {
+    "plan_id": { "type": "string", "minLength": 1 },
+    "project_id": { "type": "string", "minLength": 1 },
+    "timeline_id": { "type": "string", "minLength": 1 },
+    "base_revision": { "type": "integer", "minimum": 0 },
+    "mode": { "enum": ["mechanical", "local_edit", "full_assembly"] },
+    "preserve": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true, "maxItems": 500 },
+    "delete_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true, "maxItems": 500 },
+    "authorized_actions": { "type": "array", "items": { "type": "string", "pattern": "^aixcut_[a-z]+\\.[a-z_]+$" }, "uniqueItems": true, "maxItems": 500 }
+  }
+}

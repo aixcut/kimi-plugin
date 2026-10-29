@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0.0",
+  "server_contract_version": "1.3.0",
+  "catalog_path": "contracts/mcp-tool-catalog.json",
+  "catalog_sha256": "7dbdb485fe84ce8d662af571218cb84b4aeb0cdc45d042210dd62994537541df",
+  "schemas": {
+    "edit_plan": {
+      "path": "contracts/edit-plan.schema.json",
+      "sha256": "dffd24b55d65a3e6ec9e149654bc3ccc69dce1824605d99546fc7a5c77cd4de2"
+    },
+    "checkpoint": {
+      "path": "contracts/checkpoint.schema.json",
+      "sha256": "2211fdf55ba4545cfe968f98d6d3faeb83a3890ae63df627a61e1e2917038e9f"
+    },
+    "operation_receipt": {
+      "path": "contracts/operation-receipt.schema.json",
+      "sha256": "f29ded34eec4078cf39693344804250c6b988058a338d79f12b6bd54845b93f6"
+    },
+    "review_evidence": {
+      "path": "contracts/review-evidence.schema.json",
+      "sha256": "7b0910c8d54c1ca5fef852f7f0f28bc8b2746867ee8938dd7fbcd0f5c98c9df8"
+    },
+    "plan_context": {
+      "path": "contracts/plan-context.schema.json",
+      "sha256": "c5633a9ad3609c2bd89e2e6a518ec966a9b45270defe8afd9ca3d3c05ee6446e"
+    }
+  },
+  "actions": [
+    {
+      "id": "read.project",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "project"
+      },
+      "effect": "read",
+      "example": {
+        "view": "project"
+      }
+    },
+    {
+      "id": "read.sources",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "sources"
+      },
+      "effect": "read",
+      "example": {
+        "view": "sources"
+      }
+    },
+    {
+      "id": "read.mutation_receipt",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "mutation_receipt"
+      },
+      "effect": "read",
+      "example": {
+        "view": "mutation_receipt",
+        "mutation_id": "00000000-0000-4000-8000-000000000001"
+      },
+      "bindings": {
+        "mutation_id": "原写入返回的 mutation_id；示例 UUID 不得真实查询"
+      }
+    },
+    {
+      "id": "generate.speech_read",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "speech_read"
+      },
+      "effect": "read",
+      "example": {
+        "action": "speech_read"
+      }
+    },
+    {
+      "id": "generate.speech_edit",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "speech_edit"
+      },
+      "effect": "write",
+      "example": {
+        "action": "speech_edit",
+        "operation": "update",
+        "items": [
+          {
+            "segment": 1,
+            "text": "..."
+          }
+        ]
+      }
+    },
+    {
+      "id": "generate.speech_quote",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "speech_quote"
+      },
+      "effect": "quote",
+      "example": {
+        "action": "speech_quote",
+        "segments": [
+          1
+        ]
+      }
+    },
+    {
+      "id": "generate.speech_submit",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "speech_submit"
+      },
+      "effect": "submit",
+      "example": {
+        "action": "speech_submit",
+        "project_id": "project_1",
+        "recovery": {
+          "project_id": "project_1",
+          "items": [
+            {
+              "segment": 1,
+              "operation_id": "00000000-0000-4000-8000-000000000001",
+              "model": "speech-v1",
+              "input": {
+                "text": "示例配音",
+                "voice_profile_id": "voice_1",
+                "speed": 1,
+                "emotion": "auto"
+              },
+              "accepted_quoted_credits": 3,
+              "quote_confirmation": "quote_from_owner"
+            }
+          ]
+        }
+      },
+      "bindings": {
+        "recovery": "speech_quote 返回的原始 recovery 对象；示例 identity 不得真实提交"
+      }
+    },
+    {
+      "id": "generate.get",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "get"
+      },
+      "effect": "read",
+      "example": {
+        "action": "get",
+        "job_id": "00000000-0000-4000-8000-000000000001"
+      },
+      "bindings": {
+        "job_id": "原 submit 返回的 job_id"
+      }
+    },
+    {
+      "id": "review.renderability",
+      "tool": "aixcut_review",
+      "selector": {
+        "field": "view",
+        "value": "renderability"
+      },
+      "effect": "read",
+      "example": {
+        "view": "renderability"
+      }
+    }
+  ]
+}

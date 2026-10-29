@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aixcut.com/plugin-core/review-evidence.schema.json",
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_ref", "project_id", "timeline_id", "revision"],
+      "properties": {
+        "artifact_ref": { "type": "string", "minLength": 1 },
+        "project_id": { "type": "string", "minLength": 1 },
+        "timeline_id": { "type": "string", "minLength": 1 },
+        "revision": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "project_id",
+    "timeline_id",
+    "revision",
+    "layers",
+    "hard_failures",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeline_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "structure",
+        "semantic",
+        "visual",
+        "audio"
+      ],
+      "properties": {
+        "structure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "checks",
+            "observations"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "fail",
+                "unjudgeable"
+              ]
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "maxItems": 100
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "observations": {
+              "type": "array",
+              "maxItems": 100,
+              "items": {
+                "$ref": "#/$defs/observation"
+              }
+            }
+          }
+        },
+        "semantic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "checks"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "fail",
+                "unjudgeable"
+              ]
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "maxItems": 100
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "visual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "checks",
+            "frames"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "fail",
+                "unjudgeable"
+              ]
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "maxItems": 100
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "frames": {
+              "type": "array",
+              "maxItems": 500,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "artifact_ref",
+                  "project_id",
+                  "timeline_id",
+                  "revision",
+                  "timestamp_ms",
+                  "composed"
+                ],
+                "properties": {
+                  "artifact_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "project_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "timeline_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "timestamp_ms": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "composed": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "audio": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "checks",
+            "listened"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "pass",
+                "fail",
+                "unjudgeable"
+              ]
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "maxItems": 100
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "listened": {
+              "type": "boolean"
+            },
+            "listening": {
+              "$ref": "#/$defs/observation"
+            }
+          }
+        }
+      }
+    },
+    "hard_failures": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "read_back",
+            "confirm_receipt",
+            "poll",
+            "wait",
+            "retry",
+            "reinspect",
+            "ask_user",
+            "deliver"
+          ]
+        },
+        "after_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

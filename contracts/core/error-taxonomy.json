@@ -1,0 +1,223 @@
+{
+  "schema_version": "1.0.0",
+  "default": {
+    "retryable": false,
+    "next_action": "stop_and_report",
+    "policy": "未分类的新错误保留原事实和身份，不推断可重试"
+  },
+  "categories": [
+    {
+      "id": "unknown",
+      "retryable": false,
+      "next_action": "wait_then_read",
+      "codes": [
+        "MCP_MUTATION_STATUS_UNKNOWN"
+      ],
+      "policy": "保留原写入身份并只读确认；查询不存在不证明失败；不可换 key 重放"
+    },
+    {
+      "id": "permission",
+      "retryable": false,
+      "next_action": "ask_user",
+      "codes": [
+        "MCP_AUTH_REQUIRED",
+        "MCP_SCOPE_REQUIRED",
+        "MCP_TOKEN_INVALID",
+        "MCP_FRONTEND_RPC_SECRET"
+      ],
+      "policy": "重新确认当前授权；checkpoint 不提供权限"
+    },
+    {
+      "id": "revision",
+      "retryable": false,
+      "next_action": "reinspect",
+      "codes": [
+        "MCP_FRONTEND_TIMELINE_STALE",
+        "MCP_PLAN_ACTION_UNAUTHORIZED",
+        "MCP_PLAN_REQUIRED",
+        "MCP_PLAN_REVISION_STALE",
+        "MCP_PLAN_SCOPE_CONFLICT",
+        "MCP_SOURCE_TRANSCRIPT_OUTDATED"
+      ],
+      "policy": "重新读取当前 Project/Timeline 并重建最小计划；不得扩大用户授权，也不得带着 stale refs 重放"
+    },
+    {
+      "id": "pending",
+      "retryable": false,
+      "next_action": "wait_then_read",
+      "codes": [
+        "MCP_CAPTION_TRANSCRIPT_PENDING",
+        "MCP_EXPORT_ALREADY_RUNNING"
+      ],
+      "policy": "按原 operation/job 查询；不重复提交"
+    },
+    {
+      "id": "offline",
+      "retryable": false,
+      "next_action": "wait_then_read",
+      "codes": [
+        "MCP_FRONTEND_CLIENT_OFFLINE",
+        "MCP_FRONTEND_NOT_BOUND",
+        "MCP_FRONTEND_REPLY_DISCONNECTED",
+        "MCP_FRONTEND_SERVER_SHUTDOWN",
+        "MCP_FRONTEND_TARGET_LOST",
+        "MCP_FRONTEND_UNAVAILABLE",
+        "MCP_CLIPOS_UNAVAILABLE",
+        "MCP_ZERO_QUERY_UNAVAILABLE",
+        "MCP_LOCAL_MEDIA_BRIDGE_UNREACHABLE"
+      ],
+      "policy": "先确认页面/服务状态；写入是否受理需原 receipt/Job 证明"
+    },
+    {
+      "id": "quality",
+      "retryable": false,
+      "next_action": "verify_or_report",
+      "codes": [
+        "MCP_CAPTION_DERIVATION_FAILED",
+        "MCP_CAPTION_TRANSCRIPT_EMPTY",
+        "MCP_SOURCE_TRANSCRIPT_EMPTY",
+        "MCP_FRONTEND_RESULT_INVALID",
+        "MCP_FRONTEND_TIMELINE_INVALID",
+        "MCP_MEDIA_PROJECTION_TIMEOUT",
+        "MCP_PROJECTION_BARRIER_TIMEOUT"
+      ],
+      "policy": "核对正式状态与目标 read-back；不以工具成功替代成片质量"
+    },
+    {
+      "id": "rejected",
+      "retryable": false,
+      "next_action": "fix_input",
+      "codes": [
+        "MCP_MUTATION_LOCAL_REJECTED",
+        "MCP_MUTATION_SERVER_REJECTED",
+        "MCP_TRACK_LOCKED",
+        "MCP_TOOL_NOT_EDITABLE",
+        "MCP_TIMELINE_LAST_DELETE_FORBIDDEN"
+      ],
+      "policy": "根据稳定错误修正范围或输入，不能原样重复写入"
+    },
+    {
+      "id": "transient",
+      "retryable": false,
+      "next_action": "inspect_original_task",
+      "codes": [
+        "MCP_PROVIDER_TIMEOUT",
+        "MCP_PROVIDER_FAILED",
+        "MCP_PROVIDER_TASK_FAILED",
+        "MCP_PROVIDER_EMPTY_RESPONSE",
+        "MCP_RATE_LIMITED",
+        "MCP_CLIPOS_REQUEST_FAILED",
+        "MCP_DOCUMENT_UPLOAD_FAILED",
+        "MCP_FRONTEND_EXECUTION_FAILED",
+        "MCP_EXPORT_FAILED"
+      ],
+      "policy": "网络/Provider 故障本身不授予重做收费写入的许可；以服务端 next_action、原任务身份和预算决定恢复"
+    },
+    {
+      "id": "schema",
+      "retryable": false,
+      "next_action": "fix_input",
+      "codes": [
+        "MCP_ACTION_INVALID",
+        "MCP_ACTION_UNSUPPORTED",
+        "MCP_ARGUMENTS_INVALID",
+        "MCP_ARGUMENT_UNKNOWN",
+        "MCP_COMPONENT_FIELD_UNSUPPORTED",
+        "MCP_COMPONENT_VALUES_REQUIRED",
+        "MCP_DOCUMENT_CONTENT_REQUIRED",
+        "MCP_DOCUMENT_CONTENT_TOO_LARGE",
+        "MCP_DOCUMENT_ENCODING_INVALID",
+        "MCP_DOCUMENT_MIME_UNSUPPORTED",
+        "MCP_DOCUMENT_NAME_INVALID",
+        "MCP_DOCUMENT_PATH_INVALID",
+        "MCP_DOCUMENT_TOO_LARGE",
+        "MCP_EXPORT_INVALID_INPUT",
+        "MCP_FIELD_REQUIRED",
+        "MCP_FRONTEND_CLIENT_REQUIRED",
+        "MCP_FRONTEND_EXPORT_INVALID",
+        "MCP_FRONTEND_MEDIA_TYPE_INVALID",
+        "MCP_FRONTEND_SELECTIONS_INVALID",
+        "MCP_GENERATE_KIND_INVALID",
+        "MCP_IDEMPOTENCY_KEY_INVALID",
+        "MCP_INTEGER_REQUIRED",
+        "MCP_ITEMS_REQUIRED",
+        "MCP_JOB_ID_REQUIRED",
+        "MCP_JOB_KIND_MISMATCH",
+        "MCP_JOB_OPERATION_INVALID",
+        "MCP_LAYOUT_CLIP_UNSUPPORTED",
+        "MCP_LOCAL_MEDIA_URL_INVALID",
+        "MCP_MEDIA_ID_REQUIRED",
+        "MCP_MEDIA_TYPE_MISMATCH",
+        "MCP_MUTATION_TOO_LARGE",
+        "MCP_NUMBER_INVALID",
+        "MCP_OPEN_CONTEXT_INVALID",
+        "MCP_OPEN_TARGET_INVALID",
+        "MCP_PROJECT_CONTEXT_REQUIRED",
+        "MCP_PROJECT_DESCRIPTION_INVALID",
+        "MCP_PROJECT_EXIT_INVALID",
+        "MCP_PROJECT_ID_INVALID",
+        "MCP_PROJECT_TITLE_INVALID",
+        "MCP_READ_FILTERS_INVALID",
+        "MCP_READ_INCLUDE_INVALID",
+        "MCP_REF_REQUIRED",
+        "MCP_SCHEMA_INVALID",
+        "MCP_SOURCE_LINES_LIMIT_INVALID",
+        "MCP_SOURCE_LINES_OFFSET_INVALID",
+        "MCP_SOURCE_LINES_RESPONSE_TOO_LARGE",
+        "MCP_SOURCE_RANGE_INVALID",
+        "MCP_SOURCE_REQUIRED",
+        "MCP_SOURCE_SELECTORS_INVALID",
+        "MCP_SOURCE_SELECTOR_INVALID",
+        "MCP_SOURCE_WORD_TIME_LIMIT_INVALID",
+        "MCP_SPLIT_RANGE_INVALID",
+        "MCP_TEXT_SPLIT_RANGE_INVALID",
+        "MCP_TIMELINE_ORDER_INVALID",
+        "MCP_TRIM_RANGE_INVALID",
+        "MCP_VALUES_REQUIRED",
+        "MCP_VIEW_INVALID",
+        "MCP_VOICE_ITEMS_REQUIRED",
+        "MCP_VOICE_TARGETS_REQUIRED",
+        "MCP_VOICE_TIMEOUT_INVALID",
+        "MCP_WEB_LAUNCH_INVALID"
+      ],
+      "policy": "只允许一次有依据的 schema 修正；再次失败报告字段和稳定错误"
+    },
+    {
+      "id": "domain",
+      "retryable": false,
+      "next_action": "inspect_and_report",
+      "codes": [
+        "MCP_CANVAS_DEFAULTED",
+        "MCP_CAPTION_TRACK_NOT_FOUND",
+        "MCP_DOCUMENT_EMPTY",
+        "MCP_DOCUMENT_NOT_FOUND",
+        "MCP_EXPORT_CANCELLED",
+        "MCP_FRONTEND_CAPABILITY_UNAVAILABLE",
+        "MCP_FRONTEND_MEDIA_NOT_READY",
+        "MCP_FRONTEND_PAGE_NOT_ACTIVE",
+        "MCP_FRONTEND_PRESENCE_FAILED",
+        "MCP_FRONTEND_PUBLISH_FAILED",
+        "MCP_HANDLER_DUPLICATE",
+        "MCP_INSTANCE_ID",
+        "MCP_INTERNAL_ERROR",
+        "MCP_MUTATION_REPLAYED",
+        "MCP_PRIMARY_TRACK_NOT_FOUND",
+        "MCP_PROJECT_INITIALIZATION_FAILED",
+        "MCP_PROJECT_NOT_FOUND",
+        "MCP_PROJECT_NOT_INITIALIZED",
+        "MCP_REF_NOT_FOUND",
+        "MCP_REORDER_INCOMPLETE",
+        "MCP_SEQUENCE_NOT_FOUND",
+        "MCP_SOURCE_LINE_NOT_FOUND",
+        "MCP_SOURCE_NOT_FOUND",
+        "MCP_SOURCE_TRANSCRIPT_MISSING",
+        "MCP_STUDIO_ORIGIN_MISSING",
+        "MCP_TRACK_ENSURE_NOT_APPLIED",
+        "MCP_TRACK_NOT_FOUND",
+        "MCP_VOICE_NOT_INITIALIZED",
+        "MCP_VOICE_REF_NOT_FOUND"
+      ],
+      "policy": "保留 owner 返回的稳定错误和上下文；未明确可重试前停止重放"
+    }
+  ]
+}

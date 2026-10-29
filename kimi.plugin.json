@@ -1,0 +1,35 @@
+{
+  "name": "aixcut",
+  "version": "0.1.0",
+  "description": "AI video creation and editing with Aixcut.",
+  "author": {
+    "name": "Aixcut"
+  },
+  "homepage": "https://aixcut.cn",
+  "license": "MIT",
+  "keywords": [
+    "aixcut",
+    "video",
+    "video-editing",
+    "captions",
+    "voiceover",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "systemPromptPath": "./SYSTEM.md",
+  "sessionStart": {
+    "skill": "aixcut-host"
+  },
+  "mcpServers": {
+    "aixcut": {
+      "url": "https://web.aixcut.cn/mcp"
+    }
+  },
+  "interface": {
+    "displayName": "Aixcut",
+    "shortDescription": "AI video editing with Aixcut",
+    "longDescription": "Create, edit, caption, dub, verify, and export videos with Aixcut.",
+    "developerName": "Aixcut",
+    "websiteURL": "https://aixcut.cn"
+  }
+}

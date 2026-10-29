@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aixcut.com/plugin-core/operation-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "project_id",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "operation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mutation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "applied",
+        "duplicate",
+        "noop",
+        "pending",
+        "unknown",
+        "not_found",
+        "rejected",
+        "cancelled"
+      ]
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeline_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision_before": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "revision_after": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "failed_items": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "next_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "read_back",
+            "wait_then_read",
+            "poll",
+            "wait",
+            "retry",
+            "reinspect",
+            "ask_user",
+            "deliver"
+          ]
+        },
+        "after_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "read": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "wait_then_read"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "read"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "operation_id"
+      ]
+    },
+    {
+      "required": [
+        "mutation_id"
+      ]
+    },
+    {
+      "required": [
+        "idempotency_key"
+      ]
+    },
+    {
+      "required": [
+        "job_id"
+      ]
+    }
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "unknown",
+              "not_found"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "next_action": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "wait",
+                  "ask_user",
+                  "wait_then_read"
+                ]
+              },
+              "read": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "duplicate"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "request_digest"
+        ]
+      }
+    }
+  ]
+}

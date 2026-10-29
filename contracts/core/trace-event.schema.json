@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aixcut.com/plugin-core/trace-event.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "host", "run_id", "seq"],
+  "properties": {
+    "type": {"enum": ["intent_received", "skill_candidate", "skill_loaded", "capability_snapshot", "tool_call", "receipt", "job_poll", "checkpoint_saved", "evidence_collected", "delivery_reported"]},
+    "host": {"enum": ["codex", "workbuddy", "kimi"]},
+    "run_id": {"type": "string", "minLength": 1},
+    "seq": {"type": "integer", "minimum": 1},
+    "tool": {"type": "string", "minLength": 1, "maxLength": 128},
+    "action": {"type": "string", "minLength": 1, "maxLength": 128},
+    "view": {"type": "string", "minLength": 1, "maxLength": 128},
+    "purpose": {"enum": ["inspect", "read_back", "write", "mutation", "submit", "poll", "status", "receipt", "capability"]},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "input_fingerprint": {"type": "string", "minLength": 1},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "operation_id": {"type": "string", "minLength": 1},
+    "mutation_id": {"type": "string", "minLength": 1},
+    "job_id": {"type": "string", "minLength": 1},
+    "revision_before": {"type": "integer", "minimum": 0},
+    "revision_after": {"type": "integer", "minimum": 0},
+    "status": {"type": "string", "minLength": 1},
+    "cost_credits": {"type": "number", "minimum": 0},
+    "synthetic": {"type": "boolean"}
+  }
+}

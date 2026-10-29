@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sign in to Aixcut MCP"
+  short_description: "Check or restore Aixcut MCP OAuth authorization without opening a page"
+  default_prompt: "Use $aixcut-login only to check or restore Aixcut MCP authorization; do not open a page."

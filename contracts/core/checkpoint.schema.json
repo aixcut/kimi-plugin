@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aixcut.com/plugin-core/checkpoint.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "host",
+    "project_id",
+    "timeline_id",
+    "phase",
+    "last_confirmed_revision",
+    "completed_steps",
+    "pending_mutations",
+    "job_ids",
+    "next_step"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "host": {
+      "enum": [
+        "codex",
+        "workbuddy",
+        "kimi"
+      ]
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeline_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "enum": [
+        "intent",
+        "inspect",
+        "plan",
+        "execute",
+        "verify",
+        "deliver"
+      ]
+    },
+    "last_confirmed_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "pending_mutations": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "$ref": "operation-receipt.schema.json"
+      }
+    },
+    "job_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "next_step": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_versions": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_ref",
+          "input_version"
+        ],
+        "properties": {
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input_version": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    }
+  }
+}
