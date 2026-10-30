@@ -64,7 +64,7 @@ Send only fields declared by the selected Tool Schema. Speech operations edit th
 Treat every requested visual annotation as a typed timeline element before writing it:
 
 1. Read `aixcut_read(view="timeline")` and inspect each track's `kind`, `role`, and stable ref. A `role=caption` track is reserved for spoken or user-supplied subtitle text.
-2. If the required layer is missing, ensure it before adding content: use `aixcut_track(action="ensure", , kind="text", role="art-text", name="Art Text")` for static labels and `aixcut_track(action="ensure", , kind="video", role="overlay", name="Motion Graphics")` for animated labels, arrows, circles, and other Motion Graphs.
+2. If the required layer is missing, ensure it before adding content: use `aixcut_track(action="ensure", kind="text", role="art-text", name="Art Text")` for static labels and `aixcut_track(action="ensure", kind="video", role="overlay", name="Motion Graphics")` for animated labels, arrows, circles, and other Motion Graphs.
 3. Always pass the returned explicit track ref. Never omit `track` and never rely on the first text or video track. Use `aixcut_text(action="add")` only for static art text; use `aixcut_clip(action="add")` with `kind="motion-graph"` and the explicit video overlay track for an existing Motion Graph asset.
 4. Read `timeline` immediately after each annotation write. Confirm the new clip's source, `kind`, `track_id`, and the track's non-caption role before continuing to voice, captions, or export.
 5. If an annotation landed on the wrong track, move or correct it with the appropriate clip action and reread. Never delete the requested annotation to hide a placement error, and never count a caption as its replacement.
@@ -79,7 +79,8 @@ Treat every requested visual annotation as a typed timeline element before writi
 ## Canvas, audio, and tracks
 
 - A new Project may start at `0×0`. The first visual write chooses the source dimensions; if none are available, the server falls back to `1920×1080` and returns `MCP_CANVAS_DEFAULTED`. Use `aixcut_project(action="canvas")` for an explicit portrait or other ratio.
-- Add music, effects, or rendered voice through `aixcut_audio(action="add")` or `aixcut_audio(action="fade")`. Use `fade_in_ms` and `fade_out_ms` for music, and lower music `volume` to about 0.2–0.4 when narration must remain clear.
+- Add music, effects, or rendered voice through `aixcut_audio(action="add")`. Use `fade_in_ms` and `fade_out_ms` for music. Volume is not an add field: after adding, read the created clip ref and call `aixcut_audio(action="update", target="clip:...", volume=0.2–0.4)` when narration must remain clear.
+- When the user wants a video's original sound separately, call `aixcut_frontend(action="media.extract_audio", media_id=..., expected_file_revision=...)`, follow `operation.get` until it succeeds, then add the resulting published audio media. Never send a video media ref directly to `aixcut_audio(action="add")`.
 - Before adding audio, ensure an audio track exists with `aixcut_track(action="ensure")`. If read-back reports `MCP_TRACK_ENSURE_NOT_APPLIED`, retry once with a new UUID.
 - Change track mute or enabled state only after reading the current track state.
 
@@ -89,7 +90,7 @@ Original/source audio or narration, AI-generated voice, BGM/music, and SFX/sound
 
 Before every audio write, read the current timeline and track list, then confirm the target track and the intended start/end range. Read the source audio and existing voice state when deciding whether a human voice already covers that range. Reuse a correct existing narration for edit-only requests and skip new voice placement; this prevents double voice or overlapping narration.
 
-Only add BGM/music when it is explicitly enabled, requested, or confirmed. When music is enabled, place it on its own track with both fade-in and fade-out, and lower its volume (about `0.2–0.4`) under voice or narration. Leave optional or unmentioned music off until confirmation. SFX follows the same separate-track and range-confirmation rule.
+Only add BGM/music when it is explicitly enabled, requested, or confirmed. When music is enabled, place it on its own track with both fade-in and fade-out; after read-back, lower its volume through `aixcut_audio(action="update", target="clip:...", volume=0.2–0.4)` under voice or narration. Leave optional or unmentioned music off until confirmation. SFX follows the same separate-track and range-confirmation rule.
 
 ## Local media
 
