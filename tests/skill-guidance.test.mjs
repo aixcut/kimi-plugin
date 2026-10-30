@@ -29,6 +29,16 @@ test("video-derived audio guidance uses media.extract_audio", () => {
     /aixcut_frontend\(action="media\.extract_audio"/,
     "a video source must be converted to an audio media item before aixcut_audio add",
   );
+  assert.match(
+    timelineSkill,
+    /action="media\.extract_audio", params=\{media_id/,
+    "extract_audio arguments must be nested under params",
+  );
+  assert.match(
+    timelineSkill,
+    /action="operation\.get", params=\{operation_id/,
+    "operation polling must nest operation_id under params",
+  );
 });
 
 test("assembly guidance names the audio update action for music volume", () => {
