@@ -114,7 +114,7 @@ Run this stage only when the resolved intent is `add-music` and the user has exp
 
 1. Cover the full video duration with one music clip or divide it into sections.
 2. Add fades at both ends using `fade_in_ms` and `fade_out_ms`; see `aixcut-timeline-editing`.
-3. When narration is present, set music `volume` to about 0.2–0.4 so speech remains clear. Normal volume may be used without narration.
+3. When narration is present, read back the music clip ref and call `aixcut_audio(action="update", target="clip:...", volume=0.2–0.4)` so speech remains clear. Normal volume may be used without narration.
 4. Confirm that music and voice use parallel audio tracks and mix together.
 5. Use beat evidence only when a supported live Tool action returns it. Preserve BPM, confidence, analysis duration, and timestamps as evidence. If no supported action returns beat evidence, report beat alignment as “unable to determine”; do not infer BPM from listening or duration.
 6. Read-only analysis does not cut the timeline. Reread the timeline after each beat-based edit.
