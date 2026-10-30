@@ -6,15 +6,6 @@ const selectorFor = tool => tool === 'aixcut_read' || tool === 'aixcut_review' ?
 const shouldIgnoreLine = line => /(?:do not|don't|never|禁止|不要|历史|historical|removed|旧版|invalid|反例|forbidden|不可调用)/i.test(line.toLowerCase());
 const fail = message => { throw new Error('Skill contract closure failed: ' + message); };
 const mapCatalog = catalog => new Map((catalog.tools || []).map(tool => [tool.name, new Set(tool.actions || [])]));
-const publishedTool = (toolMap, name) => {
-  for (const [parent, actions] of toolMap) {
-    for (const action of actions) {
-      if (`${parent}_${action.replaceAll('.', '_')}` === name)
-        return { parent, action };
-    }
-  }
-  return undefined;
-};
 
 function invocations(text) {
   const found = [];
@@ -43,13 +34,9 @@ async function contained(skillRoot, skill, reference) {
 }
 function check(entry, toolMap, call) {
   const callable = new Set([...(entry.tools && entry.tools.required || []), ...(entry.tools && entry.tools.optional || [])]); const forbidden = new Set(entry.tools && entry.tools.forbidden || []);
-  const published = publishedTool(toolMap, call.tool);
-  const parent = published?.parent || call.tool;
-  const action = published?.action;
-  if (forbidden.has(parent) || forbidden.has(call.tool)) fail(entry.skill + ' calls forbidden Tool ' + call.tool + ' (' + call.source + ')');
-  if (!callable.has(parent) && !callable.has(call.tool)) fail(entry.skill + ' calls undeclared Tool ' + call.tool + ' (' + call.source + ')');
-  const actions = toolMap.get(parent); if (!actions) fail(entry.skill + ' calls unknown Tool ' + call.tool + ' (' + call.source + ')');
-  if (action) return;
+  if (forbidden.has(call.tool)) fail(entry.skill + ' calls forbidden Tool ' + call.tool + ' (' + call.source + ')');
+  if (!callable.has(call.tool)) fail(entry.skill + ' calls undeclared Tool ' + call.tool + ' (' + call.source + ')');
+  const actions = toolMap.get(call.tool); if (!actions) fail(entry.skill + ' calls unknown Tool ' + call.tool + ' (' + call.source + ')');
   const selector = selectorFor(call.tool); for (const field of ['action', 'view']) if (field !== selector && field in call.input) fail(entry.skill + ' uses wrong selector ' + field + '; ' + call.tool + ' expects ' + selector);
   if (call.input[selector] && !actions.has(call.input[selector])) fail(entry.skill + ' references unknown ' + call.tool + '.' + call.input[selector] + ' (' + call.source + ')');
 }

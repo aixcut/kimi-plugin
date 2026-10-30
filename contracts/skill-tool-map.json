@@ -1,0 +1,345 @@
+{
+  "skills": [
+    {
+      "skill": "aixcut-basics",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [],
+      "tools": {
+        "required": [
+          "aixcut_read"
+        ],
+        "optional": [],
+        "forbidden": [
+          "aixcut_login"
+        ]
+      },
+      "helper": null,
+      "references": [
+        "references/conversation-guidance.md",
+        "references/language.md",
+        "references/model.md",
+        "references/workflow-host.md"
+      ]
+    },
+    {
+      "skill": "aixcut-captions",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_caption",
+          "aixcut_read"
+        ],
+        "optional": [],
+        "forbidden": [
+          "aixcut_text"
+        ]
+      },
+      "helper": null,
+      "references": [
+        "references/actions.md"
+      ]
+    },
+    {
+      "skill": "aixcut-documents",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_document",
+          "aixcut_frontend"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-export",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-timeline-editing",
+        "aixcut-video-assembly"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_frontend"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": [
+        "references/actions.md"
+      ]
+    },
+    {
+      "skill": "aixcut-generation",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics",
+        "aixcut-timeline-editing"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_generate",
+          "aixcut_read",
+          "aixcut_timeline"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": [
+        "references/providers.md"
+      ]
+    },
+    {
+      "skill": "aixcut-host",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [],
+      "tools": {
+        "required": [
+          "aixcut_frontend",
+          "aixcut_logout",
+          "aixcut_open"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-known-errors",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-export",
+        "aixcut-timeline-editing"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_frontend",
+          "aixcut_open",
+          "aixcut_project",
+          "aixcut_read"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-login",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-projects"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_login"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-mcp-logout",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [],
+      "tools": {
+        "required": [
+          "aixcut_logout"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-projects",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [],
+      "tools": {
+        "required": [
+          "aixcut_exit_project",
+          "aixcut_frontend",
+          "aixcut_open",
+          "aixcut_read"
+        ],
+        "optional": [],
+        "forbidden": [
+          "aixcut_login"
+        ]
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-talking-head",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [],
+      "tools": {
+        "required": [
+          "aixcut_audio",
+          "aixcut_caption",
+          "aixcut_clip",
+          "aixcut_read",
+          "aixcut_review"
+        ],
+        "optional": [],
+        "forbidden": [
+          "aixcut_text"
+        ]
+      },
+      "helper": null,
+      "references": []
+    },
+    {
+      "skill": "aixcut-timeline-editing",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-captions",
+        "aixcut-export",
+        "aixcut-known-errors",
+        "aixcut-voice"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_audio",
+          "aixcut_clip",
+          "aixcut_frontend",
+          "aixcut_primary",
+          "aixcut_project",
+          "aixcut_read",
+          "aixcut_review",
+          "aixcut_speech",
+          "aixcut_text",
+          "aixcut_timeline",
+          "aixcut_track"
+        ],
+        "optional": [],
+        "forbidden": [
+          "aixcut_login"
+        ]
+      },
+      "helper": "scripts/download-capture-artifacts.mjs",
+      "references": [
+        "references/actions.md",
+        "references/frontend-actions.md"
+      ]
+    },
+    {
+      "skill": "aixcut-verification",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-timeline-editing"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_frontend",
+          "aixcut_read"
+        ],
+        "optional": [
+          "aixcut_review"
+        ],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": [
+        "references/actions.md"
+      ]
+    },
+    {
+      "skill": "aixcut-video-assembly",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics",
+        "aixcut-captions",
+        "aixcut-export",
+        "aixcut-timeline-editing",
+        "aixcut-voice"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_audio",
+          "aixcut_read",
+          "aixcut_review",
+          "aixcut_timeline"
+        ],
+        "optional": [
+          "aixcut_caption",
+          "aixcut_frontend",
+          "aixcut_generate",
+          "aixcut_primary"
+        ],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": [
+        "references/pipeline.md"
+      ]
+    },
+    {
+      "skill": "aixcut-voice",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics",
+        "aixcut-timeline-editing"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_audio",
+          "aixcut_generate",
+          "aixcut_read"
+        ],
+        "optional": [],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": [
+        "references/actions.md",
+        "references/video-sync.md"
+      ]
+    }
+  ]
+}

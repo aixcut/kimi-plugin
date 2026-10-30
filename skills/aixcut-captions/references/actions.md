@@ -36,8 +36,9 @@ This reference maps each published caption operation to its fields. Source selec
 
 These Chinese captions are deliberate user-facing content; the tool reference remains English:
 
-```json
+```json aixcut_caption
 {
+  "action": "set",
   "idempotency_key": "7d3f0b6e-3d2a-4c9f-9d5c-6a1b2c3d4e5f",
   "items": [
     { "text": "Some views are waiting for you along the way.", "start_ms": 0, "duration_ms": 3200 },

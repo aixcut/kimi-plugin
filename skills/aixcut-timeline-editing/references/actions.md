@@ -70,8 +70,9 @@ Zoom, rotation, and anchor controls are not exposed because preview and export w
 
 Pass only the field needed; omitted means 0. Audio clips map to `audioFadeInMs`/`audioFadeOutMs`, and video clips map to `videoFadeInMs`/`videoFadeOutMs`; callers do not provide storage keys. Text and caption clips reject fades. Their `purpose` is assigned from the target track (`caption` or `art-text`). For music covering the full video, set both fades.
 
-```json
+```json aixcut_audio
 {
+  "action": "fade",
   "idempotency_key": "b7f0c2a4-9d31-4e6b-8c2f-1a5d3e7b9c01",
   "target": "clip:12",
   "fade_in_ms": 300,
@@ -151,8 +152,9 @@ Page export uses `aixcut_frontend(action="export_timeline")` and `aixcut_fronten
 
 ## Complete request examples
 
-```json
+```json aixcut_clip
 {
+  "action": "trim",
   "idempotency_key": "8c1f0b6e-3d2a-4c9f-9d5c-6a1b2c3d4e5f",
   "target": "clip:3",
   "source_start_ms": 1200,
@@ -160,6 +162,8 @@ Page export uses `aixcut_frontend(action="export_timeline")` and `aixcut_fronten
 }
 ```
 
-```json
-{}
+```json aixcut_frontend
+{
+  "action": "prompt_add_material"
+}
 ```

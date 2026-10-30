@@ -100,8 +100,8 @@ There are two supported import paths. Both are asynchronous and an accepted resp
 
 Call:
 
-```json
-{}
+```json aixcut_frontend
+{"action":"prompt_add_material"}
 ```
 
 A completed response means the upload area is open. Tell the user to select or drag files. After the user confirms upload, read `aixcut_read(view="sources")` and match by `file_name`; do not call `prompt_add_material` again.
