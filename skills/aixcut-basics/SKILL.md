@@ -23,7 +23,7 @@ Kimi handles OAuth; do not call `aixcut_login` first. Never use curl, direct dat
 
 ## Intent and recovery contract
 
-For every request use the short state machine `intent → inspect → plan → execute → verify → deliver`. Mechanical edits remain narrow: do not add voice, music, B-roll, Motion Graphics, or export unless explicitly requested. An assembly request may expand scope only after its `EditPlan` names the requested stages.
+For every request use the short state machine `intent → inspect → plan → execute → verify → deliver`. Mechanical edits remain narrow: do not add voice, music, B-roll, Motion Graphics, or export unless explicitly requested. Heavyweight actions — export, generation or submission, deletion, and overwrite — run only when the user requested or explicitly authorized them, and never as a checkpoint between steps. An assembly request may expand scope only after its `EditPlan` names the requested stages.
 
 When a mutation returns `status_unknown`, preserve its original `idempotency_key`/`mutation_id` and query `aixcut_read(view="mutation_receipt")` with that identity. Treat `pending`, `unknown`, and `not_found` as unresolved until the receipt says `applied`, `duplicate`, `noop`, or `rejected`; never create a new key merely because a response was lost. Save a `Checkpoint` containing Project, timeline, revision, mutation identity and next action before leaving a recoverable stage.
 

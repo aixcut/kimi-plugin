@@ -56,7 +56,7 @@ Only confirm page presence when the next action needs it. Timeline reads/writes 
 
 ## Authentication and constraints
 
-- If authorization is missing, Kimi completes OAuth and resumes the original call. Do not call `aixcut_login` first, repeat `aixcut_open`, or operate the authorization page.
+- If authorization is missing, Kimi completes OAuth but does not resume the original call: tell the user to finish authorizing in the browser and send one more message, then continue from that message. Do not call `aixcut_login` first, repeat `aixcut_open`, or operate the authorization page.
 - If authorization is denied, cancelled, fails, or times out, stop and report that the page was not opened.
 - Use only the fields declared by the selected open operation. Do not pass arbitrary URLs, `return_to`, undeclared fields, or guessed IDs.
 - `title` is required for a new Project. Do not pass `idempotency_key` when creating one; each call creates a new Project.

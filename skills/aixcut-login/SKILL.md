@@ -15,11 +15,11 @@ Call `aixcut_login` once with `{}`. Success requires the envelope `status` to be
 
 - **Already authorized:** the Tool has validated the grant with Aixcut and returns `result.status="authenticated"`.
 - **Grant inactive or revoked:** the Tool returns `MCP_AUTH_GRANT_INACTIVE`. Clear the stale authorization through Kimi's plugin controls, reauthorize once, and do not retry the rejected business call with the old token.
-- **Authorization missing or expired:** Kimi opens the Aixcut OAuth page and resumes this call after completion. Do not operate the authorization page or call the Tool again.
+- **Authorization missing or expired:** Kimi opens the Aixcut OAuth page, but it does not resume a turn that is already waiting. Tell the user to finish authorizing in the browser and send one more message, then continue from that message. Do not operate the authorization page or call the Tool again.
 - **Authorization denied, cancelled, failed, or timed out:** stop and report that login did not complete.
 
 ## Constraints
 
 - This Skill does not handle page-opening requests. Use `aixcut-projects` for opening a page.
 - Do not add `project_id` or any business argument to `aixcut_login`.
-- For other Tools, Kimi resumes the original call when authorization is required; do not call `aixcut_login` first.
+- For other Tools, the turn ends the same way when authorization is required: tell the user to send one more message after authorizing, then continue. Do not call `aixcut_login` first.
