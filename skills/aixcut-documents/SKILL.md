@@ -34,20 +34,20 @@ State what is being imported and what happens next when useful. Continue when th
 
 The hosted MCP path does not support this call for a user-computer file. Use the browser-owned upload flow:
 
-```json
-{}
+```json aixcut_frontend
+{"action":"prompt_add_document"}
 ```
 
 Read `aixcut_frontend(action="list_documents")` before opening the prompt to establish the existing document IDs. The action only opens the Project Documents upload entry. It does not upload or confirm a file. The user must choose the document; call `aixcut_frontend(action="list_documents")` and confirm the selected filename and document ID before reporting success. A stored document with `parse_status=parsing` still needs parsing; `error` means parsing failed. Poll only the document list while parsing and never reopen the upload prompt to check status. Do not pass `file_path`, `content`, or a local URL to this hosted action.
 
 A local MCP process may use:
 
-```json
-{"file_path":"/path-visible-to-the-mcp-process/notes/product-overview.md"}
+```json aixcut_document
+{"action":"import","file_path":"/path-visible-to-the-mcp-process/notes/product-overview.md"}
 ```
 
-```json
-{"file_path":"/Users/me/docs/quarterly-review.pdf","content":"# Quarterly Review\n\nActual document text in Markdown."}
+```json aixcut_document
+{"action":"import","file_path":"/Users/me/docs/quarterly-review.pdf","content":"# Quarterly Review\n\nActual document text in Markdown."}
 ```
 
 - `file_path` must be an absolute local path. Relative paths return `MCP_DOCUMENT_PATH_INVALID`.

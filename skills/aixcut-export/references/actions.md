@@ -18,8 +18,9 @@ Project export uses `aixcut_frontend(action="export_timeline")` and `aixcut_fron
 
 ## Submit example
 
-```json
+```json aixcut_frontend
 {
+  "action": "export_timeline",
   "timeline_id": "00000000-0000-4000-8000-000000000001",
   "expected_revision": 12,
   "format": "mp4",
@@ -29,8 +30,9 @@ Project export uses `aixcut_frontend(action="export_timeline")` and `aixcut_fron
 }
 ```
 
-```json
+```json aixcut_frontend
 {
+  "action": "export_timeline_status"
 }
 ```
 

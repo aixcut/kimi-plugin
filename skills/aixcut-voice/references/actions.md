@@ -20,14 +20,14 @@ Read before using paragraph numbers; refresh after changed order or conflicts. `
 
 Read the draft:
 
-```json
-{}
+```json aixcut_generate
+{"action":"speech_read"}
 ```
 
 Quote selected paragraph numbers only after reading the current ordered draft:
 
-```json
-{"segments":[1,2]}
+```json aixcut_generate
+{"action":"speech_quote","segments":[1,2]}
 ```
 
 ## Submit and recover

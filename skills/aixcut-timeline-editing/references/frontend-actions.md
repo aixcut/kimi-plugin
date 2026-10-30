@@ -6,7 +6,7 @@ This reference covers the complete `aixcut_frontend` action catalog. Every actio
 
 Every call includes `action` and may include `project_id`, `workspace_id`, and `timeout_ms` when supported. Page actions take their fields at the top level; shared file actions (`media.*` and `timeline.*`) keep their operation arguments inside `params`:
 
-```json
+```json aixcut_frontend
 {"action":"media.list","params":{}}
 ```
 

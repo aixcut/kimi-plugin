@@ -184,12 +184,52 @@ test("does not reference retired MCP tool names outside retirement notes", () =>
   assert.deepEqual(offenders, [], `retired MCP tool names: ${offenders.join(", ")}`);
 });
 
+test("names the tool and selector in every structured skill example", () => {
+  const offenders = [];
+  for (const file of walk(join(root, "skills")).filter((path) => path.endsWith(".md"))) {
+    const source = readFileSync(file, "utf8");
+    for (const match of source.matchAll(/```([^\n]*)\n([\s\S]*?)```/g)) {
+      const info = match[1].trim();
+      if (!info.startsWith("json")) continue;
+      const label = info.slice(4).trim();
+      let body;
+      try {
+        body = JSON.parse(match[2]);
+      } catch {
+        continue;
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) continue;
+      const name = relative(root, file);
+      if (!/^aixcut_[a-z_]+$/.test(label)) {
+        offenders.push(`${name}: example block without a Tool name`);
+      } else if (!("action" in body || "view" in body || "target" in body)) {
+        offenders.push(`${name}: ${label} example without action/view/target`);
+      }
+    }
+  }
+  assert.deepEqual(offenders, [], offenders.join(", "));
+});
+
 test("uses the Kimi skill-directory placeholder for packaged helpers", () => {
   for (const file of walk(join(root, "skills")).filter((path) => path.endsWith(".md"))) {
     const source = readFileSync(file, "utf8");
     assert.doesNotMatch(source, /<plugin-root>/);
     assert.doesNotMatch(source, /(^|[^/])scripts\/(workflow-host|download-capture-artifacts)\.mjs/);
   }
+});
+
+test("passes the packaged Skill closure contract", async () => {
+  const { validateSkillClosure } = await import(
+    new URL("../scripts/skill-contract-closure.mjs", import.meta.url)
+  );
+  const mapping = readJson("contracts/skill-tool-map.json");
+  const result = await validateSkillClosure({
+    root,
+    mapping,
+    catalog: readJson("contracts/core/mcp-tool-catalog.json"),
+    skillDirectory: "skills",
+  });
+  assert.equal(result.skills, mapping.skills.length);
 });
 
 function walk(directory) {

@@ -112,8 +112,9 @@ Job details are in `result.data.job`, including `id`, `status`, `phase`, `error_
 
 This video prompt intentionally requests Chinese spoken dialogue even though the parameter guidance is in English:
 
-```json
+```json aixcut_generate
 {
+  "action": "submit",
   "idempotency_key": "d4c8a1f2-6e30-4b7d-9a15-3c9f7e0b4d28",
   "kind": "video",
   "prompt": "A calm sunrise over the ocean, slow camera push-in. A woman says in Mandarin Chinese: ‘新的一天，从海边开始。’",
@@ -128,8 +129,9 @@ This video prompt intentionally requests Chinese spoken dialogue even though the
 }
 ```
 
-```json
+```json aixcut_generate
 {
+  "action": "get",
   "job_id": "7a2f5c91-4b8e-4d36-9f21-58c0e7a3b904"
 }
 ```

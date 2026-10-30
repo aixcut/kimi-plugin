@@ -16,28 +16,12 @@ const MUTATION_TOOLS = new Set([
   'aixcut_text', 'aixcut_audio', 'aixcut_track', 'aixcut_project',
   'aixcut_timeline', 'aixcut_generate', 'aixcut_document', 'aixcut_frontend',
 ]);
-const PUBLISHED_PARENTS = [
-  'aixcut_open', 'aixcut_read', 'aixcut_review', 'aixcut_primary',
-  'aixcut_speech', 'aixcut_caption', 'aixcut_clip', 'aixcut_text',
-  'aixcut_audio', 'aixcut_track', 'aixcut_project', 'aixcut_timeline',
-  'aixcut_frontend', 'aixcut_document', 'aixcut_generate',
-];
 
 const resultOf = (envelope) => envelope?.result && typeof envelope.result === 'object'
   ? envelope.result : {};
 const errorOf = (envelope) => envelope?.error && typeof envelope.error === 'object'
   ? envelope.error : {};
 const actionOf = (args) => args?.action ?? args?.view;
-const normalizePublishedCall = (tool, rawArgs) => {
-  const parent = PUBLISHED_PARENTS.find((candidate) => tool.startsWith(`${candidate}_`));
-  if (!parent) return { tool, args: rawArgs, action: actionOf(rawArgs) };
-  let action = tool.slice(parent.length + 1);
-  if (parent === 'aixcut_frontend') {
-    action = action.replace(/^media_/, 'media.').replace(/^timeline_/, 'timeline.').replace(/^operation_/, 'operation.');
-  }
-  const selector = parent === 'aixcut_read' || parent === 'aixcut_review' ? 'view' : parent === 'aixcut_open' ? 'target' : 'action';
-  return { tool: parent, args: { ...rawArgs, [selector]: action }, action };
-};
 const identityOf = (args, envelope, error = {}) => {
   const result = resultOf(envelope);
   const details = error?.details && typeof error.details === 'object' ? error.details : {};
@@ -67,12 +51,10 @@ export function normalizeMcpE2eTrace(raw = {}, metadata = {}) {
     const start = starts.get(event.requestId);
     starts.delete(event.requestId);
     if (!start) continue;
-    const rawArgs = start.arguments && typeof start.arguments === 'object' ? start.arguments : {};
+    const args = start.arguments && typeof start.arguments === 'object' ? start.arguments : {};
     const envelope = event.envelope && typeof event.envelope === 'object' ? event.envelope : {};
-    const normalized = normalizePublishedCall(event.tool || start.tool, rawArgs);
-    const args = normalized.args;
-    const tool = normalized.tool;
-    const action = normalized.action;
+    const tool = event.tool || start.tool;
+    const action = actionOf(args);
     const identity = identityOf(args, envelope, errorOf(envelope));
     const result = resultOf(envelope);
     const status = envelope.status;

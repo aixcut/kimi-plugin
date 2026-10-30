@@ -54,8 +54,9 @@ For multiple versions, call `aixcut_timeline(action="list")`, then duplicate the
 
 1. Read the Project summary, source list, current timeline, audio tracks, existing voice state, existing music state, and source transcript states before deciding whether any audio should be generated:
 
-```json
+```json aixcut_read
 {
+  "view": "sources"
 }
 ```
 
