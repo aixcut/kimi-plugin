@@ -11,7 +11,7 @@ This Skill owns the boundary between Kimi and the Aixcut MCP server. Load it bef
 
 - `kimi.plugin.json` declares the single remote MCP server named `aixcut`. Kimi owns OAuth, credential storage, refresh, and revocation.
 - Never request, print, store, or pass an access token. Do not ask for a second endpoint or connect through another MCP client.
-- Connection readiness requires the `aixcut` MCP server to expose its tools. Let Kimi finish the authorization flow and resume the original request.
+- Connection readiness requires the `aixcut` MCP server to expose its tools. Kimi owns OAuth, but it does not resume a turn that is already waiting: when authorization is required, tell the user to finish it in the browser and then send one more message, and continue the interrupted request on that message.
 - If OAuth completed but tools are still absent, ask the user to start a new Kimi conversation or reload the plugin. Do not substitute a subprocess, another agent, or a plain Project URL.
 - For `MCP_AUTH_GRANT_INACTIVE`, use Kimi's plugin connection controls to clear the stale authorization and authorize once. Never repeat the business call with the inactive grant.
 - For logout, call `aixcut_logout` once when available, then use Kimi's plugin controls to remove the local authorization if the host reports that local cleanup is required. Preserve the plugin and MCP declaration.
