@@ -25,7 +25,7 @@ Clarify these two common ambiguities:
 
 ## Host and source-of-truth boundaries
 
-- Kimi completes OAuth at the transport layer and resumes the original call. Do not sign in first, repeat calls, or operate an authorization page.
+- Kimi completes OAuth at the transport layer, but it does not resume a call that is already waiting: the turn ends when authorization is required. Tell the user to finish authorizing in the browser and send one more message, then continue from that message. Do not sign in first, repeat calls, or operate an authorization page.
 - Only real Tool calls make changes. Do not use curl, hand-written JSON in place of a call, direct database writes, or local files to reconstruct a result.
 - The Studio page is the user's final review surface. A data write alone is not proof that the visible edit is correct.
 - Live server schemas and source code are authoritative. Use the live Tool Schema for parameters; Skills describe workflow and boundaries.
