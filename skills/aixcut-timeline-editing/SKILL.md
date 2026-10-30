@@ -66,7 +66,7 @@ Treat every requested visual annotation as a typed timeline element before writi
 1. Read `aixcut_read(view="timeline")` and inspect each track's `kind`, `role`, and stable ref. A `role=caption` track is reserved for spoken or user-supplied subtitle text.
 2. If the required layer is missing, ensure it before adding content: use `aixcut_track(action="ensure", kind="text", role="art-text", name="Art Text")` for static labels and `aixcut_track(action="ensure", kind="video", role="overlay", name="Motion Graphics")` for animated labels, arrows, circles, and other Motion Graphs.
 3. Always pass the returned explicit track ref. Never omit `track` and never rely on the first text or video track. Use `aixcut_text(action="add")` only for static art text; use `aixcut_clip(action="add")` with `kind="motion-graph"` and the explicit video overlay track for an existing Motion Graph asset.
-4. Read `timeline` immediately after each annotation write. Confirm the new clip's source, `kind`, `track_id`, and the track's non-caption role before continuing to voice, captions, or export.
+4. Read `timeline` immediately after each annotation write. Confirm the new clip's source, `kind`, `track_id`, and the track's non-caption role before continuing to the next requested stage. Export is never part of this step.
 5. If an annotation landed on the wrong track, move or correct it with the appropriate clip action and reread. Never delete the requested annotation to hide a placement error, and never count a caption as its replacement.
 
 ## Idempotency and result states

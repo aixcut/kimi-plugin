@@ -4,7 +4,7 @@ This reference specifies what to read and confirm at each stage. Use the special
 
 After every atomic batch of structural writes, reread the affected `timeline`, `audio`, or `captions` view immediately. Do not reread between the items of a single batch. Do not reuse refs across revisions or wait until export to verify writes.
 
-For multiple versions, call `aixcut_timeline(action="list")`, then duplicate the source timeline. Keep a separate `timeline_id` for each version. For each version, read, edit, reread/review that same timeline, then export. Reuse generated and source media across versions within the same Project.
+For multiple versions, call `aixcut_timeline(action="list")`, then duplicate the source timeline. Keep a separate `timeline_id` for each version. For each version, read, edit, and reread/review that same timeline. Export only after every requested version is finished, and only when the user asked for an export file. Reuse generated and source media across versions within the same Project.
 
 | Tool | action |
 | --- | --- |
@@ -62,11 +62,10 @@ For multiple versions, call `aixcut_timeline(action="list")`, then duplicate the
 
 2. Do not use an old server-side analysis status to decide whether a local video is available. For `import_local_media`, use `import_status` only until the import is settled, then use the returned `media_id` to match the source in `aixcut_read(view="sources")` and check `transcript_status` plus `transcription_tasks` when speech matters. Active transcription states are `pending`, `queued`, `running`, `processing`, `submitted`, or `retrying`; wait briefly and reread `sources`. Do not keep polling a settled import. For `prompt_add_material`, wait for the user's confirmation and match the uploaded file by `file_name` in `sources`.
 3. For videos with speech, verify that source's `transcript_status` is `available` before reading `source_lines`. Import `ready` does not mean ASR is complete. Without speech or a transcript, use `capture_source_frames` or `capture_timeline_frames` as needed for visual evidence.
-4. Export the assembled video through `aixcut_frontend(action="export_timeline")`. Do not branch on whether a complete server-side video copy exists.
-5. If media is missing or insufficient, ask the user to upload it using the “Local media” flow in `aixcut-timeline-editing`, then wait for the upload to finish.
-6. If import is still running, reread `import_status`; if transcription is pending or running, reread `sources`. Do not re-import or substitute other media.
+4. If media is missing or insufficient, ask the user to upload it using the “Local media” flow in `aixcut-timeline-editing`, then wait for the upload to finish.
+5. If import is still running, reread `import_status`; if transcription is pending or running, reread `sources`. Do not re-import or substitute other media.
 
-7. Classify the audio request before editing: `preserve-original`, `generate-voice`, `replace-original`, `add-music`, `no-music`, `optional-music`, or `needs-clarification`. Existing correct narration defaults to `preserve-original`; optional or unmentioned music defaults to `optional-music` and therefore remains off until confirmed. A complete assembly request is not permission to synthesize voice or music.
+6. Classify the audio request before editing: `preserve-original`, `generate-voice`, `replace-original`, `add-music`, `no-music`, `optional-music`, or `needs-clarification`. Existing correct narration defaults to `preserve-original`; optional or unmentioned music defaults to `optional-music` and therefore remains off until confirmed. A complete assembly request is not permission to synthesize voice or music.
 
 For local media, the Project page must be open and media access must be restored before capture or export.
 
@@ -140,7 +139,7 @@ Compare the result with the agreed script/shot plan and representative visual ev
 
 ## Stage 7: Export
 
-Use `aixcut-export` for page export and status polling. The finished file is downloaded by the user's browser and has no server download URL. Report only the filename, size, and format returned by the page.
+Use `aixcut-export` for page export and status polling. Run this stage once, at the end, and only when the user requested or explicitly authorized an export. Never export between stages or to show progress on an unfinished edit. The finished file is downloaded by the user's browser and has no server download URL. Report only the filename, size, and format returned by the page.
 
 ## Common symptoms
 

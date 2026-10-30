@@ -42,6 +42,7 @@ Local media also requires browser file-access permission. If export or frame cap
 ## Boundaries
 
 - Export does not change timeline content. Do not make unrequested edits.
+- Export only when the user asked for the file. Never export to report progress, to close out an intermediate stage, or to verify a partial edit.
 - The finished file does not pass through MCP. Do not promise a later server link.
 - For local media and asynchronous recovery, see `aixcut-timeline-editing`. For a full production workflow, see `aixcut-video-assembly`.
 
