@@ -162,6 +162,28 @@ test("uses declared actions and selectors for every referenced tool", () => {
   }
 });
 
+test("does not reference retired MCP tool names outside retirement notes", () => {
+  const catalog = readJson("contracts/core/mcp-tool-catalog.json");
+  const allowed = new Set(catalog.tools.map((tool) => tool.name));
+  const retirementNote = /旧\s*`aixcut_[a-z_]+`\s*Tool 已退役/;
+  const files = [
+    "SYSTEM.md",
+    ...walk(join(root, "skills")),
+    ...walk(join(root, "references")),
+    ...walk(join(root, "scripts")),
+  ].map((file) => relative(root, file));
+  const offenders = [];
+  for (const name of files) {
+    for (const line of readFileSync(join(root, name), "utf8").split("\n")) {
+      if (retirementNote.test(line)) continue;
+      for (const match of line.matchAll(/\baixcut_[a-z_]+\b/g)) {
+        if (!allowed.has(match[0])) offenders.push(`${name}: ${match[0]}`);
+      }
+    }
+  }
+  assert.deepEqual(offenders, [], `retired MCP tool names: ${offenders.join(", ")}`);
+});
+
 test("uses the Kimi skill-directory placeholder for packaged helpers", () => {
   for (const file of walk(join(root, "skills")).filter((path) => path.endsWith(".md"))) {
     const source = readFileSync(file, "utf8");

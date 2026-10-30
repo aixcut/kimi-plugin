@@ -4,11 +4,11 @@
 
 ## 最短路径
 
-1. 使用 `aixcut_generate_speech_read` 查看编号段落和有效设置；选择声线时用 `aixcut_generate_catalog(kind="speech")` 返回的稳定 voice ref，不猜内部 ID。
-2. 使用 `aixcut_generate_speech_edit`（`operation=add|update|delete|move`）批量修改明确段落。文本编辑无需先生成音频；段落顺序冲突先重读重新定位，不盲用旧编号。
-3. 选定 `segments` 或 `all=true` 调用 `aixcut_generate_speech_quote`，保留完整 frozen `recovery`、每段原 operation identity 与总价。先核实当前授权和费用范围；已授权范围内继续，新增费用超出范围才请用户决定。
-4. 使用 `aixcut_generate_speech_submit`（`recovery=原报价返回对象`），不重建 operation ID、input 或 accepted price。受理只表示提交，不表示音频完成或已经放在时间线。
-5. 从返回的 Job ID 使用 `aixcut_generate_get` 查询，缺失 Job ID 先 `aixcut_generate_list` 按原 operation identity 恢复。按 owner 的 `terminal/retry_after_seconds/next_action` 有界轮询，终态停止。
+1. 使用 `aixcut_generate(action="speech_read")` 查看编号段落和有效设置；选择声线时用 `catalog(kind="speech")` 返回的稳定 voice ref，不猜内部 ID。
+2. 使用 `speech_edit(operation="add|update|delete|move")` 批量修改明确段落。文本编辑无需先生成音频；段落顺序冲突先重读重新定位，不盲用旧编号。
+3. 选定 `segments` 或 `all=true` 调用 `speech_quote`，保留完整 frozen `recovery`、每段原 operation identity 与总价。先核实当前授权和费用范围；已授权范围内继续，新增费用超出范围才请用户决定。
+4. 使用 `speech_submit(recovery=原报价返回对象)`，不重建 operation ID、input 或 accepted price。受理只表示提交，不表示音频完成或已经放在时间线。
+5. 从返回的 Job ID 使用 `get` 查询，缺失 Job ID 先 `list` 按原 operation identity 恢复。按 owner 的 `terminal/retry_after_seconds/next_action` 有界轮询，终态停止。
 6. 成功且正式素材可读后，再用当前 placement Tool 按稳定 ref 放入目标 Timeline。写后 read-back，并检查音频、段落顺序和字幕时间。生成资产与实际 placement 分开汇报。
 
 ## 不确定提交和部分成功

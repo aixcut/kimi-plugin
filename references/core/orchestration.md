@@ -26,7 +26,7 @@
 
 `OperationReceipt` 只记录 owner 能证明的状态：`applied / duplicate / noop / pending / unknown / not_found / rejected / cancelled`。缺失的 identity 和 revision 省略，不随机生成后冒充原任务。`duplicate` 需要请求摘要匹配证据。
 
-遇到 `unknown/not_found`：保留原 mutation ID、idempotency key 和 scope，先查询 `aixcut_read_mutation_receipt`；不存在 receipt 仍不能证明写入失败。按 next_action 等待，预算耗尽仍保留原 identity。禁止换 key 盲重放，禁止未确认前继续依赖写入。此读取入口只在 live catalog 已包含时调用。
+遇到 `unknown/not_found`：保留原 mutation ID、idempotency key 和 scope，先查询 `aixcut_read(view="mutation_receipt")`；不存在 receipt 仍不能证明写入失败。按 next_action 等待，预算耗尽仍保留原 identity。禁止换 key 盲重放，禁止未确认前继续依赖写入。此读取入口只在 live catalog 已包含时调用。
 
 Checkpoint 仅保存必要的公开 identity、phase、revision、完成步骤、pending receipt、Job ID 与 source version。宿主支持任务产物文件时可保存；不支持时在当前会话交付结构化恢复摘要，并明确不能保证跨会话恢复。禁止借 MCP 业务文档库存内部 checkpoint，禁止保存 token/cookie、签名 URL、原始素材和内部对象地址。
 
