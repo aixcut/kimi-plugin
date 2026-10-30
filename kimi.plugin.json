@@ -30,6 +30,7 @@
     "shortDescription": "AI video editing with Aixcut",
     "longDescription": "Create, edit, caption, dub, verify, and export videos with Aixcut.",
     "developerName": "Aixcut",
-    "websiteURL": "https://aixcut.cn"
+    "websiteURL": "https://aixcut.cn",
+    "category": "PRODUCTIVITY"
   }
 }

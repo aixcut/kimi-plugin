@@ -18,6 +18,7 @@ test("declares a Kimi-native manifest with an in-repository skill root", () => {
   assert.ok(manifest.interface?.displayName);
   assert.ok(manifest.interface?.shortDescription);
   assert.ok(manifest.interface?.websiteURL);
+  assert.equal(manifest.interface?.category, "PRODUCTIVITY");
   assert.deepEqual(manifest.mcpServers, {
     aixcut: { url: "https://web.aixcut.cn/mcp" },
   });
