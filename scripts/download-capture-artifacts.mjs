@@ -10,9 +10,8 @@ const chunks = [];
 for await (const chunk of process.stdin) chunks.push(chunk);
 const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
 const result = payload?.result;
-const captureTools = new Set(['aixcut_frontend_capture_source_frames', 'aixcut_frontend_capture_timeline_frames']);
-if (payload?.status !== 'ok' || !captureTools.has(payload?.tool) || !Array.isArray(result?.data?.artifacts)) {
-  throw new Error('Expected a successful Aixcut frame capture result on stdin');
+if (payload?.status !== 'ok' || payload?.tool !== 'aixcut_frontend' || !String(result?.action).startsWith('capture_') || !Array.isArray(result?.data?.artifacts)) {
+  throw new Error('Expected a successful aixcut_frontend capture result on stdin');
 }
 if (result.data.artifacts.length < 1 || result.data.artifacts.length > 8) throw new Error('Invalid artifact count');
 

@@ -40,6 +40,45 @@ function run(command, body, directory) {
   return JSON.parse(result.stdout);
 }
 
+const captureHelper = join(root, "scripts", "download-capture-artifacts.mjs");
+
+function runCapture(payload) {
+  const directory = mkdtempSync(join(tmpdir(), "aixcut-kimi-capture-"));
+  try {
+    return spawnSync(process.execPath, [captureHelper, directory], {
+      cwd: root,
+      input: JSON.stringify(payload),
+      encoding: "utf8",
+    });
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+test("accepts a unified aixcut_frontend capture payload", () => {
+  const result = runCapture({
+    status: "ok",
+    tool: "aixcut_frontend",
+    result: {
+      action: "capture_timeline_frames",
+      data: { artifacts: [{ download_url: "http://example.invalid/a.jpg", byte_size: 10 }] },
+    },
+  });
+  assert.notEqual(result.status, 0);
+  assert.doesNotMatch(result.stderr, /Expected a successful/);
+  assert.match(result.stderr, /must use HTTPS/);
+});
+
+test("rejects a retired single-action capture tool name", () => {
+  const result = runCapture({
+    status: "ok",
+    tool: "aixcut_frontend_capture_timeline_frames",
+    result: { action: "capture_timeline_frames", data: { artifacts: [] } },
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Expected a successful aixcut_frontend capture result/);
+});
+
 test("creates, saves, and resumes a Kimi-owned checkpoint", () => {
   const directory = mkdtempSync(join(tmpdir(), "aixcut-kimi-workflow-"));
   try {

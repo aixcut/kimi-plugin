@@ -5,7 +5,7 @@ const queryFor = receipt => {
   const identity = receipt.mutation_id || receipt.idempotency_key;
   if (!identity) return undefined;
   const field = receipt.mutation_id ? 'mutation_id' : 'idempotency_key';
-  return `aixcut_read_mutation_receipt(project_id=${JSON.stringify(receipt.project_id)},${field}=${JSON.stringify(identity)})`;
+  return `aixcut_read(view="mutation_receipt",project_id=${JSON.stringify(receipt.project_id)},${field}=${JSON.stringify(identity)})`;
 };
 export async function validateEditPlan(plan, root) { return validateContract('edit-plan', plan, root); }
 export async function validateCheckpoint(checkpoint, root) { return validateContract('checkpoint', checkpoint, root); }
