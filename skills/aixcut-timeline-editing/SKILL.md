@@ -80,7 +80,7 @@ Treat every requested visual annotation as a typed timeline element before writi
 
 - A new Project may start at `0×0`. The first visual write chooses the source dimensions; if none are available, the server falls back to `1920×1080` and returns `MCP_CANVAS_DEFAULTED`. Use `aixcut_project(action="canvas")` for an explicit portrait or other ratio.
 - Add music, effects, or rendered voice through `aixcut_audio(action="add")`. Use `fade_in_ms` and `fade_out_ms` for music. Volume is not an add field: after adding, read the created clip ref and call `aixcut_audio(action="update", target="clip:...", volume=0.2–0.4)` when narration must remain clear.
-- When the user wants a video's original sound separately, call `aixcut_frontend(action="media.extract_audio", media_id=..., expected_file_revision=...)`, follow `operation.get` until it succeeds, then add the resulting published audio media. Never send a video media ref directly to `aixcut_audio(action="add")`.
+- When the user wants a video's original sound separately, call `aixcut_frontend(action="media.extract_audio", params={media_id: ..., expected_file_revision: ...})`, then poll `aixcut_frontend(action="operation.get", params={operation_id: ...})` until it succeeds, and add the resulting published audio media. Never send a video media ref directly to `aixcut_audio(action="add")`.
 - Before adding audio, ensure an audio track exists with `aixcut_track(action="ensure")`. If read-back reports `MCP_TRACK_ENSURE_NOT_APPLIED`, retry once with a new UUID.
 - Change track mute or enabled state only after reading the current track state.
 

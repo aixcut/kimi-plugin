@@ -1,7 +1,7 @@
 {
   "name": "aixcut",
-  "version": "0.1.3",
-  "description": "AI video creation and editing with Aixcut.",
+  "version": "0.1.4",
+  "description": "用 Aixcut 完成 AI 视频创作与剪辑：导入素材、编辑时间线、生成配音与字幕，并导出成片。",
   "author": {
     "name": "Aixcut"
   },
@@ -26,11 +26,87 @@
     }
   },
   "interface": {
+    "defaultLocale": "zh-CN",
+    "locales": "./locales/",
     "displayName": "Aixcut",
-    "shortDescription": "AI video editing with Aixcut",
-    "longDescription": "Create, edit, caption, dub, verify, and export videos with Aixcut.",
+    "shortDescription": "用 Aixcut 做 AI 视频剪辑",
+    "longDescription": "打开 Aixcut，导入本地素材与文档，先读项目再编辑；用自然语言完成剪切、字幕、配音、音乐、生成素材和导出，并核验每一步结果。",
     "developerName": "Aixcut",
     "websiteURL": "https://aixcut.cn",
-    "category": "PRODUCTIVITY"
+    "iconUrl": "https://raw.githubusercontent.com/aixcut/kimi-plugin/main/icon.png",
+    "category": "PRODUCTIVITY",
+    "tryPrompts": [
+      "用 Aixcut 打开我的项目，先读时间线再改",
+      "给这段口播去掉口误和停顿，配上字幕",
+      "生成一段配音和背景音乐，组装成一条 30 秒短片并导出"
+    ],
+    "mcpOverrides": {
+      "aixcut": {
+        "displayName": "Aixcut",
+        "description": "Aixcut 视频创作与剪辑服务：项目、时间线、字幕、配音、素材生成、核验和导出。"
+      }
+    },
+    "skillOverrides": {
+      "aixcut-basics": {
+        "displayName": "Aixcut 基础规则",
+        "description": "共享的 Aixcut MCP 规则：先读后写、稳定引用、幂等与异步任务、错误封装和宿主边界。没有专门技能适用时先加载它。"
+      },
+      "aixcut-captions": {
+        "displayName": "字幕",
+        "description": "创建、编辑、拆分和样式化 Aixcut 字幕，并与配音或人声对齐。"
+      },
+      "aixcut-documents": {
+        "displayName": "导入文档",
+        "description": "把用户提供的本地文档导入 Aixcut 项目资料库。"
+      },
+      "aixcut-export": {
+        "displayName": "导出成片",
+        "description": "把 Aixcut 项目导出为 MP4、MOV 或 WebM，并查询页面导出状态与结果。"
+      },
+      "aixcut-generation": {
+        "displayName": "素材生成",
+        "description": "在 Aixcut 生成图片、视频或音乐，并跟踪异步生成任务。"
+      },
+      "aixcut-host": {
+        "displayName": "Kimi 宿主适配",
+        "description": "Aixcut 的 Kimi 宿主适配：OAuth、内置浏览器交接、本地素材、工作流存储与导出交付。"
+      },
+      "aixcut-known-errors": {
+        "displayName": "错误排查",
+        "description": "按稳定错误码排查被拒绝的 Aixcut 调用。"
+      },
+      "aixcut-login": {
+        "displayName": "检查登录",
+        "description": "检查 Aixcut MCP 的 OAuth 登录状态，不打开网页。"
+      },
+      "aixcut-mcp-logout": {
+        "displayName": "退出登录",
+        "description": "退出 Aixcut MCP，撤销 OAuth 授权并清除本地凭据。"
+      },
+      "aixcut-projects": {
+        "displayName": "项目管理",
+        "description": "列出、新建、打开、切换或退出 Aixcut 项目。"
+      },
+      "aixcut-talking-head": {
+        "displayName": "口播剪辑",
+        "description": "剪辑口播类视频（访谈、课程、播客），重点是去掉口误和停顿。"
+      },
+      "aixcut-timeline-editing": {
+        "displayName": "时间线编辑",
+        "description": "编辑 Aixcut 的片段、文字、音频、轨道和画布，并导入本地素材。"
+      },
+      "aixcut-verification": {
+        "displayName": "结果核验",
+        "description": "只读核验 Aixcut 的结构、时间线、配音、字幕和可导出性。"
+      },
+      "aixcut-video-assembly": {
+        "displayName": "成片组装",
+        "description": "协调画面、配音、字幕、音乐和导出，组装完整成片。"
+      },
+      "aixcut-voice": {
+        "displayName": "配音",
+        "description": "编写配音文案、选择音色、合成语音，并可放到时间线上。"
+      }
+    }
   }
 }
