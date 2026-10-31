@@ -35,6 +35,48 @@ test("declares a Kimi-native manifest with an in-repository skill root", () => {
   }
 });
 
+test("ships the official marketplace interface metadata", () => {
+  const manifest = readJson("kimi.plugin.json");
+  const itf = manifest.interface;
+
+  assert.equal(itf.defaultLocale, "zh-CN");
+  assert.equal(itf.locales, "./locales/");
+  assert.ok(Array.isArray(itf.tryPrompts) && itf.tryPrompts.length >= 1, "tryPrompts");
+  assert.match(itf.iconUrl, /^https:\/\//, "iconUrl must be an https URL");
+
+  const serverNames = Object.keys(manifest.mcpServers).sort();
+  assert.deepEqual(Object.keys(itf.mcpOverrides).sort(), serverNames);
+  for (const name of serverNames) {
+    const entry = itf.mcpOverrides[name];
+    assert.ok(entry?.displayName, `mcpOverrides.${name}.displayName`);
+    assert.ok(entry?.description, `mcpOverrides.${name}.description`);
+  }
+
+  const skillNames = readdirSync(join(root, "skills"), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+  assert.deepEqual(Object.keys(itf.skillOverrides).sort(), skillNames);
+  for (const name of skillNames) {
+    const entry = itf.skillOverrides[name];
+    assert.ok(entry?.displayName, `skillOverrides.${name}.displayName`);
+    assert.ok(entry?.description, `skillOverrides.${name}.description`);
+  }
+
+  const localeDir = join(root, "locales");
+  assert.ok(statSync(localeDir).isDirectory(), "locales/ directory");
+  const en = JSON.parse(readFileSync(join(localeDir, "en-US.json"), "utf8"));
+  for (const key of ["displayName", "shortDescription", "longDescription", "tryPrompts", "skillOverrides"]) {
+    assert.ok(en[key], `en-US.json missing ${key}`);
+  }
+  assert.equal(en.tryPrompts.length, itf.tryPrompts.length);
+  assert.deepEqual(Object.keys(en.skillOverrides).sort(), skillNames);
+  for (const name of skillNames) {
+    assert.ok(en.skillOverrides[name].displayName, `en-US skillOverrides.${name}.displayName`);
+    assert.ok(en.skillOverrides[name].description, `en-US skillOverrides.${name}.description`);
+  }
+});
+
 test("keeps every declared path inside the plugin root", () => {
   const manifest = readJson("kimi.plugin.json");
   for (const field of ["skills", "systemPromptPath"]) {

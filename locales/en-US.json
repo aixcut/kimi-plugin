@@ -1,0 +1,73 @@
+{
+  "displayName": "Aixcut",
+  "shortDescription": "AI video editing with Aixcut",
+  "longDescription": "Open Aixcut, import local media and documents, read a project before editing, then cut, caption, dub, score, generate assets and export in natural language while verifying each step.",
+  "developerName": "Aixcut",
+  "tryPrompts": [
+    "Open my Aixcut project and read the timeline before editing",
+    "Remove mistakes and pauses from this talking-head clip and caption it",
+    "Generate a voiceover and background music, assemble a 30-second cut and export it"
+  ],
+  "skillOverrides": {
+    "aixcut-basics": {
+      "displayName": "Aixcut Basics",
+      "description": "Shared Aixcut MCP rules: read-before-write, stable refs, idempotency, async jobs, error envelopes, and host boundaries. Load it when no specialist skill applies."
+    },
+    "aixcut-captions": {
+      "displayName": "Captions",
+      "description": "Create, edit, split, and style Aixcut captions, and keep them in sync with voice or speech."
+    },
+    "aixcut-documents": {
+      "displayName": "Import Documents",
+      "description": "Import a user-provided local document into an Aixcut project library."
+    },
+    "aixcut-export": {
+      "displayName": "Export",
+      "description": "Export an Aixcut project as MP4, MOV, or WebM and check the page-based export status and result."
+    },
+    "aixcut-generation": {
+      "displayName": "Generate Assets",
+      "description": "Generate images, videos, or music in Aixcut and track asynchronous generation jobs."
+    },
+    "aixcut-host": {
+      "displayName": "Kimi Host Adapter",
+      "description": "Aixcut's Kimi host adapter: OAuth, built-in browser handoff, local media, workflow storage, and export delivery."
+    },
+    "aixcut-known-errors": {
+      "displayName": "Error Triage",
+      "description": "Triage rejected Aixcut calls by stable error code."
+    },
+    "aixcut-login": {
+      "displayName": "Check Login",
+      "description": "Check the Aixcut MCP OAuth login state without opening a web page."
+    },
+    "aixcut-mcp-logout": {
+      "displayName": "Sign Out",
+      "description": "Sign out of Aixcut MCP, revoke the OAuth grant, and clear the local credential."
+    },
+    "aixcut-projects": {
+      "displayName": "Projects",
+      "description": "List, create, open, switch, or exit Aixcut projects."
+    },
+    "aixcut-talking-head": {
+      "displayName": "Talking-Head Editing",
+      "description": "Edit speech-led videos such as interviews, courses, and podcasts, removing mistakes and pauses."
+    },
+    "aixcut-timeline-editing": {
+      "displayName": "Timeline Editing",
+      "description": "Edit Aixcut clips, text, audio, tracks, and canvas, and import local media."
+    },
+    "aixcut-verification": {
+      "displayName": "Verification",
+      "description": "Read-only verification of Aixcut structure, timeline, voice, captions, and renderability."
+    },
+    "aixcut-video-assembly": {
+      "displayName": "Video Assembly",
+      "description": "Assemble a complete video by coordinating visuals, voiceover, captions, music, and export."
+    },
+    "aixcut-voice": {
+      "displayName": "Voiceover",
+      "description": "Write voiceover scripts, select a voice, synthesize speech, and optionally place it on the timeline."
+    }
+  }
+}
