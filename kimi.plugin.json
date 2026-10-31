@@ -1,6 +1,6 @@
 {
   "name": "aixcut",
-  "version": "0.1.5",
+  "version": "0.1.0",
   "description": "用 Aixcut 完成 AI 视频创作与剪辑：导入素材、编辑时间线、生成配音与字幕，并导出成片。",
   "author": {
     "name": "Aixcut"
