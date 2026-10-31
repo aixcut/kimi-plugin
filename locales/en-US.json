@@ -8,6 +8,12 @@
     "Remove mistakes and pauses from this talking-head clip and caption it",
     "Generate a voiceover and background music, assemble a 30-second cut and export it"
   ],
+  "mcpOverrides": {
+    "aixcut": {
+      "displayName": "Aixcut",
+      "description": "Aixcut video creation and editing service: projects, timeline, captions, voiceover, asset generation, verification, and export."
+    }
+  },
   "skillOverrides": {
     "aixcut-basics": {
       "displayName": "Aixcut Basics",

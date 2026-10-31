@@ -65,15 +65,36 @@ test("ships the official marketplace interface metadata", () => {
 
   const localeDir = join(root, "locales");
   assert.ok(statSync(localeDir).isDirectory(), "locales/ directory");
-  const en = JSON.parse(readFileSync(join(localeDir, "en-US.json"), "utf8"));
-  for (const key of ["displayName", "shortDescription", "longDescription", "tryPrompts", "skillOverrides"]) {
-    assert.ok(en[key], `en-US.json missing ${key}`);
-  }
-  assert.equal(en.tryPrompts.length, itf.tryPrompts.length);
-  assert.deepEqual(Object.keys(en.skillOverrides).sort(), skillNames);
-  for (const name of skillNames) {
-    assert.ok(en.skillOverrides[name].displayName, `en-US skillOverrides.${name}.displayName`);
-    assert.ok(en.skillOverrides[name].description, `en-US skillOverrides.${name}.description`);
+  const localeFiles = readdirSync(localeDir).filter((file) => file.endsWith(".json"));
+  assert.ok(localeFiles.includes("en-US.json"), "locales/ must cover en-US alongside the zh-CN default");
+  const localizable = new Set([
+    "displayName",
+    "shortDescription",
+    "longDescription",
+    "developerName",
+    "tryPrompts",
+    "mcpOverrides",
+    "skillOverrides",
+  ]);
+  for (const file of localeFiles) {
+    const doc = JSON.parse(readFileSync(join(localeDir, file), "utf8"));
+    for (const key of ["displayName", "shortDescription", "longDescription", "developerName", "tryPrompts"]) {
+      assert.ok(doc[key], `locales/${file} missing ${key}`);
+    }
+    assert.equal(doc.tryPrompts.length, itf.tryPrompts.length, `locales/${file} tryPrompts count`);
+    for (const key of Object.keys(doc)) {
+      assert.ok(localizable.has(key), `locales/${file} has a non-localizable key: ${key}`);
+    }
+    assert.deepEqual(Object.keys(doc.mcpOverrides ?? {}).sort(), serverNames, `locales/${file} mcpOverrides`);
+    for (const name of serverNames) {
+      assert.ok(doc.mcpOverrides?.[name]?.displayName, `locales/${file} mcpOverrides.${name}.displayName`);
+      assert.ok(doc.mcpOverrides?.[name]?.description, `locales/${file} mcpOverrides.${name}.description`);
+    }
+    assert.deepEqual(Object.keys(doc.skillOverrides ?? {}).sort(), skillNames, `locales/${file} skillOverrides`);
+    for (const name of skillNames) {
+      assert.ok(doc.skillOverrides?.[name]?.displayName, `locales/${file} skillOverrides.${name}.displayName`);
+      assert.ok(doc.skillOverrides?.[name]?.description, `locales/${file} skillOverrides.${name}.description`);
+    }
   }
 });
 
