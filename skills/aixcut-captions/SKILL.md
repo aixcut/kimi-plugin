@@ -49,7 +49,7 @@ Use the language the user requested for the finished captions, not the language 
 
 ## Writing and editing
 
-- Replace the whole track with the set action; append new captions with the add action.
+- Replace the whole track with the set action; append new captions with the add action. `add` takes `items` and has no top-level `text`; see the append example in [references/actions.md](references/actions.md).
 - Use the corresponding action for wording, splitting, styling, and highlights.
 - Use a new `idempotency_key` for each structural write and reread after each one. Position edits require the latest ref.
 - See [references/actions.md](references/actions.md) for fields and actions.

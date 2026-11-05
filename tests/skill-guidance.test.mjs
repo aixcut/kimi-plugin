@@ -22,6 +22,10 @@ const conversationGuidance = readFileSync(
   join(root, "skills/aixcut-basics/references/conversation-guidance.md"),
   "utf8",
 );
+const captionsReference = readFileSync(
+  join(root, "skills/aixcut-captions/references/actions.md"),
+  "utf8",
+);
 const assemblyGuidance = [
   "skills/aixcut-video-assembly/SKILL.md",
   "skills/aixcut-video-assembly/references/pipeline.md",
@@ -86,7 +90,7 @@ test("Kimi local media guidance uses only the user-selected Project upload flow"
   assert.match(timelineSkill, /one supported local-media route/i);
   assert.match(timelineSkill, /\{"action":"prompt_add_material"\}/);
   assert.match(timelineSkill, /select or drag files/i);
-  assert.match(timelineSkill, /wait for confirmation\. Then read `?aixcut_read\(view="sources"\)`?/i);
+  assert.match(timelineSkill, /wait for the user's confirmation[\s\S]{0,200}read `?aixcut_read\(view="sources"\)`?/i);
   assert.match(timelineSkill, /match [^.]{0,40}by `?file_name`?/i);
   assert.match(timelineActions, /For Kimi local-media uploads, use only `prompt_add_material`/i);
   assert.match(frontendActions, /`prompt_add_material`.*user selects files/i);
@@ -98,4 +102,20 @@ test("Kimi local media guidance uses only the user-selected Project upload flow"
     /local-media-bridge|local media bridge|import_local_media|MCP_LOCAL_MEDIA_BRIDGE_UNREACHABLE|NODE_OPTIONS|--no-reuse/i,
   );
   assert.doesNotMatch(assemblyGuidance, /import_status for local imports|import_local_media/i);
+});
+
+test("local media guidance ends the turn before the user confirms the upload", () => {
+  assert.match(
+    timelineSkill,
+    /end (?:your )?turn and wait for the user's confirmation/i,
+    "prompt_add_material must be followed by an ended turn; polling sources before the user confirms wasted a round in acceptance",
+  );
+});
+
+test("caption add guidance shows the items array form", () => {
+  assert.match(
+    captionsReference,
+    /```json aixcut_caption[\s\S]*?"action":\s*"add"[\s\S]*?"items"\s*:\s*\[[\s\S]*?```/,
+    "caption add only accepts items[]; a worked example prevents a rejected first call",
+  );
 });
