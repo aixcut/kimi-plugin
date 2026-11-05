@@ -142,13 +142,9 @@ Pass only the field needed; omitted means 0. Audio clips map to `audioFadeInMs`/
 | aixcut_timeline(action="reorder") | — | `timeline_ids` | — | Reorder timelines using the complete list |
 | aixcut_frontend(action="capture_source_frames") | — | `media_id`, `selections` | `timeout_ms`, `workspace_id` | Capture 1–8 JPEG frames from a source |
 | aixcut_frontend(action="capture_timeline_frames") | — | `selections` | `timeline_id`, `expected_revision`, `timeout_ms`, `workspace_id` | Capture 1–8 JPEG frames from a timeline |
-| aixcut_frontend(action="import_local_media") | — | `url` or `urls` | `timeout_ms`, `workspace_id` | Import 1–8 local assets; returns `import_ids` |
-| aixcut_frontend(action="import_status") | — | `import_ids` | `timeout_ms`, `workspace_id` | Check imports until settled and `private_copy` is not `copying` |
 | aixcut_frontend(action="prompt_add_material") | — | — | `timeout_ms`, `workspace_id` | Show the user upload area |
 
-`import_local_media` and `prompt_add_material` both return acceptance, not completed library ingestion. The first returns `import_ids` for `import_status`; the second has no import ID and must be confirmed by rereading `aixcut_read(view="sources")`. A batch uses `url` for one file or `urls` for up to eight; per-file failures appear in `failures`.
-
-Local bridge URLs may be used only for paths explicitly named or reconfirmed in the current task. The helper preserves the host's `NODE_OPTIONS` file guard, rechecks every current path before reuse, and reuses only an unexpired bridge with the exact same file set. It never carries files forward from old state; permission failure disables the URL and must fall back to `prompt_add_material`. After all imports settle, stop the helper bridge with `--stop`.
+For Kimi local-media uploads, use only `prompt_add_material`. It opens the upload area but does not confirm completion and returns no import ID; wait for the user, then reread `aixcut_read(view="sources")` and match the file by `file_name`. User selection in the Project upload area is the only Kimi route for local files.
 
 Page export uses `aixcut_frontend(action="export_timeline")` and `aixcut_frontend(action="export_timeline_status")`, but belongs to `aixcut-export` and is not listed here.
 

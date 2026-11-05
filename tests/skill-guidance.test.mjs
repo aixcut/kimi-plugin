@@ -10,6 +10,18 @@ const timelineSkill = readFileSync(
 );
 const hostSkill = readFileSync(join(root, "skills/aixcut-host/SKILL.md"), "utf8");
 const knownErrorsSkill = readFileSync(join(root, "skills/aixcut-known-errors/SKILL.md"), "utf8");
+const timelineActions = readFileSync(
+  join(root, "skills/aixcut-timeline-editing/references/actions.md"),
+  "utf8",
+);
+const frontendActions = readFileSync(
+  join(root, "skills/aixcut-timeline-editing/references/frontend-actions.md"),
+  "utf8",
+);
+const conversationGuidance = readFileSync(
+  join(root, "skills/aixcut-basics/references/conversation-guidance.md"),
+  "utf8",
+);
 const assemblyGuidance = [
   "skills/aixcut-video-assembly/SKILL.md",
   "skills/aixcut-video-assembly/references/pipeline.md",
@@ -59,11 +71,31 @@ test("tool examples do not contain empty argument slots", () => {
   }
 });
 
-test("local media guidance limits bridge files to current authorization and fails closed", () => {
-  const guidance = `${hostSkill}\n${timelineSkill}\n${knownErrorsSkill}`;
-  assert.match(guidance, /explicitly named or reconfirmed in the current task/i);
-  assert.match(guidance, /never.*(?:carry|reuse|infer).*historical files/i);
-  assert.match(guidance, /access is denied|permission.*(?:expired|revoked)|(?:expired|revoked).*permission/i);
-  assert.match(guidance, /prompt_add_material/);
-  assert.match(guidance, /--stop/);
+test("Kimi local media guidance uses only the user-selected Project upload flow", () => {
+  const guidance = [
+    hostSkill,
+    timelineSkill,
+    knownErrorsSkill,
+    timelineActions,
+    frontendActions,
+    conversationGuidance,
+    assemblyGuidance,
+  ].join("\n");
+
+  assert.match(hostSkill, /only supported local-media route is .*prompt_add_material/i);
+  assert.match(timelineSkill, /one supported local-media route/i);
+  assert.match(timelineSkill, /\{"action":"prompt_add_material"\}/);
+  assert.match(timelineSkill, /select or drag files/i);
+  assert.match(timelineSkill, /wait for confirmation\. Then read `?aixcut_read\(view="sources"\)`?/i);
+  assert.match(timelineSkill, /match [^.]{0,40}by `?file_name`?/i);
+  assert.match(timelineActions, /For Kimi local-media uploads, use only `prompt_add_material`/i);
+  assert.match(frontendActions, /`prompt_add_material`.*user selects files/i);
+  assert.match(knownErrorsSkill, /prompt_add_material/);
+  assert.match(conversationGuidance, /completed user-selected upload/i);
+
+  assert.doesNotMatch(
+    guidance,
+    /local-media-bridge|local media bridge|import_local_media|MCP_LOCAL_MEDIA_BRIDGE_UNREACHABLE|NODE_OPTIONS|--no-reuse/i,
+  );
+  assert.doesNotMatch(assemblyGuidance, /import_status for local imports|import_local_media/i);
 });

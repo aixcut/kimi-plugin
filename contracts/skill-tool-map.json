@@ -119,7 +119,8 @@
         "required": [
           "aixcut_frontend",
           "aixcut_logout",
-          "aixcut_open"
+          "aixcut_open",
+          "aixcut_read"
         ],
         "optional": [],
         "forbidden": []

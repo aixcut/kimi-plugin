@@ -1,6 +1,6 @@
 ---
 name: aixcut-timeline-editing
-description: "Edit Aixcut clips, text, audio, tracks, canvas, and local imports. Do not use for voice scripts, full assembly, or export. Chinese triggers: 剪切、拼接、裁剪、删除片段、加文字、加音乐、轨道、画布、上传素材."
+description: "Edit Aixcut clips, text, audio, tracks, canvas, and user-selected Project uploads. Do not use for voice scripts, full assembly, or export. Chinese triggers: 剪切、拼接、裁剪、删除片段、加文字、加音乐、轨道、画布、上传素材."
 ---
 
 # Aixcut Timeline Editing
@@ -94,9 +94,9 @@ Only add BGM/music when it is explicitly enabled, requested, or confirmed. When 
 
 ## Local media
 
-There are two supported import paths. Both are asynchronous and an accepted response does not mean that the media is ready.
+Kimi has one supported local-media route: ask the user to select files in the Project page. A local path mentioned in chat does not authorize the plugin to read it.
 
-### Ask the user to upload
+### User-selected Project upload
 
 Call:
 
@@ -104,36 +104,11 @@ Call:
 {"action":"prompt_add_material"}
 ```
 
-A completed response means the upload area is open. Tell the user to select or drag files. After the user confirms upload, read `aixcut_read(view="sources")` and match by `file_name`; do not call `prompt_add_material` again.
+A completed response means only that the upload area is open, not that a file was uploaded, and it returns no import ID. Tell the user to select or drag files and wait for confirmation. Then read `aixcut_read(view="sources")` and match the new source by `file_name`. If the file is not listed yet, wait about 15 seconds and reread `sources` once. Do not reopen the prompt for the same upload or assume it succeeded.
 
-### Import an explicit local path
+ASR is independent of the user's file selection and upload. When the task depends on speech or transcript text, call `aixcut_read(view="sources")`, match the uploaded source by `file_name`, and check its `transcript_status` and `transcription_tasks`. Active transcription states are `pending`, `queued`, `running`, `processing`, `submitted`, or `retrying`; wait briefly and reread `sources`. If needed to confirm whether transcription should exist, call `aixcut_read(view="source", source=media_id)` and check `has_audio`. Do not wait for ASR when there is no audio or the task only needs visual evidence. Read `source_lines` only after the matching source has `transcript_status=available`; report empty, outdated, or failed transcription instead of fabricating text or asking the user to upload again.
 
-Use the local media bridge only for paths the user explicitly named or reconfirmed in the current task. Never recover a path from an earlier task, the bridge state file, or the fact that a file still exists. Start or reuse the bridge yourself before importing; do not ask the user to start it. Locate the plugin helper and use the Site origin from the connected MCP Server instructions. If either is unavailable, report that specific setup blocker instead of running an incomplete command.
-
-```bash
-node "${KIMI_SKILL_DIR}/../../scripts/local-media-bridge.mjs" /absolute/path/a.mp4 /absolute/path/b.mp4 --allowed-origin "<MCP Server Site origin>"
-```
-
-The helper requires the host-provided `NODE_OPTIONS` preload/import configuration and preserves it in the background process. It checks each current path under that host configuration before considering reuse. Reuse is allowed only when origin, expiry, and the entire file set exactly match this invocation; a changed set stops the old bridge before opening only the current files. Never pass historical files merely because their old URLs or paths still exist. Do not call `aixcut_frontend(action="import_local_media")` until this command succeeds. Never invent the origin, URL, or port. The helper manages its own background process and port; do not wrap it in `screen`, `nohup`, or `&`.
-
-If the helper reports missing host configuration, denied/expired file access, or an unavailable host file proxy, do not retry with the same permission, remove `NODE_OPTIONS`, or use another direct file-read route. Use `aixcut_frontend(action="prompt_add_material")` so the user can choose the files in the Project page. Retry the helper at most once only for a transient startup/health failure after current host access has succeeded. Do not retry missing files, a missing Site origin, or a missing helper; report the specific blocker.
-
-After the helper succeeds, use only its printed `files[].url` values in one `aixcut_frontend(action="import_local_media")` call, with `url` for one file or `urls` for up to eight. A ready bridge does not prove the Project page can fetch it. If import reports bridge-unreachable or URL failures, rerun the helper with `--no-reuse` for only the failed files and retry those once with the new URLs; the helper will recheck host access and revoke the old bridge. If that check fails, use `prompt_add_material` instead. Report only files that still fail.
-
-The response includes `import_ids`. Poll only those IDs with `import_status`. Follow `next_action.after_seconds`; do not re-import while an item is running. An item is settled only when its status is `ready`, `failed`, or `cancelled`, and its `private_copy` is no longer `copying`.
-
-- On `ready`, use the returned `media_id` directly; do not search `sources` just to rediscover which source was imported.
-- On `unknown`, the page no longer tracks the import (for example, after a refresh). Reread `sources` and match by `file_name`.
-- Retry `failed` or `cancelled` only when `retryable` is `true`; otherwise report its `error_code` and `error_message`.
-- `private_copy=ok` means the complete local copy is saved. `fallback` means the media remains usable, but refresh or page export may fail to access the original; report `private_copy_reason`. Removing a clip from the timeline does not remove this copy. It is released when the source is deleted from the library or the Project is deleted.
-
-After every import in the batch is settled and `private_copy` is no longer `copying`, stop the bridge with `node "${KIMI_SKILL_DIR}/../../scripts/local-media-bridge.mjs" --stop`. Do not leave its local URLs active after the import has finished.
-
-ASR is independent of the file import status. Use `import_status` only until each import is settled; it is not the source of transcription status. When the user's task depends on speech or transcript text, call `aixcut_read(view="sources")`, match the source by the returned `media_id`, and check its `transcript_status` and `transcription_tasks`. Active transcription states are `pending`, `queued`, `running`, `processing`, `submitted`, or `retrying`; wait briefly and reread `sources`; do not keep polling the settled import or re-import. If needed to confirm whether transcription should exist, call `aixcut_read(view="source", source=media_id)` and check `has_audio`. Do not wait for ASR when there is no audio or the task only needs visual evidence. Read `source_lines` only after the matching source has `transcript_status=available`; report empty, outdated, or failed transcription instead of fabricating text or re-importing.
-
-For `prompt_add_material`, there is no `import_id`. After the user says the upload is complete, reread `sources` and match by filename. If it has not appeared, wait about 15 seconds and reread; never reopen the prompt to confirm the same upload.
-
-Local video does not require a complete server-side video copy. The browser keeps the original and sends extracted audio for transcription; use `capture_source_frames` or `capture_timeline_frames` for visual evidence. If `CAPTURE_PERMISSION_REQUIRED` occurs, ask the user to click the Project page once and retry the original capture. If host file access is denied or unavailable, use the page's file picker; never bypass the host guard.
+Local video does not require a complete server-side video copy. The browser keeps the user-selected original and sends extracted audio for transcription; use `capture_source_frames` or `capture_timeline_frames` for visual evidence. If `CAPTURE_PERMISSION_REQUIRED` occurs, ask the user to click the Project page once and retry the original capture. Local files reach Kimi only after the user selects them in the Project page.
 
 ## Captures and visual placement
 

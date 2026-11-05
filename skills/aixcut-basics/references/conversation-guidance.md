@@ -13,7 +13,7 @@ Guide the user through the whole Aixcut workflow, not only login or project setu
 
 ## Keep readiness states separate
 
-Do not treat Plugin installation, MCP configuration, OAuth authorization, an active Project page, available source media, or a local media bridge as the same state. Inspect each state before reporting readiness. Never claim that setup, upload, or an edit succeeded without a confirming result.
+Do not treat Plugin installation, MCP configuration, OAuth authorization, an active Project page, available source media, an open upload prompt, or a completed user-selected upload as the same state. Inspect each state before reporting readiness. Never claim that setup, upload, or an edit succeeded without a confirming result.
 
 OAuth is completed by the Host outside the waiting turn: the turn that asked for authorization has already ended and the Host does not resume it. Ask the user to send one more message after authorizing. If tools are still absent on that message, ask the user to start a new session. Never substitute a child process, another MCP client, another agent session, or a plain Project URL; browser handoff must be created and opened in the same host session.
 

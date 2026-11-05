@@ -1,6 +1,6 @@
 # Frontend Action Reference
 
-This reference covers the complete `aixcut_frontend` action catalog. Every action is called through the model-callable `aixcut_frontend` MCP Tool; the live Tool Schema remains authoritative. Send only fields accepted by the selected action.
+This reference covers the `aixcut_frontend` actions Kimi uses. Every action is called through the model-callable `aixcut_frontend` MCP Tool; the live Tool Schema remains authoritative. Send only fields accepted by the selected action.
 
 ## Request shapes
 
@@ -20,8 +20,6 @@ Every call includes `action` and may include `project_id`, `workspace_id`, and `
 | `activate_timeline` | `timeline_id` | Switches the active timeline in the bound Project page. |
 | `playback_check` | `timeline_id`, `expected_revision`, `start_ms`, `target_ms` | Plays at most 10 seconds and restores the playhead; `target_ms` must follow `start_ms`. |
 | `prompt_add_material` | — | Opens the Project media upload area. The user selects files; verify the result with `aixcut_read(view="sources")`. |
-| `import_local_media` | Exactly one of `url` or `urls` | `timeout_ms`, `workspace_id`; only use loopback bridge URLs for paths the user explicitly named or reconfirmed in the current task. Returns `import_ids`, not completion. |
-| `import_status` | `import_ids` | `timeout_ms`, `workspace_id`; poll these same IDs until settled; never resend the import. |
 | `prompt_add_document` | — | Opens the Project Documents picker. The user selects the document. |
 | `list_documents` | — | Lists document IDs, names, and parse status; use to verify uploads and parsing. |
 | `export_timeline` | — | `timeline_id`, `expected_revision`, `format`, `width`, `height`, `frame_rate`; returns `export_id`, not a file URL. |
@@ -66,4 +64,4 @@ All fields in this table belong inside `params`. Except `media.list` and `media.
 
 ## Result handling
 
-An accepted file or browser action is not proof that the work completed. Use `operation.get` for file operations, `import_status` for local imports, `export_timeline_status` for page exports, and `list_documents` for Project document upload/parse status. Follow each result's terminal/status fields and do not create duplicate work by resending an accepted request.
+An accepted file or browser action is not proof that the work completed. Use `operation.get` for operations that return an operation ID, `export_timeline_status` for page exports, and `list_documents` for Project document upload/parse status. The Kimi `prompt_add_material` flow has no import ID: wait for the user, then verify the file in `sources`. Follow each result's terminal/status fields and do not create duplicate work by resending an accepted request.

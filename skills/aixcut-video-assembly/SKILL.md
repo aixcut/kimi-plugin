@@ -5,7 +5,7 @@ description: "Assemble a complete video by coordinating visuals, voiceover, capt
 
 # Aixcut Video Assembly
 
-Use the packaged shared [orchestration](../../references/core/orchestration.md) and [quality gates](../../references/core/quality-gates.md) as the common policy; keep browser handoff and local-file operations in the Kimi host and specialist Skills.
+Use the packaged shared [orchestration](../../references/core/orchestration.md) and [quality gates](../../references/core/quality-gates.md) as the common policy; keep browser handoff and user-selected file uploads in the Kimi host and specialist Skills.
 
 ## Conversation guidance
 
