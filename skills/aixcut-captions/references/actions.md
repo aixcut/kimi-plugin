@@ -46,3 +46,18 @@ These Chinese captions are deliberate user-facing content; the tool reference re
   ]
 }
 ```
+
+## Append example
+
+`add` appends caption items and takes no top-level `text`; a call that passes text outside `items` is rejected. Pass `start_ms` on the action to place the appended captions, or on each item to time them individually:
+
+```json aixcut_caption
+{
+  "action": "add",
+  "idempotency_key": "9c1a4e02-6f77-4a30-8f0e-2b7d51c4a9d3",
+  "start_ms": 0,
+  "items": [
+    { "text": "Caption appended to the existing track.", "duration_ms": 2000 }
+  ]
+}
+```

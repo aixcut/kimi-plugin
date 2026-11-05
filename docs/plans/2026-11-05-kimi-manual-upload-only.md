@@ -45,3 +45,14 @@ flowchart LR
 4. 重跑专项 Skill 指引测试；全部实现稳定后运行一次 `npm run check`，确认插件结构、Skill/Tool 闭包与原有桥接安全测试仍通过。
 
 本计划不授权提交、推送或创建 PR；交付前先报告分支、文件、测试和建议提交信息。
+
+## 验收结果（2026-11-05）
+
+按“打开上传区 → 用户选择文件 → 读取 `sources` 核实 → 编辑并核验”的流程在 Kimi Work 实测，项目「kimi测试2」：
+
+- 指引检查通过：Kimi 全程只调用 `aixcut_read`、`aixcut_open`、`aixcut_frontend(action="page_status")`、`aixcut_frontend(action="prompt_add_material")`，没有出现桥、helper、`import_local_media`、`import_status`。
+- 本机命令仅有 `sleep` 与 `uuidgen`（幂等键），没有执行任何脚本。
+- 被问“只给一个本地文件路径会怎么做”时，Kimi 回答不会自行读取路径，只打开上传区让用户在页面选择。
+- 上传链路可用：系统文件框正常弹出，页面导入成功，`aixcut_read(view="sources")` 首次读取即命中两个测试视频，按 `file_name` 匹配正确。
+- 编辑与核验正常：新建时间轴后 `aixcut_read(view="timeline")` 读回 revision 3，视频 0–35767ms、字幕「测试导入成功」0–2000ms 均正确。
+- 首轮实测暴露两个可承受问题，已在本轮一起修正：`prompt_add_material` 之后模型曾抢跑读取 `sources`；`aixcut_caption(action="add")` 首次传参被拒，缺少 `items` 数组示例。
