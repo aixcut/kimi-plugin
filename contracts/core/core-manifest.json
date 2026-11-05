@@ -15,7 +15,7 @@
     "contracts/trace-event.schema.json": "7a7d0be9f15a255241804491ee95fef7498a02c6dc14e08e4e132ae897f4e106",
     "helpers/contract-semantics.mjs": "a00ecf2574d1eabf653a7ccd84f5a46b78745a2c817bdc0bcfbbf77e3bc4f72c",
     "helpers/download-capture-artifacts.mjs": "68296d02ad0fe0699936c568ca0073c8a3905f9d7ccf0a7d77df4124a6af48fd",
-    "helpers/local-media-bridge.mjs": "15bed75f15468939382dfc0896528733f53370f898b9314a0663d390986b0c4c",
+    "helpers/local-media-bridge.mjs": "e7f8a4aec51b10de3a83718b04619675f6d1f3140976f4dcafca398437837e7f",
     "helpers/review-evidence.mjs": "5f000dbe857c0ba7d3cacd35a19e3cdbeeaa9355270f774d55eee781007b693f",
     "helpers/schema-validators.mjs": "3454c31801474173a38fb65e1af159074ca8ae4855573689e94ecacb011e5e1e",
     "helpers/skill-contract-closure.mjs": "035fc6010f3ffcada6b8928f9335e254fdd17cbc598f012bb61eb8bb2479b947",

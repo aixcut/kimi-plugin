@@ -20,7 +20,7 @@ Every call includes `action` and may include `project_id`, `workspace_id`, and `
 | `activate_timeline` | `timeline_id` | Switches the active timeline in the bound Project page. |
 | `playback_check` | `timeline_id`, `expected_revision`, `start_ms`, `target_ms` | Plays at most 10 seconds and restores the playhead; `target_ms` must follow `start_ms`. |
 | `prompt_add_material` | — | Opens the Project media upload area. The user selects files; verify the result with `aixcut_read(view="sources")`. |
-| `import_local_media` | Exactly one of `url` or `urls` | `timeout_ms`, `workspace_id`; only use loopback bridge URLs for paths the user explicitly named. Returns `import_ids`, not completion. |
+| `import_local_media` | Exactly one of `url` or `urls` | `timeout_ms`, `workspace_id`; only use loopback bridge URLs for paths the user explicitly named or reconfirmed in the current task. Returns `import_ids`, not completion. |
 | `import_status` | `import_ids` | `timeout_ms`, `workspace_id`; poll these same IDs until settled; never resend the import. |
 | `prompt_add_document` | — | Opens the Project Documents picker. The user selects the document. |
 | `list_documents` | — | Lists document IDs, names, and parse status; use to verify uploads and parsing. |
