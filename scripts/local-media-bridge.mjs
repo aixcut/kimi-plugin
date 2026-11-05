@@ -3,7 +3,8 @@
  * Aixcut 本机素材桥
  *
  * 只监听回环地址，把命令行给出的文件喂给 Aixcut 页面，让页面在不依赖文件选择器
- * 手势的前提下导入素材。AI 只能在用户明确给出路径后使用它。
+ * 手势的前提下导入素材。仅可使用用户在当前任务明确给出或重新确认的路径，
+ * 且所有后台读取仍经过宿主注入的文件访问保护。
  *
  * 用法：
  *   node local-media-bridge.mjs <文件...> [--allowed-origin HTTPS_ORIGIN] [--port N] [--ttl-ms N] [--state-file PATH] [--no-reuse]
@@ -11,7 +12,7 @@
  *   node local-media-bridge.mjs --stop
  *
  * 起桥时默认自己后台化：命令打印 JSON 后立即返回，桥继续在后台跑，不依赖调用它的
- * 终端或会话。已经在跑的桥如果已经覆盖这次要的文件，就直接复用，不再起第二个进程。
+ * 终端或会话。宿主权限失效时文件 URL 会撤销；只有授权仍有效且文件集合完全匹配时才复用。
  */
 import { spawn } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -30,6 +31,11 @@ const PROBE_TIMEOUT_MS = 1_000;
 
 export const defaultStateFilePath = (home = os.homedir()) =>
   path.join(home, '.aixcut', 'local-media-bridge.json');
+
+/** 只有宿主注入了 Node preload/import 时才尝试访问用户文件。 */
+export const hasHostFileAccessConfiguration = (env = process.env) =>
+  typeof env.NODE_OPTIONS === 'string' &&
+  /(?:^|\s)(?:--require(?:=|\s)|--import(?:=|\s)|-r(?:=|\s))/.test(env.NODE_OPTIONS);
 
 export const parseBridgeArguments = (argv) => {
   const options = {
@@ -117,36 +123,40 @@ export const clearBridgeState = (stateFile) => {
 };
 
 /**
- * 桥的服务进程必须拿干净的环境起。
- *
- * 宿主会给子进程注入 NODE_OPTIONS（沙箱文件代理之类的 --require）。桥继承它以后，
- * 读用户文件走的就是宿主代理；会话一结束代理失效，第一次取文件就报
- * connect failed: Connection refused。清掉它，桥只用自己的 node 读盘。
- */
-export const bridgeChildEnv = (env = process.env) =>
-  Object.fromEntries(Object.entries(env).filter(([key]) => key !== 'NODE_OPTIONS'));
-
-/**
- * 已在跑的桥能不能直接服务这次的文件。
- * 只要过期、或有一个文件它没在服务，就必须起新的。
+ * 已在跑的桥能不能服务本次明确授权的完整文件集。
+ * 旧桥有多余文件也不能复用；调用方还必须先在宿主保护下重新检查这些路径。
  */
 export const resolveBridgeReuse = (state, filePaths, now = Date.now(), allowedOrigin = null) => {
   if (!state || typeof state !== 'object') return { reusable: false, reason: 'no-state' };
+  if (state.bridge_policy_version !== 2)
+    return { reusable: false, reason: 'unsupported-policy' };
   if ((state.allowed_origin ?? null) !== (allowedOrigin ?? null))
     return { reusable: false, reason: 'origin-mismatch' };
   const expiresAt = Date.parse(state.expires_at ?? '');
   if (!Number.isFinite(expiresAt) || expiresAt <= now)
     return { reusable: false, reason: 'expired' };
-  const served = new Map(
-    (Array.isArray(state.files) ? state.files : [])
-      .filter((file) => file && typeof file.path === 'string' && typeof file.url === 'string')
-      .map((file) => [file.path, file]),
-  );
-  const missing = filePaths.filter((filePath) => !served.has(filePath));
-  if (missing.length > 0) return { reusable: false, reason: 'missing-files', missing };
+  const stateFiles = Array.isArray(state.files) ? state.files : [];
+  const served = new Map(stateFiles.map((file) => [file?.path, file]));
+  const requested = [...new Set(filePaths)];
+  if (requested.length !== filePaths.length || stateFiles.length !== requested.length ||
+      served.size !== stateFiles.length || requested.some((filePath) => !served.has(filePath)) ||
+      stateFiles.some((file) => {
+        if (typeof file?.path !== 'string' || typeof file?.url !== 'string' ||
+            typeof file?.id !== 'string') return true;
+        try {
+          const baseUrl = new URL(state.base_url);
+          const fileUrl = new URL(file.url);
+          return baseUrl.protocol !== 'http:' || baseUrl.hostname !== '127.0.0.1' ||
+            fileUrl.origin !== baseUrl.origin || fileUrl.pathname !== `/media/${file.id}` ||
+            fileUrl.searchParams.get('token') !== state.token;
+        } catch {
+          return true;
+        }
+      }))
+    return { reusable: false, reason: 'file-set-mismatch' };
   return {
     reusable: true,
-    files: filePaths.map((filePath) => served.get(filePath)),
+    files: requested.map((filePath) => served.get(filePath)),
   };
 };
 
@@ -158,9 +168,10 @@ export const probeBridgeHealth = async (baseUrl, token, timeoutMs = PROBE_TIMEOU
     const url = new URL('/health', baseUrl);
     url.searchParams.set('token', token ?? '');
     const response = await fetch(url, { signal: controller.signal });
-    if (!response.ok) return null;
     const body = await response.json();
-    return body && body.ok === true ? body : null;
+    if (body?.ok !== true) return null;
+    if (response.ok || (response.status === 410 && body.expired === true)) return body;
+    return null;
   } catch {
     return null;
   } finally {
@@ -231,9 +242,15 @@ const runServer = (options, stateFile) => {
   const entries = resolveFiles(options.files);
   const token = crypto.randomBytes(24).toString('hex');
   const expiresAt = Date.now() + options.ttlMs;
-  const byId = new Map(
-    entries.map((entry) => [crypto.randomBytes(8).toString('hex'), entry]),
-  );
+  const byId = new Map();
+  const idByEntry = new Map();
+  for (const entry of entries) {
+    const id = crypto.randomBytes(8).toString('hex');
+    byId.set(id, entry);
+    idByEntry.set(entry, id);
+  }
+  let activeEntries = [...entries];
+  let state = null;
 
   const sendJson = (res, status, body, origin) => {
     const payload = JSON.stringify(body);
@@ -243,6 +260,23 @@ const runServer = (options, stateFile) => {
       'Content-Length': Buffer.byteLength(payload),
     });
     res.end(payload);
+  };
+
+  const revokeEntry = (entry) => {
+    const id = idByEntry.get(entry);
+    if (id) byId.delete(id);
+    activeEntries = activeEntries.filter((candidate) => candidate !== entry);
+    if (!state) return;
+    state.files = state.files.filter((file) => file.path !== entry.path);
+    try {
+      writeBridgeState(stateFile, state);
+    } catch (error) {
+      console.error(JSON.stringify({
+        at: new Date().toISOString(),
+        event: 'bridge-state-update-failed',
+        message: error instanceof Error ? error.message : String(error),
+      }));
+    }
   };
 
   const server = http.createServer((req, res) => {
@@ -265,27 +299,33 @@ const runServer = (options, stateFile) => {
       res.end();
       return;
     }
-    if (Date.now() > expiresAt) {
-      sendJson(res, 410, { error: 'bridge-expired' }, origin, options.allowedOrigin);
-      return;
-    }
     const url = new URL(req.url ?? '/', `http://127.0.0.1:${options.port}`);
     if (url.searchParams.get('token') !== token) {
       sendJson(res, 403, { error: 'invalid-token' }, origin, options.allowedOrigin);
       return;
     }
+    const expired = Date.now() > expiresAt;
     if (url.pathname === '/health') {
       sendJson(
         res,
-        200,
+        expired ? 410 : 200,
         {
           ok: true,
+          ...(expired ? { expired: true } : {}),
           expires_at: new Date(expiresAt).toISOString(),
-          files: entries.map((entry) => ({ name: entry.name, size: entry.size })),
+          files: activeEntries.map((entry) => ({
+            id: idByEntry.get(entry),
+            name: entry.name,
+            size: entry.size,
+          })),
         },
         origin,
         options.allowedOrigin,
       );
+      return;
+    }
+    if (expired) {
+      sendJson(res, 410, { error: 'bridge-expired' }, origin, options.allowedOrigin);
       return;
     }
     const match = /^\/media\/([0-9a-f]+)$/.exec(url.pathname);
@@ -294,25 +334,16 @@ const runServer = (options, stateFile) => {
       sendJson(res, 404, { error: 'not-found' }, origin, options.allowedOrigin);
       return;
     }
-    // 起桥之后文件可能被删掉、换掉或变成目录。这时必须回一个可读的 500，
-    // 不能把异常抛进请求处理里——桥是长驻进程，崩掉以后页面只会看到连接被重置，
-    // 于是导入被误判成「被取消」，真实原因反而查不到。
+    // 宿主文件代理拒绝访问、文件被删除或目标不再是普通文件时，撤销 URL。
+    // 不尝试绕过代理，也不让同一授权在后续请求中继续使用。
     let lastModified = '';
     try {
       const stats = fs.statSync(entry.path);
       if (!stats.isFile()) throw new Error('not a regular file');
       lastModified = String(stats.mtimeMs);
     } catch (error) {
-      sendJson(
-        res,
-        500,
-        {
-          error: 'file-unreadable',
-          message: `bridge cannot read ${entry.name}: ${error instanceof Error ? error.message : String(error)}`,
-        },
-        origin,
-        options.allowedOrigin,
-      );
+      revokeEntry(entry);
+      sendJson(res, 410, { error: 'file-access-revoked' }, origin);
       return;
     }
     const responseHeaders = {
@@ -340,6 +371,7 @@ const runServer = (options, stateFile) => {
       stream.pipe(res);
     });
     stream.once('error', (error) => {
+      revokeEntry(entry);
       console.error(
         JSON.stringify({
           at: new Date().toISOString(),
@@ -349,10 +381,7 @@ const runServer = (options, stateFile) => {
         }),
       );
       if (!res.headersSent) {
-        sendJson(res, 500, {
-          error: 'file-unreadable',
-          message: `bridge cannot read ${entry.name}: ${error instanceof Error ? error.message : String(error)}`,
-        }, origin);
+        sendJson(res, 410, { error: 'file-access-revoked' }, origin);
       } else {
         res.destroy();
       }
@@ -362,7 +391,8 @@ const runServer = (options, stateFile) => {
 
   server.listen(options.port, '127.0.0.1', () => {
     const baseUrl = `http://127.0.0.1:${server.address().port}`;
-    const state = {
+    state = {
+      bridge_policy_version: 2,
       base_url: baseUrl,
       allowed_origin: options.allowedOrigin,
       token,
@@ -371,12 +401,11 @@ const runServer = (options, stateFile) => {
       expires_at: new Date(expiresAt).toISOString(),
       log_file: `${stateFile}.log`,
       files: entries.map((entry) => ({
+        id: idByEntry.get(entry),
         path: entry.path,
         name: entry.name,
         size: entry.size,
-        url: `${baseUrl}/media/${
-          [...byId.entries()].find(([, candidate]) => candidate.path === entry.path)[0]
-        }?token=${token}`,
+        url: `${baseUrl}/media/${idByEntry.get(entry)}?token=${token}`,
       })),
     };
     writeBridgeState(stateFile, state);
@@ -422,7 +451,8 @@ const startDetachedBridge = async (options, stateFile) => {
       stateFile,
       ...(options.allowedOrigin ? ['--allowed-origin', options.allowedOrigin] : []),
     ],
-    { detached: true, stdio: ['ignore', logFd, logFd], env: bridgeChildEnv() },
+    // 默认继承 process.env，保留宿主注入的受控文件访问配置（包括 NODE_OPTIONS）。
+    { detached: true, stdio: ['ignore', logFd, logFd] },
   );
   child.unref();
   fs.closeSync(logFd);
@@ -443,7 +473,18 @@ const runStatus = async (stateFile) => {
   if (!state) return { running: false, reason: 'no-state' };
   const health = await probeBridgeHealth(state.base_url, state.token);
   if (!health) return { running: false, reason: 'unreachable' };
-  return { running: true, ...summary(state, true) };
+  return {
+    running: true,
+    expires_at: state.expires_at,
+    file_count: Array.isArray(health.files) ? health.files.length : 0,
+  };
+};
+
+const clearStateIfCurrent = (stateFile, expectedState) => {
+  const current = readBridgeState(stateFile);
+  if (current?.pid === expectedState.pid && current?.token === expectedState.token &&
+      current?.base_url === expectedState.base_url)
+    clearBridgeState(stateFile);
 };
 
 const runStop = async (stateFile) => {
@@ -455,20 +496,33 @@ const runStop = async (stateFile) => {
     // 只有确认记录的进程真的不在了才清理；进程还活着但探不通时不动它，
     // 免得把 PID 被复用的无关进程连带清掉。
     if (Number.isInteger(state.pid) && !processIsRunning(state.pid)) {
-      clearBridgeState(stateFile);
+      clearStateIfCurrent(stateFile, state);
       return { stopped: true, reason: 'process-exited' };
     }
     return { stopped: false, reason: 'bridge-not-verified' };
   }
-  if (Number.isInteger(state.pid)) {
-    try {
-      process.kill(state.pid, 'SIGTERM');
-    } catch {
-      // 进程已经不在，按停止成功处理。
-    }
+  if (!Number.isInteger(state.pid)) return { stopped: false, reason: 'missing-process-id' };
+  try {
+    process.kill(state.pid, 'SIGTERM');
+  } catch (error) {
+    if (error?.code !== 'ESRCH') return { stopped: false, reason: 'stop-signal-failed' };
   }
-  clearBridgeState(stateFile);
-  return { stopped: true };
+  const deadline = Date.now() + 1_500;
+  while (Date.now() < deadline) {
+    if (!(await probeBridgeHealth(state.base_url, state.token, 100))) {
+      clearStateIfCurrent(stateFile, state);
+      return { stopped: true };
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  return { stopped: false, reason: 'shutdown-timeout' };
+};
+
+const stopPriorBridge = async (stateFile) => {
+  if (!readBridgeState(stateFile)) return;
+  const result = await runStop(stateFile);
+  if (result.stopped || !readBridgeState(stateFile)) return;
+  throw new Error(`cannot safely replace the existing local media bridge (${result.reason})`);
 };
 
 export const runBridgeCommand = async (argv, { home } = {}) => {
@@ -479,40 +533,48 @@ export const runBridgeCommand = async (argv, { home } = {}) => {
 
   if (options.mode === 'status') return runStatus(stateFile);
   if (options.mode === 'stop') return runStop(stateFile);
-  if (options.foreground) return runServer(options, stateFile);
+  if (options.foreground) {
+    if (!hasHostFileAccessConfiguration())
+      throw new Error('host-controlled file access is unavailable; use prompt_add_material');
+    return runServer(options, stateFile);
+  }
   if (options.files.length === 0)
     throw new Error(
       'usage: local-media-bridge.mjs <file...> [--allowed-origin HTTPS_ORIGIN] [--port N] [--ttl-ms N] [--state-file PATH] [--no-reuse]',
     );
 
-  const absoluteFiles = options.files.map((file) => path.resolve(file));
+  const absoluteFiles = [...new Set(options.files.map((file) => path.resolve(file)))];
   const existing = readBridgeState(stateFile);
-  if (options.reuse && existing) {
-    const decision = resolveBridgeReuse(existing, absoluteFiles, Date.now(), options.allowedOrigin);
-    if (decision.reusable && (await probeBridgeHealth(existing.base_url, existing.token)))
-      return summary(existing, true);
+  if (!hasHostFileAccessConfiguration()) {
+    if (existing) await stopPriorBridge(stateFile);
+    throw new Error('host-controlled file access is unavailable; use prompt_add_material');
+  }
+  try {
+    // 本次显式传入的每个路径都通过当前宿主文件访问配置检查后，才允许复用旧 URL。
+    resolveFiles(absoluteFiles);
+  } catch (error) {
+    // 当前授权已失效时，不让旧桥继续提供先前授权的文件。
+    if (existing) await stopPriorBridge(stateFile);
+    throw error;
   }
 
-  // 新桥要接着服务旧桥还在的文件，避免换桥后旧 url 全部失效。
-  const originChanged = existing && (existing.allowed_origin ?? null) !== (options.allowedOrigin ?? null);
-  if (
-    originChanged &&
-    Number.isInteger(existing.pid) &&
-    (await probeBridgeHealth(existing.base_url, existing.token))
-  ) {
-    try {
-      process.kill(existing.pid, 'SIGTERM');
-    } catch {
-      // 旧桥已经退出，继续启动当前站点的新桥。
+  if (options.reuse && existing) {
+    const decision = resolveBridgeReuse(existing, absoluteFiles, Date.now(), options.allowedOrigin);
+    if (decision.reusable) {
+      const health = await probeBridgeHealth(existing.base_url, existing.token);
+      const requestedIds = decision.files.map((file) => file.id).sort();
+      const activeIds = Array.isArray(health?.files)
+        ? health.files.map((file) => file?.id).sort()
+        : [];
+      if (health && requestedIds.length === activeIds.length &&
+          requestedIds.every((id, index) => id === activeIds[index]))
+        return summary(existing, true);
     }
   }
-  const carriedOver = originChanged
-    ? []
-    : (Array.isArray(existing?.files) ? existing.files : [])
-    .map((file) => file?.path)
-    .filter((filePath) => typeof filePath === 'string' && fs.existsSync(filePath));
-  const files = [...new Set([...absoluteFiles, ...carriedOver])];
-  const state = await startDetachedBridge({ ...options, files }, stateFile);
+
+  // 新桥只开放本次重新确认的文件。替换范围或关闭复用时先停止旧桥，撤销旧 URL。
+  if (existing) await stopPriorBridge(stateFile);
+  const state = await startDetachedBridge({ ...options, files: absoluteFiles }, stateFile);
   return summary(state, false);
 };
 

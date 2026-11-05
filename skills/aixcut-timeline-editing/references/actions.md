@@ -148,6 +148,8 @@ Pass only the field needed; omitted means 0. Audio clips map to `audioFadeInMs`/
 
 `import_local_media` and `prompt_add_material` both return acceptance, not completed library ingestion. The first returns `import_ids` for `import_status`; the second has no import ID and must be confirmed by rereading `aixcut_read(view="sources")`. A batch uses `url` for one file or `urls` for up to eight; per-file failures appear in `failures`.
 
+Local bridge URLs may be used only for paths explicitly named or reconfirmed in the current task. The helper preserves the host's `NODE_OPTIONS` file guard, rechecks every current path before reuse, and reuses only an unexpired bridge with the exact same file set. It never carries files forward from old state; permission failure disables the URL and must fall back to `prompt_add_material`. After all imports settle, stop the helper bridge with `--stop`.
+
 Page export uses `aixcut_frontend(action="export_timeline")` and `aixcut_frontend(action="export_timeline_status")`, but belongs to `aixcut-export` and is not listed here.
 
 ## Complete request examples

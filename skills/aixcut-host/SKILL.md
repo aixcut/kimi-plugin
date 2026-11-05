@@ -26,6 +26,11 @@ This Skill owns the boundary between Kimi and the Aixcut MCP server. Load it bef
 
 ## Local media and files
 
+- Use the local media bridge only for paths the user explicitly named or reconfirmed in the current task. Never infer paths from a previous task, bridge state, or files merely still present on disk.
+- The bridge helper runs only when `NODE_OPTIONS` contains the host-provided preload/import configuration. It preserves that configuration in its detached child and never falls back to an unprotected filesystem read. If the host configuration is absent, access is denied, or its file proxy is unavailable, use `aixcut_frontend(action="prompt_add_material")` and let the user select the files in the Project page.
+- Each helper invocation's file list is the complete authorization scope. It may reuse a bridge only when the current host check succeeds for every explicitly supplied file, the origin and expiry are valid, and the old file set exactly matches. A changed file set or `--no-reuse` stops the old bridge before opening only this invocation's files; never carry or infer historical files.
+- When the user's import calls have all settled, run the helper with `--stop` to revoke its URLs. Do not stop the bridge while an import is still running.
+
 - When the user explicitly supplies a local file path and Kimi can execute the packaged Node helper, run:
 
 ```bash

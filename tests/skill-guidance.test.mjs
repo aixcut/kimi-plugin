@@ -8,6 +8,8 @@ const timelineSkill = readFileSync(
   join(root, "skills/aixcut-timeline-editing/SKILL.md"),
   "utf8",
 );
+const hostSkill = readFileSync(join(root, "skills/aixcut-host/SKILL.md"), "utf8");
+const knownErrorsSkill = readFileSync(join(root, "skills/aixcut-known-errors/SKILL.md"), "utf8");
 const assemblyGuidance = [
   "skills/aixcut-video-assembly/SKILL.md",
   "skills/aixcut-video-assembly/references/pipeline.md",
@@ -55,4 +57,13 @@ test("tool examples do not contain empty argument slots", () => {
   for (const file of files) {
     assert.doesNotMatch(readFileSync(join(root, file), "utf8"), /,\s*,/, file);
   }
+});
+
+test("local media guidance limits bridge files to current authorization and fails closed", () => {
+  const guidance = `${hostSkill}\n${timelineSkill}\n${knownErrorsSkill}`;
+  assert.match(guidance, /explicitly named or reconfirmed in the current task/i);
+  assert.match(guidance, /never.*(?:carry|reuse|infer).*historical files/i);
+  assert.match(guidance, /access is denied|permission.*(?:expired|revoked)|(?:expired|revoked).*permission/i);
+  assert.match(guidance, /prompt_add_material/);
+  assert.match(guidance, /--stop/);
 });
