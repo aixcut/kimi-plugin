@@ -1,17 +1,17 @@
 {
   "displayName": "Aixcut",
-  "shortDescription": "AI video editing with Aixcut",
-  "longDescription": "Open Aixcut, import local media and documents, read a project before editing, then cut, caption, dub, score, generate assets and export in natural language while verifying each step.",
+  "shortDescription": "All-in-one AI video editing for five scenarios",
+  "longDescription": "Your all-in-one video editing expert. Create videos faster across five scenarios: talking-head fine cuts, livestream clips, e-commerce feed ads, TV commercials, and batch content production. Aixcut Studio supports exporting project files to major post-production software.",
   "developerName": "Aixcut",
   "tryPrompts": [
-    "Open my Aixcut project and read the timeline before editing",
-    "Remove mistakes and pauses from this talking-head clip and caption it",
-    "Generate a voiceover and background music, assemble a 30-second cut and export it"
+    "Tighten this talking-head edit by removing mistakes and repetition while preserving meaning and captions",
+    "Turn this livestream into several e-commerce feed clips, each focused on one product benefit, and check the pacing",
+    "Create a TVC-style ad from this brand script and footage, then plan distinct versions for a content matrix"
   ],
   "mcpOverrides": {
     "aixcut": {
       "displayName": "Aixcut",
-      "description": "Aixcut video creation and editing service: projects, timeline, captions, voiceover, asset generation, verification, and export."
+      "description": "Aixcut's all-in-one editing service for talking-head cuts, livestream clips, e-commerce ads, TVCs, and batch content production."
     }
   },
   "skillOverrides": {

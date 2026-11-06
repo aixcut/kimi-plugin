@@ -98,6 +98,18 @@ test("ships the official marketplace interface metadata", () => {
   }
 });
 
+test("marketplace copy leads with the five video-editing scenarios", () => {
+  const manifest = readJson("kimi.plugin.json");
+  const locale = JSON.parse(readFileSync(join(root, "locales/en-US.json"), "utf8"));
+
+  assert.match(manifest.description, /全能剪辑专家.*口播精剪.*直播切片.*电商信息流.*TVC 广告.*矩阵批量生产/);
+  assert.match(manifest.interface.longDescription, /Aixcut Studio 支持将工程文件导出至主流后期软件/);
+  assert.match(manifest.interface.shortDescription, /AI 视频剪辑/);
+  assert.match(locale.longDescription, /talking-head.*livestream.*e-commerce.*TV commercials.*batch content production/i);
+  assert.match(locale.mcpOverrides.aixcut.description, /talking-head.*livestream.*e-commerce.*TVC.*batch content production/i);
+  assert.equal(manifest.interface.tryPrompts.length, 3);
+});
+
 test("keeps every declared path inside the plugin root", () => {
   const manifest = readJson("kimi.plugin.json");
   for (const field of ["skills", "systemPromptPath"]) {

@@ -1,7 +1,7 @@
 {
   "name": "aixcut",
   "version": "0.1.0",
-  "description": "用 Aixcut 完成 AI 视频创作与剪辑：导入素材、编辑时间线、生成配音与字幕，并导出成片。",
+  "description": "全能剪辑专家。覆盖口播精剪、直播切片、电商信息流、TVC 广告、矩阵批量生产五大场景，帮助用户快速出视频；Aixcut Studio 支持将工程文件导出至主流后期软件。",
   "author": {
     "name": "Aixcut"
   },
@@ -29,21 +29,21 @@
     "defaultLocale": "zh-CN",
     "locales": "./locales/",
     "displayName": "Aixcut",
-    "shortDescription": "用 Aixcut 做 AI 视频剪辑",
-    "longDescription": "打开 Aixcut，导入本地素材与文档，先读项目再编辑；用自然语言完成剪切、字幕、配音、音乐、生成素材和导出，并核验每一步结果。",
+    "shortDescription": "AI 视频剪辑全能专家，五大场景快速出片",
+    "longDescription": "全能剪辑专家。覆盖口播精剪、直播切片、电商信息流、TVC 广告、矩阵批量生产五大场景，帮助用户快速出视频；Aixcut Studio 支持将工程文件导出至主流后期软件。",
     "developerName": "Aixcut",
     "websiteURL": "https://aixcut.cn",
     "iconUrl": "https://raw.githubusercontent.com/aixcut/kimi-plugin/main/icon.png",
     "category": "PRODUCTIVITY",
     "tryPrompts": [
-      "用 Aixcut 打开我的项目，先读时间线再改",
-      "给这段口播去掉口误和停顿，配上字幕",
-      "生成一段配音和背景音乐，组装成一条 30 秒短片并导出"
+      "把这段口播剪得更紧凑，去掉口误和重复，保留原意并校准字幕",
+      "把这场直播切成多条电商信息流短片，每条突出一个商品卖点并检查节奏",
+      "用品牌脚本和素材制作一支 TVC 风格广告，并规划适合矩阵发布的多个版本"
     ],
     "mcpOverrides": {
       "aixcut": {
         "displayName": "Aixcut",
-        "description": "Aixcut 视频创作与剪辑服务：项目、时间线、字幕、配音、素材生成、核验和导出。"
+        "description": "Aixcut 全能剪辑服务，覆盖口播精剪、直播切片、电商信息流、TVC 广告与矩阵批量生产。"
       }
     },
     "skillOverrides": {
