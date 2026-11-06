@@ -1,6 +1,6 @@
 # Aixcut Kimi Plugin
 
-Kimi 原生 Aixcut 插件，通过 Aixcut MCP 提供视频项目、时间线、字幕、配音、素材生成、核验和导出能力。
+Kimi 原生 Aixcut 插件，定位为全能剪辑专家，覆盖口播精剪、直播切片、电商信息流、TVC 广告和矩阵批量生产；Aixcut Studio 支持将工程文件导出至主流后期软件。
 
 ## 当前版本
 
