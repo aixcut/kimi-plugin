@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "server_contract_version": "1.3.0",
+  "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "7dbdb485fe84ce8d662af571218cb84b4aeb0cdc45d042210dd62994537541df",
+  "catalog_sha256": "7140392ec004b3a1c391752d7c1131dea51fdeab38563c681009fded9b42fb08",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
@@ -27,55 +27,1380 @@
   },
   "actions": [
     {
-      "id": "read.project",
-      "tool": "aixcut_read",
+      "id": "arrange.close_gaps",
+      "tool": "aixcut_arrange",
       "selector": {
-        "field": "view",
-        "value": "project"
+        "field": "action",
+        "value": "close_gaps"
       },
-      "effect": "read",
+      "effect": "write",
       "example": {
-        "view": "project"
+        "action": "close_gaps",
+        "track": "x"
       }
     },
     {
-      "id": "read.sources",
-      "tool": "aixcut_read",
+      "id": "arrange.delete",
+      "tool": "aixcut_arrange",
       "selector": {
-        "field": "view",
-        "value": "sources"
+        "field": "action",
+        "value": "delete"
       },
-      "effect": "read",
+      "effect": "write",
       "example": {
-        "view": "sources"
+        "action": "delete",
+        "targets": [
+          "x"
+        ]
       }
     },
     {
-      "id": "read.mutation_receipt",
-      "tool": "aixcut_read",
+      "id": "arrange.delete_after",
+      "tool": "aixcut_arrange",
       "selector": {
-        "field": "view",
-        "value": "mutation_receipt"
+        "field": "action",
+        "value": "delete_after"
       },
-      "effect": "read",
+      "effect": "write",
       "example": {
-        "view": "mutation_receipt",
-        "mutation_id": "00000000-0000-4000-8000-000000000001"
-      },
-      "bindings": {
-        "mutation_id": "原写入返回的 mutation_id；示例 UUID 不得真实查询"
+        "action": "delete_after",
+        "track": "x",
+        "at_ms": 0
       }
     },
     {
-      "id": "generate.speech_read",
+      "id": "arrange.delete_before",
+      "tool": "aixcut_arrange",
+      "selector": {
+        "field": "action",
+        "value": "delete_before"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete_before",
+        "track": "x",
+        "at_ms": 0
+      }
+    },
+    {
+      "id": "arrange.duplicate",
+      "tool": "aixcut_arrange",
+      "selector": {
+        "field": "action",
+        "value": "duplicate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "duplicate",
+        "items": [
+          {
+            "target": "x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arrange.move",
+      "tool": "aixcut_arrange",
+      "selector": {
+        "field": "action",
+        "value": "move"
+      },
+      "effect": "write",
+      "example": {
+        "action": "move",
+        "items": [
+          {
+            "target": "x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "audio.add",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "action": "add",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "audio.cut",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "cut"
+      },
+      "effect": "write",
+      "example": {
+        "action": "cut",
+        "target": "x",
+        "source_start_ms": 0,
+        "end_ms": 1
+      }
+    },
+    {
+      "id": "audio.delete",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.detach_audio",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "detach_audio"
+      },
+      "effect": "write",
+      "example": {
+        "action": "detach_audio",
+        "targets": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "audio.duplicate",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "duplicate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "duplicate",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.fade",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "fade"
+      },
+      "effect": "write",
+      "example": {
+        "action": "fade",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.move",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "move"
+      },
+      "effect": "write",
+      "example": {
+        "action": "move",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.reorder",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "track": "x",
+        "order": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "audio.replace",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "replace"
+      },
+      "effect": "write",
+      "example": {
+        "action": "replace",
+        "target": "x",
+        "source": "x"
+      }
+    },
+    {
+      "id": "audio.restore_audio",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "restore_audio"
+      },
+      "effect": "write",
+      "example": {
+        "action": "restore_audio",
+        "targets": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "audio.retime",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "retime"
+      },
+      "effect": "write",
+      "example": {
+        "action": "retime",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.set",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "track": "x",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "audio.split",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "split"
+      },
+      "effect": "write",
+      "example": {
+        "action": "split",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.time",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "time"
+      },
+      "effect": "write",
+      "example": {
+        "action": "time",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.trim",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "trim"
+      },
+      "effect": "write",
+      "example": {
+        "action": "trim",
+        "target": "x"
+      }
+    },
+    {
+      "id": "audio.update",
+      "tool": "aixcut_audio",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "target": "x"
+      }
+    },
+    {
+      "id": "caption.add",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "action": "add",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "caption.delete",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete",
+        "target": "x"
+      }
+    },
+    {
+      "id": "caption.duplicate",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "duplicate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "duplicate",
+        "target": "x"
+      }
+    },
+    {
+      "id": "caption.highlight",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "highlight"
+      },
+      "effect": "write",
+      "example": {
+        "action": "highlight",
+        "target": "x",
+        "highlight_ranges": [
+          {
+            "start": 0,
+            "end": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "caption.merge",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "merge"
+      },
+      "effect": "write",
+      "example": {
+        "action": "merge",
+        "targets": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "caption.mode",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "mode"
+      },
+      "effect": "write",
+      "example": {
+        "action": "mode",
+        "mode": "x"
+      }
+    },
+    {
+      "id": "caption.move",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "move"
+      },
+      "effect": "write",
+      "example": {
+        "action": "move",
+        "target": "x",
+        "to_ms": 0
+      }
+    },
+    {
+      "id": "caption.regenerate",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "regenerate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "regenerate"
+      }
+    },
+    {
+      "id": "caption.set",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "caption.split",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "split"
+      },
+      "effect": "write",
+      "example": {
+        "action": "split",
+        "target": "x"
+      }
+    },
+    {
+      "id": "caption.style",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "style"
+      },
+      "effect": "write",
+      "example": {
+        "action": "style",
+        "target": "x"
+      }
+    },
+    {
+      "id": "caption.sync",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "sync"
+      },
+      "effect": "write",
+      "example": {
+        "action": "sync"
+      }
+    },
+    {
+      "id": "caption.update",
+      "tool": "aixcut_caption",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.add",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "action": "add",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "clip.cut",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "cut"
+      },
+      "effect": "write",
+      "example": {
+        "action": "cut",
+        "target": "x",
+        "source_start_ms": 0,
+        "end_ms": 1
+      }
+    },
+    {
+      "id": "clip.delete",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.duplicate",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "duplicate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "duplicate",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.fade",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "fade"
+      },
+      "effect": "write",
+      "example": {
+        "action": "fade",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.layout",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "layout"
+      },
+      "effect": "write",
+      "example": {
+        "action": "layout",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.move",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "move"
+      },
+      "effect": "write",
+      "example": {
+        "action": "move",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.reorder",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "track": "x",
+        "order": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "clip.replace",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "replace"
+      },
+      "effect": "write",
+      "example": {
+        "action": "replace",
+        "target": "x",
+        "source": "x"
+      }
+    },
+    {
+      "id": "clip.retime",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "retime"
+      },
+      "effect": "write",
+      "example": {
+        "action": "retime",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.set",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "track": "x",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "clip.split",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "split"
+      },
+      "effect": "write",
+      "example": {
+        "action": "split",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.time",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "time"
+      },
+      "effect": "write",
+      "example": {
+        "action": "time",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.trim",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "trim"
+      },
+      "effect": "write",
+      "example": {
+        "action": "trim",
+        "target": "x"
+      }
+    },
+    {
+      "id": "clip.update",
+      "tool": "aixcut_clip",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "target": "x"
+      }
+    },
+    {
+      "id": "component.add",
+      "tool": "aixcut_component",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "component_type": "x",
+        "payload": {},
+        "action": "add"
+      }
+    },
+    {
+      "id": "component.delete",
+      "tool": "aixcut_component",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "component.set",
+      "tool": "aixcut_component",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "items": [
+          {
+            "owner": "x",
+            "component_type": "x",
+            "payload": {}
+          }
+        ],
+        "action": "set"
+      }
+    },
+    {
+      "id": "component.update",
+      "tool": "aixcut_component",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
+      }
+    },
+    {
+      "id": "document.import",
+      "tool": "aixcut_document",
+      "selector": {
+        "field": "action",
+        "value": "import"
+      },
+      "effect": "write",
+      "example": {
+        "action": "import",
+        "file_path": "x"
+      }
+    },
+    {
+      "id": "effect.add",
+      "tool": "aixcut_effect",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "action": "add"
+      }
+    },
+    {
+      "id": "effect.delete",
+      "tool": "aixcut_effect",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "effect.reorder",
+      "tool": "aixcut_effect",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "owner": "x",
+        "ids": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "effect.set",
+      "tool": "aixcut_effect",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "items": [
+          {
+            "owner": "x"
+          }
+        ],
+        "action": "set"
+      }
+    },
+    {
+      "id": "effect.update",
+      "tool": "aixcut_effect",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
+      }
+    },
+    {
+      "id": "frontend.activate_timeline",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "activate_timeline"
+      },
+      "effect": "write",
+      "example": {
+        "action": "activate_timeline",
+        "timeline_id": "x"
+      }
+    },
+    {
+      "id": "frontend.capture_source_frames",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "capture_source_frames"
+      },
+      "effect": "write",
+      "example": {
+        "action": "capture_source_frames",
+        "media_id": "x",
+        "selections": [
+          {
+            "times_ms": [
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "frontend.capture_timeline_frames",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "capture_timeline_frames"
+      },
+      "effect": "write",
+      "example": {
+        "action": "capture_timeline_frames",
+        "selections": [
+          {
+            "times_ms": [
+              0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "frontend.export_timeline",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "export_timeline"
+      },
+      "effect": "write",
+      "example": {
+        "action": "export_timeline"
+      }
+    },
+    {
+      "id": "frontend.export_timeline_status",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "export_timeline_status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "export_timeline_status"
+      }
+    },
+    {
+      "id": "frontend.import_local_media",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "import_local_media"
+      },
+      "effect": "write",
+      "example": {
+        "action": "import_local_media"
+      }
+    },
+    {
+      "id": "frontend.import_status",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "import_status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "import_status",
+        "import_ids": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "frontend.list_documents",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "list_documents"
+      },
+      "effect": "write",
+      "example": {
+        "action": "list_documents"
+      }
+    },
+    {
+      "id": "frontend.media.add",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.add"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.add",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.analyze",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.analyze"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.analyze",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.associate_remote",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.associate_remote"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.associate_remote",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.bind_local",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.bind_local"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.bind_local",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.capture_frame",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.capture_frame"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.capture_frame",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.copy_to_opfs",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.copy_to_opfs"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.copy_to_opfs",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.delete",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.delete",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.delete_cloud",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.delete_cloud"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.delete_cloud",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.export_range",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.export_range"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.export_range",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.extract_audio",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.extract_audio"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.extract_audio",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.inspect",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.inspect"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.inspect",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.list",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.list"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.list",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.local_status",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.local_status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.local_status",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.prepare_local",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.prepare_local"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.prepare_local",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.replace_source",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.replace_source"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.replace_source",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.resolve_cloud_url",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.resolve_cloud_url"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.resolve_cloud_url",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.save_to_disk",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.save_to_disk"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.save_to_disk",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.media.upload",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "media.upload"
+      },
+      "effect": "write",
+      "example": {
+        "action": "media.upload",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.operation.cancel",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "operation.cancel"
+      },
+      "effect": "write",
+      "example": {
+        "action": "operation.cancel",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.operation.get",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "operation.get"
+      },
+      "effect": "write",
+      "example": {
+        "action": "operation.get",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.operation.retry",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "operation.retry"
+      },
+      "effect": "write",
+      "example": {
+        "action": "operation.retry",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.page_status",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "page_status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "page_status"
+      }
+    },
+    {
+      "id": "frontend.playback_check",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "playback_check"
+      },
+      "effect": "write",
+      "example": {
+        "action": "playback_check",
+        "timeline_id": "x",
+        "expected_revision": 0,
+        "start_ms": 0,
+        "target_ms": 0
+      }
+    },
+    {
+      "id": "frontend.prompt_add_document",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "prompt_add_document"
+      },
+      "effect": "write",
+      "example": {
+        "action": "prompt_add_document"
+      }
+    },
+    {
+      "id": "frontend.prompt_add_material",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "prompt_add_material"
+      },
+      "effect": "write",
+      "example": {
+        "action": "prompt_add_material"
+      }
+    },
+    {
+      "id": "frontend.timeline.capture_frame",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "timeline.capture_frame"
+      },
+      "effect": "write",
+      "example": {
+        "action": "timeline.capture_frame",
+        "params": {}
+      }
+    },
+    {
+      "id": "frontend.timeline.export_range",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "timeline.export_range"
+      },
+      "effect": "write",
+      "example": {
+        "action": "timeline.export_range",
+        "params": {}
+      }
+    },
+    {
+      "id": "generate.cancel",
       "tool": "aixcut_generate",
       "selector": {
         "field": "action",
-        "value": "speech_read"
+        "value": "cancel"
+      },
+      "effect": "write",
+      "example": {
+        "action": "cancel",
+        "job_id": "x"
+      }
+    },
+    {
+      "id": "generate.catalog",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "catalog"
+      },
+      "effect": "write",
+      "example": {
+        "action": "catalog"
+      }
+    },
+    {
+      "id": "generate.get",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "get"
       },
       "effect": "read",
       "example": {
-        "action": "speech_read"
+        "action": "get",
+        "job_id": "00000000-0000-4000-8000-000000000001"
+      },
+      "bindings": {
+        "job_id": "原 submit 返回的 job_id"
+      }
+    },
+    {
+      "id": "generate.list",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "list"
+      },
+      "effect": "write",
+      "example": {
+        "action": "list"
+      }
+    },
+    {
+      "id": "generate.quote",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "quote"
+      },
+      "effect": "write",
+      "example": {
+        "action": "quote"
       }
     },
     {
@@ -113,6 +1438,18 @@
       }
     },
     {
+      "id": "generate.speech_read",
+      "tool": "aixcut_generate",
+      "selector": {
+        "field": "action",
+        "value": "speech_read"
+      },
+      "effect": "read",
+      "example": {
+        "action": "speech_read"
+      }
+    },
+    {
       "id": "generate.speech_submit",
       "tool": "aixcut_generate",
       "selector": {
@@ -147,19 +1484,1038 @@
       }
     },
     {
-      "id": "generate.get",
+      "id": "generate.submit",
       "tool": "aixcut_generate",
       "selector": {
         "field": "action",
-        "value": "get"
+        "value": "submit"
+      },
+      "effect": "write",
+      "example": {
+        "action": "submit"
+      }
+    },
+    {
+      "id": "generator.add",
+      "tool": "aixcut_generator",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "preset_id": "x",
+        "action": "add"
+      }
+    },
+    {
+      "id": "generator.delete",
+      "tool": "aixcut_generator",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "generator.set",
+      "tool": "aixcut_generator",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "track": "x",
+        "items": [
+          {
+            "preset_id": "x"
+          }
+        ],
+        "action": "set"
+      }
+    },
+    {
+      "id": "generator.update",
+      "tool": "aixcut_generator",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
+      }
+    },
+    {
+      "id": "group.add",
+      "tool": "aixcut_group",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "anchor_clip_id": "x",
+        "action": "add"
+      }
+    },
+    {
+      "id": "group.delete",
+      "tool": "aixcut_group",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "group.set",
+      "tool": "aixcut_group",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "items": [
+          {
+            "anchor_clip_id": "x"
+          }
+        ],
+        "action": "set"
+      }
+    },
+    {
+      "id": "group.update",
+      "tool": "aixcut_group",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
+      }
+    },
+    {
+      "id": "keyframe.add",
+      "tool": "aixcut_keyframe",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "property_id": "x",
+        "value_type": "number",
+        "value": 1,
+        "local_time_ms": 0,
+        "action": "add"
+      }
+    },
+    {
+      "id": "keyframe.delete",
+      "tool": "aixcut_keyframe",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "keyframe.set",
+      "tool": "aixcut_keyframe",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "property_id": "x",
+        "value_type": "number",
+        "value": 1,
+        "local_time_ms": 0,
+        "items": [
+          {
+            "owner": "x",
+            "property_id": "x",
+            "value_type": "number",
+            "value": 1,
+            "local_time_ms": 0
+          }
+        ],
+        "action": "set"
+      }
+    },
+    {
+      "id": "keyframe.update",
+      "tool": "aixcut_keyframe",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
+      }
+    },
+    {
+      "id": "layout.reset",
+      "tool": "aixcut_layout",
+      "selector": {
+        "field": "action",
+        "value": "reset"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reset",
+        "targets": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "layout.set",
+      "tool": "aixcut_layout",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "items": [
+          {
+            "target": "x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "layout.update",
+      "tool": "aixcut_layout",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "target": "x"
+      }
+    },
+    {
+      "id": "mask.add",
+      "tool": "aixcut_mask",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "action": "add"
+      }
+    },
+    {
+      "id": "mask.delete",
+      "tool": "aixcut_mask",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "mask.reorder",
+      "tool": "aixcut_mask",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "owner": "x",
+        "ids": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "mask.set",
+      "tool": "aixcut_mask",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "items": [
+          {}
+        ],
+        "action": "set"
+      }
+    },
+    {
+      "id": "mask.update",
+      "tool": "aixcut_mask",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
+      }
+    },
+    {
+      "id": "motion.clear",
+      "tool": "aixcut_motion",
+      "selector": {
+        "field": "action",
+        "value": "clear"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "action": "clear"
+      }
+    },
+    {
+      "id": "motion.delete",
+      "tool": "aixcut_motion",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "phase": "enter",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "motion.reset",
+      "tool": "aixcut_motion",
+      "selector": {
+        "field": "action",
+        "value": "reset"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "phase": "enter",
+        "action": "reset"
+      }
+    },
+    {
+      "id": "motion.set",
+      "tool": "aixcut_motion",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "effect_capability": "x",
+        "phase": "enter",
+        "action": "set"
+      }
+    },
+    {
+      "id": "motion.update",
+      "tool": "aixcut_motion",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "phase": "enter",
+        "action": "update"
+      }
+    },
+    {
+      "id": "node.add",
+      "tool": "aixcut_node",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "node_id": "x",
+        "definition": {},
+        "action": "add"
+      }
+    },
+    {
+      "id": "node.delete",
+      "tool": "aixcut_node",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "node_id": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "node.move",
+      "tool": "aixcut_node",
+      "selector": {
+        "field": "action",
+        "value": "move"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "node_id": "x",
+        "action": "move"
+      }
+    },
+    {
+      "id": "node.set",
+      "tool": "aixcut_node",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "node_id": "x",
+        "definition": {},
+        "action": "set"
+      }
+    },
+    {
+      "id": "node.update",
+      "tool": "aixcut_node",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "owner": "x",
+        "node_id": "x",
+        "definition": {},
+        "action": "update"
+      }
+    },
+    {
+      "id": "open.new_project",
+      "tool": "aixcut_open",
+      "selector": {
+        "field": "target",
+        "value": "new_project"
+      },
+      "effect": "write",
+      "example": {
+        "target": "new_project",
+        "title": "x"
+      }
+    },
+    {
+      "id": "open.project",
+      "tool": "aixcut_open",
+      "selector": {
+        "field": "target",
+        "value": "project"
+      },
+      "effect": "write",
+      "example": {
+        "target": "project",
+        "project_id": "x"
+      }
+    },
+    {
+      "id": "open.project_list",
+      "tool": "aixcut_open",
+      "selector": {
+        "field": "target",
+        "value": "project_list"
+      },
+      "effect": "write",
+      "example": {
+        "target": "project_list"
+      }
+    },
+    {
+      "id": "open.studio",
+      "tool": "aixcut_open",
+      "selector": {
+        "field": "target",
+        "value": "studio"
+      },
+      "effect": "write",
+      "example": {
+        "target": "studio"
+      }
+    },
+    {
+      "id": "primary.add",
+      "tool": "aixcut_primary",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "action": "add",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "primary.delete",
+      "tool": "aixcut_primary",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete"
+      }
+    },
+    {
+      "id": "primary.reorder",
+      "tool": "aixcut_primary",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "order": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "primary.replace",
+      "tool": "aixcut_primary",
+      "selector": {
+        "field": "action",
+        "value": "replace"
+      },
+      "effect": "write",
+      "example": {
+        "action": "replace",
+        "target": "x",
+        "source": "x"
+      }
+    },
+    {
+      "id": "primary.set",
+      "tool": "aixcut_primary",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "project.canvas",
+      "tool": "aixcut_project",
+      "selector": {
+        "field": "action",
+        "value": "canvas"
+      },
+      "effect": "write",
+      "example": {
+        "action": "canvas"
+      }
+    },
+    {
+      "id": "project.clear",
+      "tool": "aixcut_project",
+      "selector": {
+        "field": "action",
+        "value": "clear"
+      },
+      "effect": "write",
+      "example": {
+        "action": "clear"
+      }
+    },
+    {
+      "id": "project.update",
+      "tool": "aixcut_project",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "title": "x"
+      }
+    },
+    {
+      "id": "read.audio",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "audio"
       },
       "effect": "read",
       "example": {
-        "action": "get",
-        "job_id": "00000000-0000-4000-8000-000000000001"
+        "view": "audio"
+      }
+    },
+    {
+      "id": "read.captions",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "captions"
+      },
+      "effect": "read",
+      "example": {
+        "view": "captions"
+      }
+    },
+    {
+      "id": "read.clips",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "clips"
+      },
+      "effect": "read",
+      "example": {
+        "view": "clips"
+      }
+    },
+    {
+      "id": "read.component",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "component"
+      },
+      "effect": "read",
+      "example": {
+        "view": "component"
+      }
+    },
+    {
+      "id": "read.effect",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "effect"
+      },
+      "effect": "read",
+      "example": {
+        "view": "effect"
+      }
+    },
+    {
+      "id": "read.effect_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "effect_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "effect_catalog"
+      }
+    },
+    {
+      "id": "read.generator",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "generator"
+      },
+      "effect": "read",
+      "example": {
+        "view": "generator"
+      }
+    },
+    {
+      "id": "read.generator_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "generator_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "generator_catalog"
+      }
+    },
+    {
+      "id": "read.group",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "group"
+      },
+      "effect": "read",
+      "example": {
+        "view": "group"
+      }
+    },
+    {
+      "id": "read.keyframe",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "keyframe"
+      },
+      "effect": "read",
+      "example": {
+        "view": "keyframe"
+      }
+    },
+    {
+      "id": "read.keyframe_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "keyframe_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "keyframe_catalog"
+      }
+    },
+    {
+      "id": "read.layout",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "layout"
+      },
+      "effect": "read",
+      "example": {
+        "view": "layout"
+      }
+    },
+    {
+      "id": "read.layout_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "layout_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "layout_catalog"
+      }
+    },
+    {
+      "id": "read.mask",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "mask"
+      },
+      "effect": "read",
+      "example": {
+        "view": "mask"
+      }
+    },
+    {
+      "id": "read.mask_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "mask_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "mask_catalog"
+      }
+    },
+    {
+      "id": "read.motion",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "motion"
+      },
+      "effect": "read",
+      "example": {
+        "view": "motion"
+      }
+    },
+    {
+      "id": "read.motion_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "motion_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "motion_catalog"
+      }
+    },
+    {
+      "id": "read.mutation_receipt",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "mutation_receipt"
+      },
+      "effect": "read",
+      "example": {
+        "view": "mutation_receipt",
+        "mutation_id": "00000000-0000-4000-8000-000000000001"
       },
       "bindings": {
-        "job_id": "原 submit 返回的 job_id"
+        "mutation_id": "原写入返回的 mutation_id；示例 UUID 不得真实查询"
+      }
+    },
+    {
+      "id": "read.node",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "node"
+      },
+      "effect": "read",
+      "example": {
+        "view": "node"
+      }
+    },
+    {
+      "id": "read.project",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "project"
+      },
+      "effect": "read",
+      "example": {
+        "view": "project"
+      }
+    },
+    {
+      "id": "read.refs",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "refs"
+      },
+      "effect": "read",
+      "example": {
+        "view": "refs"
+      }
+    },
+    {
+      "id": "read.review",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "review"
+      },
+      "effect": "read",
+      "example": {
+        "view": "review"
+      }
+    },
+    {
+      "id": "read.settings",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "settings"
+      },
+      "effect": "read",
+      "example": {
+        "view": "settings"
+      }
+    },
+    {
+      "id": "read.source",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "source"
+      },
+      "effect": "read",
+      "example": {
+        "view": "source"
+      }
+    },
+    {
+      "id": "read.source_lines",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "source_lines"
+      },
+      "effect": "read",
+      "example": {
+        "view": "source_lines"
+      }
+    },
+    {
+      "id": "read.sources",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "sources"
+      },
+      "effect": "read",
+      "example": {
+        "view": "sources"
+      }
+    },
+    {
+      "id": "read.speech",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "speech"
+      },
+      "effect": "read",
+      "example": {
+        "view": "speech"
+      }
+    },
+    {
+      "id": "read.style",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "style"
+      },
+      "effect": "read",
+      "example": {
+        "view": "style"
+      }
+    },
+    {
+      "id": "read.style_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "style_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "style_catalog"
+      }
+    },
+    {
+      "id": "read.text",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "text"
+      },
+      "effect": "read",
+      "example": {
+        "view": "text"
+      }
+    },
+    {
+      "id": "read.timeline",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "timeline"
+      },
+      "effect": "read",
+      "example": {
+        "view": "timeline"
+      }
+    },
+    {
+      "id": "read.tracks",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "tracks"
+      },
+      "effect": "read",
+      "example": {
+        "view": "tracks"
+      }
+    },
+    {
+      "id": "read.transition",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "transition"
+      },
+      "effect": "read",
+      "example": {
+        "view": "transition"
+      }
+    },
+    {
+      "id": "read.transition_catalog",
+      "tool": "aixcut_read",
+      "selector": {
+        "field": "view",
+        "value": "transition_catalog"
+      },
+      "effect": "read",
+      "example": {
+        "view": "transition_catalog"
+      }
+    },
+    {
+      "id": "review.project",
+      "tool": "aixcut_review",
+      "selector": {
+        "field": "view",
+        "value": "project"
+      },
+      "effect": "read",
+      "example": {
+        "view": "project"
       }
     },
     {
@@ -172,6 +2528,589 @@
       "effect": "read",
       "example": {
         "view": "renderability"
+      }
+    },
+    {
+      "id": "review.timeline",
+      "tool": "aixcut_review",
+      "selector": {
+        "field": "view",
+        "value": "timeline"
+      },
+      "effect": "read",
+      "example": {
+        "view": "timeline"
+      }
+    },
+    {
+      "id": "speech.delete",
+      "tool": "aixcut_speech",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete"
+      }
+    },
+    {
+      "id": "speech.insert",
+      "tool": "aixcut_speech",
+      "selector": {
+        "field": "action",
+        "value": "insert"
+      },
+      "effect": "write",
+      "example": {
+        "action": "insert",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "speech.replace",
+      "tool": "aixcut_speech",
+      "selector": {
+        "field": "action",
+        "value": "replace"
+      },
+      "effect": "write",
+      "example": {
+        "action": "replace",
+        "target": "x",
+        "source": "x"
+      }
+    },
+    {
+      "id": "speech.reset",
+      "tool": "aixcut_speech",
+      "selector": {
+        "field": "action",
+        "value": "reset"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reset"
+      }
+    },
+    {
+      "id": "speech.set",
+      "tool": "aixcut_speech",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "speech.trim",
+      "tool": "aixcut_speech",
+      "selector": {
+        "field": "action",
+        "value": "trim"
+      },
+      "effect": "write",
+      "example": {
+        "action": "trim"
+      }
+    },
+    {
+      "id": "style.reset",
+      "tool": "aixcut_style",
+      "selector": {
+        "field": "action",
+        "value": "reset"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reset",
+        "targets": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "style.set",
+      "tool": "aixcut_style",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "items": [
+          {
+            "target": "x",
+            "style": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "style.update",
+      "tool": "aixcut_style",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "target": "x"
+      }
+    },
+    {
+      "id": "text.add",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "action": "add",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "text.delete",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete",
+        "target": "x"
+      }
+    },
+    {
+      "id": "text.duplicate",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "duplicate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "duplicate",
+        "target": "x"
+      }
+    },
+    {
+      "id": "text.merge",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "merge"
+      },
+      "effect": "write",
+      "example": {
+        "action": "merge",
+        "targets": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "text.move",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "move"
+      },
+      "effect": "write",
+      "example": {
+        "action": "move",
+        "target": "x"
+      }
+    },
+    {
+      "id": "text.set",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "action": "set",
+        "track": "x",
+        "items": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "text.split",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "split"
+      },
+      "effect": "write",
+      "example": {
+        "action": "split",
+        "target": "x"
+      }
+    },
+    {
+      "id": "text.style",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "style"
+      },
+      "effect": "write",
+      "example": {
+        "action": "style",
+        "target": "x"
+      }
+    },
+    {
+      "id": "text.update",
+      "tool": "aixcut_text",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "target": "x"
+      }
+    },
+    {
+      "id": "timeline.clear",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "clear"
+      },
+      "effect": "write",
+      "example": {
+        "action": "clear",
+        "timeline_id": "x"
+      }
+    },
+    {
+      "id": "timeline.create",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "create"
+      },
+      "effect": "write",
+      "example": {
+        "action": "create"
+      }
+    },
+    {
+      "id": "timeline.delete",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete",
+        "timeline_id": "x"
+      }
+    },
+    {
+      "id": "timeline.duplicate",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "duplicate"
+      },
+      "effect": "write",
+      "example": {
+        "action": "duplicate",
+        "source_timeline_id": "x"
+      }
+    },
+    {
+      "id": "timeline.history",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "history"
+      },
+      "effect": "write",
+      "example": {
+        "action": "history"
+      }
+    },
+    {
+      "id": "timeline.list",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "list"
+      },
+      "effect": "write",
+      "example": {
+        "action": "list"
+      }
+    },
+    {
+      "id": "timeline.receipt",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "receipt"
+      },
+      "effect": "write",
+      "example": {
+        "action": "receipt"
+      }
+    },
+    {
+      "id": "timeline.redo",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "redo"
+      },
+      "effect": "write",
+      "example": {
+        "action": "redo",
+        "operation_id": "x"
+      }
+    },
+    {
+      "id": "timeline.rename",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "rename"
+      },
+      "effect": "write",
+      "example": {
+        "action": "rename",
+        "timeline_id": "x",
+        "name": "x"
+      }
+    },
+    {
+      "id": "timeline.reorder",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "timeline_ids": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "timeline.undo",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "undo"
+      },
+      "effect": "write",
+      "example": {
+        "action": "undo",
+        "operation_id": "x"
+      }
+    },
+    {
+      "id": "timeline.update",
+      "tool": "aixcut_timeline",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "timeline_id": "x"
+      }
+    },
+    {
+      "id": "track.cleanup",
+      "tool": "aixcut_track",
+      "selector": {
+        "field": "action",
+        "value": "cleanup"
+      },
+      "effect": "write",
+      "example": {
+        "action": "cleanup"
+      }
+    },
+    {
+      "id": "track.clear",
+      "tool": "aixcut_track",
+      "selector": {
+        "field": "action",
+        "value": "clear"
+      },
+      "effect": "write",
+      "example": {
+        "action": "clear"
+      }
+    },
+    {
+      "id": "track.delete",
+      "tool": "aixcut_track",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "action": "delete"
+      }
+    },
+    {
+      "id": "track.ensure",
+      "tool": "aixcut_track",
+      "selector": {
+        "field": "action",
+        "value": "ensure"
+      },
+      "effect": "write",
+      "example": {
+        "action": "ensure"
+      }
+    },
+    {
+      "id": "track.reorder",
+      "tool": "aixcut_track",
+      "selector": {
+        "field": "action",
+        "value": "reorder"
+      },
+      "effect": "write",
+      "example": {
+        "action": "reorder",
+        "order": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "track.update",
+      "tool": "aixcut_track",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update"
+      }
+    },
+    {
+      "id": "transcript.find",
+      "tool": "aixcut_transcript",
+      "selector": {
+        "field": "action",
+        "value": "find"
+      },
+      "effect": "write",
+      "example": {
+        "action": "find",
+        "source": "x",
+        "query": "x"
+      }
+    },
+    {
+      "id": "transcript.update",
+      "tool": "aixcut_transcript",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "action": "update",
+        "source": "x",
+        "sentence_id": "x",
+        "source_file_revision": 1,
+        "expected_revision": 1,
+        "start_index": 0,
+        "end_index": 1,
+        "new_texts": [
+          "x"
+        ]
+      }
+    },
+    {
+      "id": "transition.add",
+      "tool": "aixcut_transition",
+      "selector": {
+        "field": "action",
+        "value": "add"
+      },
+      "effect": "write",
+      "example": {
+        "from": "x",
+        "to": "x",
+        "duration_ms": 100,
+        "alignment": "start",
+        "action": "add"
+      }
+    },
+    {
+      "id": "transition.delete",
+      "tool": "aixcut_transition",
+      "selector": {
+        "field": "action",
+        "value": "delete"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "delete"
+      }
+    },
+    {
+      "id": "transition.set",
+      "tool": "aixcut_transition",
+      "selector": {
+        "field": "action",
+        "value": "set"
+      },
+      "effect": "write",
+      "example": {
+        "from": "x",
+        "to": "x",
+        "action": "set"
+      }
+    },
+    {
+      "id": "transition.update",
+      "tool": "aixcut_transition",
+      "selector": {
+        "field": "action",
+        "value": "update"
+      },
+      "effect": "write",
+      "example": {
+        "target": "x",
+        "action": "update"
       }
     }
   ]

@@ -341,6 +341,63 @@
         "references/actions.md",
         "references/video-sync.md"
       ]
+    },
+    {
+      "skill": "aixcut-visual-effects",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_read",
+          "aixcut_effect",
+          "aixcut_transition",
+          "aixcut_mask",
+          "aixcut_group",
+          "aixcut_node",
+          "aixcut_component",
+          "aixcut_generator",
+          "aixcut_motion",
+          "aixcut_keyframe"
+        ],
+        "optional": [
+          "aixcut_review",
+          "aixcut_frontend"
+        ],
+        "forbidden": [
+          "aixcut_text"
+        ]
+      },
+      "actions": {
+        "aixcut_read": [
+          "effect",
+          "transition",
+          "mask",
+          "group",
+          "node",
+          "component",
+          "generator",
+          "motion",
+          "keyframe",
+          "effect_catalog",
+          "transition_catalog",
+          "mask_catalog",
+          "generator_catalog",
+          "motion_catalog",
+          "keyframe_catalog"
+        ],
+        "aixcut_frontend": [
+          "capture_timeline_frames",
+          "playback_check"
+        ]
+      },
+      "helper": null,
+      "references": [
+        "references/actions.md"
+      ]
     }
   ]
 }

@@ -103,6 +103,10 @@
         "displayName": "成片组装",
         "description": "协调画面、配音、字幕、音乐和导出，组装完整成片。"
       },
+    "aixcut-visual-effects": {
+      "displayName": "视觉增强",
+      "description": "编辑特效、转场、蒙版、分组、组合节点、组件、生成器、对象动画和关键帧，并用画面与播放证据验收。"
+    },
       "aixcut-voice": {
         "displayName": "配音",
         "description": "编写配音文案、选择音色、合成语音，并可放到时间线上。"
