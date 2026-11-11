@@ -217,7 +217,8 @@
           "aixcut_caption",
           "aixcut_clip",
           "aixcut_read",
-          "aixcut_review"
+          "aixcut_review",
+          "aixcut_transcript"
         ],
         "optional": [],
         "forbidden": [
@@ -250,6 +251,9 @@
           "aixcut_speech",
           "aixcut_text",
           "aixcut_timeline",
+          "aixcut_layout",
+          "aixcut_style",
+          "aixcut_arrange",
           "aixcut_track"
         ],
         "optional": [],
