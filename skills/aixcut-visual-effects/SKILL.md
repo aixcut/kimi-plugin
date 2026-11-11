@@ -21,6 +21,6 @@ Use `aixcut_node`, `aixcut_component` and `aixcut_motion` for authored compositi
 
 Use `aixcut_generator` for source-free generated clips. Catalog availability is real capability information: an empty catalog means the capability is unavailable in this Project, not an invitation to invent a preset.
 
-Use `aixcut_keyframe` for relational animation tracks. The owner, property type, base value and keyframe value must agree. Use `aixcut_motion` for authored phase programs.
+Use `aixcut_keyframe` for relational animation tracks. The owner may be a clip or an `fx:`, `mask:` or `trn:` ref from read; the owner, property type, base value and keyframe value must agree, and the written `owner_kind` follows the ref you pass. Use `aixcut_motion` for authored phase programs.
 
 After a structural write, read the affected domain again and verify the returned refs and relationships. Structural review cannot prove visual quality: use timeline frames and continuous playback for final visual acceptance.

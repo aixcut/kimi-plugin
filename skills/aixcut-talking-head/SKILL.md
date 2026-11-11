@@ -32,6 +32,8 @@ If an upstream stage changes, revisit dependent stages. Read back after each maj
 
 | Intent | action |
 | --- | --- |
+| Find a spoken phrase with exact timing and word indexes | `aixcut_transcript` `find` |
+| Fix a misheard word in the transcript | `aixcut_transcript` `update` |
 | Replace the full speech sequence | `set` |
 | Insert new speech | `insert` |
 | Remove a mistake, filler, or full line | `delete` |

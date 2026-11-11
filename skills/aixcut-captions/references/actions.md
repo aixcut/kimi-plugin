@@ -24,6 +24,10 @@ This reference maps each published caption operation to its fields. Source selec
 | aixcut_caption(action="split") | — | `target` | `at_ms`, `char_index`, `to_ms` | Split one caption into two by time or character position. |
 | aixcut_caption(action="style") | — | `target` | `style`, `highlight_ranges`, `x`, `y` | Update caption style or position. |
 | aixcut_caption(action="highlight") | — | `target` | `highlight_ranges` | Set highlights as an array of `{ start, end }` character ranges. |
+| aixcut_caption(action="merge") | — | `targets` | `separator` | Merge captions into their real timeline window. |
+| aixcut_caption(action="sync") | — | — | — | Re-sync the caption track to the primary speech track. |
+| aixcut_caption(action="move") | — | `target` | `to_ms` | Move one caption to a new start time. |
+| aixcut_caption(action="duplicate") | — | `target` | `start_ms` | Duplicate one caption. |
 
 ## Caption mode
 
