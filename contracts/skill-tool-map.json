@@ -78,7 +78,9 @@
         "required": [
           "aixcut_frontend"
         ],
-        "optional": [],
+        "optional": [
+          "aixcut_open"
+        ],
         "forbidden": []
       },
       "helper": null,
@@ -218,6 +220,7 @@
           "aixcut_clip",
           "aixcut_read",
           "aixcut_review",
+        "aixcut_speech",
           "aixcut_transcript"
         ],
         "optional": [],

@@ -23,7 +23,9 @@ Local video is not uploaded in full. If it has audio, the browser may upload ext
 
 Before export, bind the current inspected timeline revision and pass it as `expected_revision` to `export_timeline`. Run the packaged Core `workflow-host.mjs gate` with `{evidence,current:{project_id,timeline_id,revision},deliverable:"export"}` before submitting export. Report export success only if the page status succeeded and current structural evidence still passes the gate; this gate does not prove playback or listening.
 
-The target Project page must be open and initialized. If it is offline or bound to another Project, ask the user to open the target page. If uncertain, call `aixcut_frontend(action="page_status")`.
+The target Project page must be open and initialized. If it is offline or bound to another Project, follow the bounded recovery below. If uncertain, call `aixcut_frontend(action="page_status")`.
+
+For `MCP_FRONTEND_NOT_BOUND`, `MCP_FRONTEND_CLIENT_OFFLINE`, or `MCP_FRONTEND_PAGE_NOT_ACTIVE`, follow `error.next_action`. If the target page is not online and this turn has not already handed off the browser, call `aixcut_open(target="project", project_id=...)` once, open the complete `result.browser_handoff.url` once with the official host browser-opening capability, wait for `after_open.after_seconds`, then call `page_status`. Continue only when `presence_connections >= 1` and the target Project is present. After one handoff attempt, stop and ask the user if it is still offline. Do not retry `export_timeline` before the target page is online.
 
 Local media also requires browser file-access permission. If export or frame capture returns `CAPTURE_PERMISSION_REQUIRED`, ask the user to click anywhere on the Project page and retry the same request. Do not reimport the media.
 
@@ -35,9 +37,9 @@ Local media also requires browser file-access permission. If export or frame cap
 | `MCP_EXPORT_INVALID_INPUT` | Correct the format, dimensions, or frame rate and submit again. |
 | `MCP_EXPORT_FAILED` | Explain `error_message`; retry once only with a justified parameter change. |
 | `MCP_EXPORT_CANCELLED` | Report that the user cancelled the export. Do not retry as a system failure. |
-| `MCP_FRONTEND_NOT_BOUND` | Ask the user to open the Aixcut Project page. |
-| `MCP_FRONTEND_CLIENT_OFFLINE` | Do not reopen the Project automatically. Ask the user to open the target Project in this MCP session, then check `page_status`; retry export at most once after it is online. |
-| `MCP_FRONTEND_PAGE_NOT_ACTIVE` | Ask the user to switch the online page to the target Project. |
+| `MCP_FRONTEND_NOT_BOUND` | Follow the bounded one-time re-handoff above; retry export once only after the page is online. |
+| `MCP_FRONTEND_CLIENT_OFFLINE` | Follow the bounded one-time re-handoff above; retry export once only after the page is online. |
+| `MCP_FRONTEND_PAGE_NOT_ACTIVE` | Follow the bounded one-time re-handoff above for the target Project; retry export once only after it is online. |
 
 ## Boundaries
 

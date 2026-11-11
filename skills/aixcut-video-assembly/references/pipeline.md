@@ -55,9 +55,7 @@ For multiple versions, call `aixcut_timeline(action="list")`, then duplicate the
 1. Read the Project summary, source list, current timeline, audio tracks, existing voice state, existing music state, and source transcript states before deciding whether any audio should be generated:
 
 ```json aixcut_read
-{
-  "view": "sources"
-}
+{"view":"sources"}
 ```
 
 2. Do not use an old server-side analysis status to decide whether a local video is available. Kimi local files must be added through `prompt_add_material`; wait for the user's confirmation and match the uploaded file by `file_name` in `aixcut_read(view="sources")`. Then check `transcript_status` plus `transcription_tasks` when speech matters. Active transcription states are `pending`, `queued`, `running`, `processing`, `submitted`, or `retrying`; wait briefly and reread `sources` while transcription is active.

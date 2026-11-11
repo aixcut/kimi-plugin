@@ -31,9 +31,7 @@ Project export uses `aixcut_frontend(action="export_timeline")` and `aixcut_fron
 ```
 
 ```json aixcut_frontend
-{
-  "action": "export_timeline_status"
-}
+{"action":"export_timeline_status"}
 ```
 
 ## Result fields

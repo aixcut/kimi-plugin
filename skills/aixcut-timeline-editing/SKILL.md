@@ -20,6 +20,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 3. Call the narrowest Tool and action matching the intent.
 4. Read affected views after a successful write; use `aixcut_review(view="timeline")` or `aixcut_review(view="renderability")` when structure or visual placement needs confirmation.
 5. Report the actual result fields when present: `status`, `mutation_id`, `operation_id`, `revision_after`, `created`, `removed`, `ref_map`, and `warnings`.
+6. After the requested edit passes final verification, invoke `aixcut-export` when the user requests a deliverable. Do not duplicate an export already owned by `aixcut-video-assembly`.
 
 ### Batching writes
 
@@ -46,7 +47,11 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 | Video, image, or Motion Graph clips | `aixcut_clip(action="add")`, `aixcut_clip(action="update")` |
 | Regular on-screen text | `aixcut_text(action="add")`, `aixcut_text(action="update")` |
 | Music, effects, or placed voice audio | `aixcut_audio(action="add")`, `aixcut_audio(action="update")` |
+| Canvas placement of picture clips | `aixcut_layout(action="update")`, `aixcut_layout(action="set")` |
+| Text and caption styling | `aixcut_style(action="update")`, `aixcut_style(action="set")` |
+| Batch delete, copy, move, gaps and playhead trims | `aixcut_arrange(action="delete")`, `aixcut_arrange(action="move")` |
 | Tracks | `aixcut_track(action="ensure")`, `aixcut_track(action="update")` |
+| Versions and timelines | `aixcut_timeline(action="list")`, `aixcut_timeline(action="duplicate")` |
 | Canvas or full cleanup | `aixcut_project(action="canvas")`, `aixcut_project(action="clear")` |
 | Remote browser actions | `aixcut_frontend(action="page_status")`, `aixcut_frontend(action="capture_timeline_frames")` |
 
@@ -109,7 +114,6 @@ A completed response means only that the upload area is open, not that a file wa
 ASR is independent of the user's file selection and upload. When the task depends on speech or transcript text, call `aixcut_read(view="sources")`, match the uploaded source by `file_name`, and check its `transcript_status` and `transcription_tasks`. Active transcription states are `pending`, `queued`, `running`, `processing`, `submitted`, or `retrying`; wait briefly and reread `sources`. If needed to confirm whether transcription should exist, call `aixcut_read(view="source", source=media_id)` and check `has_audio`. Do not wait for ASR when there is no audio or the task only needs visual evidence. Read `source_lines` only after the matching source has `transcript_status=available`; report empty, outdated, or failed transcription instead of fabricating text or asking the user to upload again.
 
 Local video does not require a complete server-side video copy. The browser keeps the user-selected original and sends extracted audio for transcription; use `capture_source_frames` or `capture_timeline_frames` for visual evidence. If `CAPTURE_PERMISSION_REQUIRED` occurs, ask the user to click the Project page once and retry the original capture. Local files reach Kimi only after the user selects them in the Project page.
-
 ## Captures and visual placement
 
 Use `capture_source_frames` or `capture_timeline_frames` when visual evidence is needed. The result returns temporary JPEG URLs in `result.data.artifacts`. To save them locally, pass the exact JSON Tool result through stdin to `${KIMI_SKILL_DIR}/../../scripts/download-capture-artifacts.mjs <output-directory>`. Report a local path only after the helper succeeds; the remote MCP server does not write files to the local machine.

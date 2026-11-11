@@ -9,6 +9,23 @@ Read before writing. Use `aixcut_read` views `effect`, `transition`, `mask`, `gr
 
 Every mutation call is one atomic Zero batch. Use a new `idempotency_key` for each new change. If a result is `status_unknown`, read `mutation_receipt` with the original key before any retry.
 
+## Tool selection
+
+| Intent | Tool |
+| --- | --- |
+| Read the current effects, transitions, masks, groups, nodes, components, generators, motion or keyframes | `aixcut_read(view="effect")` and the matching domain view |
+| Look up available presets and parameters | `aixcut_read(view="effect_catalog")` and the matching `*_catalog` view |
+| Add, patch, delete or reorder effects on one clip | `aixcut_effect` |
+| Add, patch, delete or set a transition across a cut | `aixcut_transition` |
+| Add, patch, delete or reorder masks on one clip | `aixcut_mask` |
+| Group clips that must follow an anchor | `aixcut_group` |
+| Author composition nodes | `aixcut_node` |
+| Attach or patch clip and track components | `aixcut_component` |
+| Create a source-free generated clip | `aixcut_generator` |
+| Author or clear object motion phases | `aixcut_motion` |
+| Add, patch, replace or delete keyframes | `aixcut_keyframe` |
+| Capture frames or check playback after a structural write | `aixcut_frontend` |
+
 Use `aixcut_effect` on one clip. Reorder only with the complete effect list for that owner. Prefer `add`, `update`, and `delete` when identity matters; use `set` only when replacing the owner's complete list.
 
 Use `aixcut_transition` only between contiguous clips on the same track. Transition duration must fit both the clips and available source handles. Read back and use returned `adjustments`; do not silently present a shortened transition as the requested duration.
