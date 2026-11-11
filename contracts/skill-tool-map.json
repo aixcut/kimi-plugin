@@ -76,7 +76,10 @@
       ],
       "tools": {
         "required": [
-          "aixcut_frontend"
+          "aixcut_read",
+          "aixcut_review",
+          "aixcut_frontend",
+          "aixcut_export"
         ],
         "optional": [
           "aixcut_open"
@@ -259,7 +262,9 @@
           "aixcut_arrange",
           "aixcut_track"
         ],
-        "optional": [],
+        "optional": [
+          "aixcut_media"
+        ],
         "forbidden": [
           "aixcut_login"
         ]

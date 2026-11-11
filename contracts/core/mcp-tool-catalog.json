@@ -1,6 +1,6 @@
 {
   "server_contract_version": "1.4.0",
-  "server_revision": "1ebfb3db00b05e5ccae2dc63dfec02d3264a58f6",
+  "server_revision": "eba99b5bb151efdecd2bc99414f08c2daea8f155",
   "tools": [
     {
       "name": "aixcut_arrange",
@@ -100,6 +100,14 @@
     {
       "name": "aixcut_exit_project",
       "actions": []
+    },
+    {
+      "name": "aixcut_export",
+      "actions": [
+        "cancel",
+        "get",
+        "submit"
+      ]
     },
     {
       "name": "aixcut_frontend",
@@ -207,6 +215,14 @@
         "reorder",
         "set",
         "update"
+      ]
+    },
+    {
+      "name": "aixcut_media",
+      "actions": [
+        "complete_upload",
+        "prepare_upload",
+        "upload_status"
       ]
     },
     {

@@ -1,6 +1,6 @@
 ---
 name: aixcut-export
-description: "Export an Aixcut Project as MP4, MOV, or WebM and check the page-based export status and result. Use when the user asks to export, render, download, or check an export. Do not use for editing, voiceover, or captions. Chinese triggers include 导出、渲染、下载成片."
+description: "Export an Aixcut Project: render it in the open Project page for a browser download, or submit a headless frame or media render job. Use when the user asks to export, render, download, or check an export. Do not use for editing, voiceover, or captions. Chinese triggers include 导出、渲染、下载成片."
 ---
 
 # Export from Aixcut
@@ -9,7 +9,24 @@ description: "Export an Aixcut Project as MP4, MOV, or WebM and check the page-b
 
 State the export's current status and next step when useful. Continue checks and polling when possible. Distinguish queued, rendering, completed, failed, and unknown; report an export as complete only after its result is available.
 
-There is one export path: the open Project page renders the timeline in the browser and downloads the finished file to the user's computer.
+## Tool selection
+
+| Intent | Tool |
+| --- | --- |
+| Render and download through the open Project page | `aixcut_frontend(action="export_timeline")`, `aixcut_frontend(action="export_timeline_status")` |
+| Submit, inspect or cancel a headless render | `aixcut_export` |
+| Read the timeline, sources or captions before exporting | `aixcut_read` |
+| Check structure and renderability | `aixcut_review` |
+| Open or recover the Project page | `aixcut_open` |
+
+## Two export paths
+
+Pick the path the request actually needs; do not fall back to the other one silently.
+
+- **Page export** — `aixcut_frontend(action="export_timeline")`. The open Project page renders the timeline in the browser and downloads the finished file to the user's computer. It needs a live Project page bound to the target Project and never returns a file URL.
+- **Headless render** — `aixcut_export`. The server renders a frame or media job with no page involved. Use it when no Project page is available, when the page cannot be kept open, or when the request is a single still frame. The finished artifact is a short-lived download URL.
+
+When a Project page is already online, the page export is the default. Prefer the headless render when the page is offline and the user should not have to keep it open.
 
 Local video is not uploaded in full. If it has audio, the browser may upload extracted audio for transcription; visual understanding uses on-demand `capture_source_frames` or `capture_timeline_frames`. Do not require a full cloud copy or server-side render job.
 
@@ -29,6 +46,13 @@ For `MCP_FRONTEND_NOT_BOUND`, `MCP_FRONTEND_CLIENT_OFFLINE`, or `MCP_FRONTEND_PA
 
 Local media also requires browser file-access permission. If export or frame capture returns `CAPTURE_PERMISSION_REQUIRED`, ask the user to click anywhere on the Project page and retry the same request. Do not reimport the media.
 
+## Headless render
+
+1. Call `aixcut_export(action="submit")` with `kind`. Use `kind="frame"` plus `time_ms` and a `format` of `png` or `webp` for one still. Use `kind="export"` plus `range`, `output` and a media `format` (`mp4`, `mov`, `webm`, `mp3`, `aac`, `wav`) for a file.
+2. Keep the returned `job_id` and poll `aixcut_export(action="get", job_id=...)` until `status` is terminal. This path never requires a Project page.
+3. On success, report the artifact in `result.data.artifacts`: `download_url`, `content_type`, `size_bytes`, `format`, and `expires_at`. The URL is short-lived — never present it as a permanent link, and never re-submit just to refresh it before it expires.
+4. Report `cancelled` and `interrupted` as their own outcomes. `aixcut_export(action="cancel")` stops a queued or running job; report the returned status instead of assuming it stopped.
+
 ## Error handling
 
 | Error | Meaning and action |
@@ -45,9 +69,9 @@ Local media also requires browser file-access permission. If export or frame cap
 
 - Export does not change timeline content. Do not make unrequested edits.
 - Export only when the user asked for the file. Never export to report progress, to close out an intermediate stage, or to verify a partial edit.
-- The finished file does not pass through MCP. Do not promise a later server link.
+- A page export never returns a file URL: the browser downloads the file. A headless render returns only the short-lived artifact URL; do not promise anything more durable.
 - For local media and asynchronous recovery, see `aixcut-timeline-editing`. For a full production workflow, see `aixcut-video-assembly`.
 
 ## Completion
 
-Complete only when `export_timeline_status` reports `state: "succeeded"`. Report the filename, format, resolution, duration, and file size.
+Complete only when the chosen path reaches a terminal success: `export_timeline_status` reports `state: "succeeded"`, or `aixcut_export(action="get")` reports a succeeded job. Report the filename, format, resolution, duration, and file size.

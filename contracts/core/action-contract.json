@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "7140392ec004b3a1c391752d7c1131dea51fdeab38563c681009fded9b42fb08",
+  "catalog_sha256": "75e65d0c199e96ac842739b297b1c026f44e1f173289df8da04e537668f4524c",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
@@ -870,6 +870,45 @@
       "example": {
         "target": "x",
         "action": "update"
+      }
+    },
+    {
+      "id": "export.cancel",
+      "tool": "aixcut_export",
+      "selector": {
+        "field": "action",
+        "value": "cancel"
+      },
+      "effect": "write",
+      "example": {
+        "action": "cancel",
+        "job_id": "x"
+      }
+    },
+    {
+      "id": "export.get",
+      "tool": "aixcut_export",
+      "selector": {
+        "field": "action",
+        "value": "get"
+      },
+      "effect": "write",
+      "example": {
+        "action": "get",
+        "job_id": "x"
+      }
+    },
+    {
+      "id": "export.submit",
+      "tool": "aixcut_export",
+      "selector": {
+        "field": "action",
+        "value": "submit"
+      },
+      "effect": "write",
+      "example": {
+        "action": "submit",
+        "kind": "frame"
       }
     },
     {
@@ -1791,6 +1830,49 @@
       "example": {
         "target": "x",
         "action": "update"
+      }
+    },
+    {
+      "id": "media.complete_upload",
+      "tool": "aixcut_media",
+      "selector": {
+        "field": "action",
+        "value": "complete_upload"
+      },
+      "effect": "write",
+      "example": {
+        "action": "complete_upload",
+        "session_id": "x",
+        "file_id": "x"
+      }
+    },
+    {
+      "id": "media.prepare_upload",
+      "tool": "aixcut_media",
+      "selector": {
+        "field": "action",
+        "value": "prepare_upload"
+      },
+      "effect": "write",
+      "example": {
+        "action": "prepare_upload",
+        "file_name": "x",
+        "mime_type": "x",
+        "byte_size": 1,
+        "source_fingerprint": "x"
+      }
+    },
+    {
+      "id": "media.upload_status",
+      "tool": "aixcut_media",
+      "selector": {
+        "field": "action",
+        "value": "upload_status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "upload_status",
+        "session_id": "x"
       }
     },
     {
