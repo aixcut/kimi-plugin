@@ -1,6 +1,6 @@
 {
   "name": "aixcut",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "全能剪辑专家。覆盖口播精剪、直播切片、电商信息流、TVC 广告、矩阵批量生产五大场景，帮助用户快速出视频；Aixcut Studio 支持将工程文件导出至主流后期软件。",
   "author": {
     "name": "Aixcut"
@@ -103,6 +103,10 @@
         "displayName": "成片组装",
         "description": "协调画面、配音、字幕、音乐和导出，组装完整成片。"
       },
+    "aixcut-visual-effects": {
+      "displayName": "视觉增强",
+      "description": "编辑特效、转场、蒙版、分组、组合节点、组件、生成器、对象动画和关键帧，并用画面与播放证据验收。"
+    },
       "aixcut-voice": {
         "displayName": "配音",
         "description": "编写配音文案、选择音色、合成语音，并可放到时间线上。"

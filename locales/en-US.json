@@ -71,6 +71,10 @@
       "displayName": "Video Assembly",
       "description": "Assemble a complete video by coordinating visuals, voiceover, captions, music, and export."
     },
+  "aixcut-visual-effects": {
+    "displayName": "Visual Effects",
+    "description": "Edit effects, transitions, masks, groups, composition nodes, components, generators, object motion, and keyframes, then verify the result with frames and playback."
+  },
     "aixcut-voice": {
       "displayName": "Voiceover",
       "description": "Write voiceover scripts, select a voice, synthesize speech, and optionally place it on the timeline."
