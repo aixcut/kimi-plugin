@@ -3,6 +3,12 @@
  * This is deliberately conservative: incomplete requests and missing evidence
  * are omitted rather than being reported as successful workflow steps.
  */
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const catalog = JSON.parse(readFileSync(new URL('../contracts/mcp-tool-catalog.json', import.meta.url), 'utf8'));
+const PUBLISHED_TOOLS = catalog.tools.map(tool => tool.name);
+const PUBLISHED_TOOL_SET = new Set(PUBLISHED_TOOLS);
 
 const READ_ONLY_FRONTEND_ACTIONS = new Set([
   'page_status', 'capture_timeline_frames', 'capture_source_frames',
@@ -11,17 +17,57 @@ const READ_ONLY_FRONTEND_ACTIONS = new Set([
 ]);
 const READ_ONLY_GENERATE_ACTIONS = new Set(['catalog', 'get', 'list', 'quote', 'speech_read', 'speech_quote']);
 const READ_ONLY_DOCUMENT_ACTIONS = new Set(['list', 'get', 'status']);
-const MUTATION_TOOLS = new Set([
-  'aixcut_primary', 'aixcut_speech', 'aixcut_caption', 'aixcut_clip',
-  'aixcut_text', 'aixcut_audio', 'aixcut_track', 'aixcut_project',
-  'aixcut_timeline', 'aixcut_generate', 'aixcut_document', 'aixcut_frontend',
+const CONTROL_TOOLS = new Set(['aixcut_open', 'aixcut_exit_project', 'aixcut_login', 'aixcut_logout']);
+const READ_ONLY_TOOLS = new Set(['aixcut_read', 'aixcut_review']);
+const BILLABLE_ACTIONS = new Map([
+  ['aixcut_generate', new Set(['submit', 'speech_submit'])],
+  ['aixcut_export', new Set(['submit'])],
 ]);
+const ACTION_READ_ONLY_ACTIONS = new Map([
+  ['aixcut_frontend', READ_ONLY_FRONTEND_ACTIONS],
+  ['aixcut_generate', READ_ONLY_GENERATE_ACTIONS],
+  ['aixcut_document', READ_ONLY_DOCUMENT_ACTIONS],
+  ['aixcut_export', new Set(['get'])],
+  ['aixcut_media', new Set(['upload_status'])],
+]);
+
+export const TRACE_TOOL_POLICY = Object.freeze(Object.fromEntries(PUBLISHED_TOOLS.map(tool => [tool,
+  CONTROL_TOOLS.has(tool) ? 'control' : READ_ONLY_TOOLS.has(tool) ? 'read' : ACTION_READ_ONLY_ACTIONS.has(tool) || BILLABLE_ACTIONS.has(tool) ? 'mixed' : 'mutation',
+])));
+
+export const classifyTraceTool = (tool, args = {}) => {
+  if (CONTROL_TOOLS.has(tool)) return 'control';
+  if (READ_ONLY_TOOLS.has(tool)) return 'read';
+  const action = actionOf(args);
+  if (action && ACTION_READ_ONLY_ACTIONS.get(tool)?.has(action)) return 'read';
+  if (action && BILLABLE_ACTIONS.get(tool)?.has(action)) return 'billable';
+  return 'mutation';
+};
 
 const resultOf = (envelope) => envelope?.result && typeof envelope.result === 'object'
   ? envelope.result : {};
 const errorOf = (envelope) => envelope?.error && typeof envelope.error === 'object'
   ? envelope.error : {};
 const actionOf = (args) => args?.action ?? args?.view;
+const stableJson = value => {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
+  if (!value || typeof value !== 'object') return JSON.stringify(value);
+  return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(',')}}`;
+};
+const requestDigest = value => createHash('sha256').update(stableJson(value)).digest('hex');
+export const normalizePublishedCall = (tool, rawArgs) => {
+  if (PUBLISHED_TOOL_SET.has(tool)) return { tool, args: rawArgs, action: actionOf(rawArgs) };
+  const parent = PUBLISHED_TOOLS
+    .filter(candidate => tool.startsWith(`${candidate}_`))
+    .sort((left, right) => right.length - left.length)[0];
+  if (!parent) return { tool, args: rawArgs, action: actionOf(rawArgs) };
+  let action = tool.slice(parent.length + 1);
+  if (parent === 'aixcut_frontend') {
+    action = action.replace(/^media_/, 'media.').replace(/^timeline_/, 'timeline.').replace(/^operation_/, 'operation.');
+  }
+  const selector = parent === 'aixcut_read' || parent === 'aixcut_review' ? 'view' : parent === 'aixcut_open' ? 'target' : 'action';
+  return { tool: parent, args: { ...rawArgs, [selector]: action }, action };
+};
 const identityOf = (args, envelope, error = {}) => {
   const result = resultOf(envelope);
   const details = error?.details && typeof error.details === 'object' ? error.details : {};
@@ -30,17 +76,12 @@ const identityOf = (args, envelope, error = {}) => {
     || details.mutation_id || details.operation_id || details.job_id;
 };
 const planOf = (args) => args?.plan_context?.plan_id || args?.plan_id;
-const isMutation = (tool, args = {}) => {
-  if (!MUTATION_TOOLS.has(tool)) return false;
-  if (tool === 'aixcut_frontend') return !READ_ONLY_FRONTEND_ACTIONS.has(args.action);
-  if (tool === 'aixcut_generate') return !READ_ONLY_GENERATE_ACTIONS.has(args.action);
-  if (tool === 'aixcut_document') return !READ_ONLY_DOCUMENT_ACTIONS.has(args.action);
-  return tool !== 'aixcut_read' && tool !== 'aixcut_review';
-};
+const isMutation = (tool, args = {}) => ['mutation', 'billable'].includes(classifyTraceTool(tool, args));
 
 export function normalizeMcpE2eTrace(raw = {}, metadata = {}) {
   const sourceEvents = Array.isArray(raw.events) ? raw.events : [];
   const starts = new Map();
+  const seenMutations = new Map();
   const output = [];
   for (const event of sourceEvents) {
     if (event?.kind === 'tool:start' && event.requestId) {
@@ -51,13 +92,16 @@ export function normalizeMcpE2eTrace(raw = {}, metadata = {}) {
     const start = starts.get(event.requestId);
     starts.delete(event.requestId);
     if (!start) continue;
-    const args = start.arguments && typeof start.arguments === 'object' ? start.arguments : {};
+    const rawArgs = start.arguments && typeof start.arguments === 'object' ? start.arguments : {};
     const envelope = event.envelope && typeof event.envelope === 'object' ? event.envelope : {};
-    const tool = event.tool || start.tool;
-    const action = actionOf(args);
+    const normalized = normalizePublishedCall(event.tool || start.tool, rawArgs);
+    const args = normalized.args;
+    const tool = normalized.tool;
+    const action = normalized.action;
     const identity = identityOf(args, envelope, errorOf(envelope));
     const result = resultOf(envelope);
     const status = envelope.status;
+    const argsDigest = requestDigest(args);
 
     if (isMutation(tool, args)) {
       const unknown = event.kind === 'tool:error'
@@ -70,10 +114,16 @@ export function normalizeMcpE2eTrace(raw = {}, metadata = {}) {
         output.push({ type: 'unknown', mutation_id: identity, operation_id: identity, tool, action });
       } else if (!unknown && ['ok', 'async'].includes(status)) {
         const plan = planOf(args);
+        const prior = identity ? seenMutations.get(identity) : undefined;
+        const idempotentReplay = Boolean(prior && prior.args_digest === argsDigest);
+        if (identity) seenMutations.set(identity, { args_digest: argsDigest });
         const mutation = {
           type: 'mutation', tool, action,
           ...(identity ? { mutation_id: identity } : {}),
           ...(plan ? { plan_id: plan } : {}),
+          ...(Number.isSafeInteger(args.plan_context?.plan_epoch) ? { plan_epoch: args.plan_context.plan_epoch } : {}),
+          args_digest: argsDigest,
+          idempotent_replay: idempotentReplay,
           ...(Array.isArray(args.plan_context?.preserve) ? { preserve: args.plan_context.preserve } : {}),
           ...(Number.isSafeInteger(result.revision_before) ? { revision_before: result.revision_before } : {}),
           ...(Number.isSafeInteger(result.revision_after) ? { revision_after: result.revision_after } : {}),

@@ -2,15 +2,15 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "75e65d0c199e96ac842739b297b1c026f44e1f173289df8da04e537668f4524c",
+  "catalog_sha256": "85450d292875d77d43557dfaded5446caaf41438ddd8d69f6401907ef27b4f70",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
-      "sha256": "dffd24b55d65a3e6ec9e149654bc3ccc69dce1824605d99546fc7a5c77cd4de2"
+      "sha256": "cd85711bef68dc22e122ee9ff3e77f259604eae9bf1728f5a21e7edcb815afaa"
     },
     "checkpoint": {
       "path": "contracts/checkpoint.schema.json",
-      "sha256": "2211fdf55ba4545cfe968f98d6d3faeb83a3890ae63df627a61e1e2917038e9f"
+      "sha256": "d33d6167e05d1cf61af0e41498c9a81479a44104292b75d387afad0bc2d2a799"
     },
     "operation_receipt": {
       "path": "contracts/operation-receipt.schema.json",
@@ -22,7 +22,7 @@
     },
     "plan_context": {
       "path": "contracts/plan-context.schema.json",
-      "sha256": "c5633a9ad3609c2bd89e2e6a518ec966a9b45270defe8afd9ca3d3c05ee6446e"
+      "sha256": "14a35aebab3a63d203248a70ef18f2672a57efe7cbee149683d9282e11245991"
     }
   },
   "actions": [

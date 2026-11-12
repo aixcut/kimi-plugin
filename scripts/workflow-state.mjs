@@ -9,7 +9,7 @@ const queryFor = receipt => {
 };
 export async function validateEditPlan(plan, root) { return validateContract('edit-plan', plan, root); }
 export async function validateCheckpoint(checkpoint, root) { return validateContract('checkpoint', checkpoint, root); }
-export async function createCheckpoint({ plan, host, phase, lastConfirmedRevision, completedSteps = [], pendingMutations = [], jobIds = [], nextStep, sourceVersions = [], evidenceIds = [] }, root) {
+export async function createCheckpoint({ plan, host, phase, lastConfirmedRevision, completedSteps = [], pendingMutations = [], jobIds = [], relinkAssets = [], nextStep, sourceVersions = [], evidenceIds = [] }, root) {
   const planErrors = await validateEditPlan(plan, root); if (planErrors.length) throw new Error('invalid EditPlan: ' + planErrors.join('; '));
   if (!Number.isInteger(lastConfirmedRevision) || lastConfirmedRevision < 0) throw new Error('lastConfirmedRevision must be a non-negative integer');
   const pending = pendingMutations.map(receipt => {
@@ -21,7 +21,8 @@ export async function createCheckpoint({ plan, host, phase, lastConfirmedRevisio
     }
     return clean;
   });
-  const checkpoint = { schema_version: '1.0.0', plan_id: plan.plan_id, host, project_id: plan.project_id, timeline_id: plan.timeline_id, phase, last_confirmed_revision: lastConfirmedRevision, completed_steps: [...new Set(completedSteps)], pending_mutations: pending, job_ids: [...new Set(jobIds)], next_step: nextStep || (pending.some(item => ['unknown', 'not_found', 'pending'].includes(item.status)) ? 'confirm_original_receipt' : 'continue'), ...(sourceVersions.length ? { source_versions: sourceVersions } : {}), ...(evidenceIds.length ? { evidence_ids: evidenceIds } : {}) };
+  const planEpoch = plan.plan_epoch ?? 0;
+  const checkpoint = { schema_version: '1.0.0', plan_id: plan.plan_id, host, project_id: plan.project_id, timeline_id: plan.timeline_id, phase, last_confirmed_revision: lastConfirmedRevision, plan_epoch: planEpoch, completed_steps: [...new Set(completedSteps)], pending_mutations: pending, job_ids: [...new Set(jobIds)], ...(relinkAssets.length ? { relink_assets: relinkAssets } : {}), next_step: nextStep || (pending.some(item => ['unknown', 'not_found', 'pending'].includes(item.status)) ? 'confirm_original_receipt' : 'continue'), ...(sourceVersions.length ? { source_versions: sourceVersions } : {}), ...(evidenceIds.length ? { evidence_ids: evidenceIds } : {}) };
   const errors = await validateCheckpoint(checkpoint, root); if (errors.length) throw new Error('invalid Checkpoint: ' + errors.join('; '));
   return checkpoint;
 };
