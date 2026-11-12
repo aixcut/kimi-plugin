@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "85450d292875d77d43557dfaded5446caaf41438ddd8d69f6401907ef27b4f70",
+  "catalog_sha256": "53831492a1ebf8e006c5c38742f40647b93f66642a3e54fb85fc16b973a14c48",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
@@ -922,6 +922,19 @@
       "example": {
         "action": "activate_timeline",
         "timeline_id": "x"
+      }
+    },
+    {
+      "id": "frontend.analyze_music_beats",
+      "tool": "aixcut_frontend",
+      "selector": {
+        "field": "action",
+        "value": "analyze_music_beats"
+      },
+      "effect": "write",
+      "example": {
+        "action": "analyze_music_beats",
+        "media_id": "x"
       }
     },
     {

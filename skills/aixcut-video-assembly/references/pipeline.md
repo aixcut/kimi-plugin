@@ -114,7 +114,7 @@ Run this stage only when the resolved intent is `add-music` and the user has exp
 2. Add fades at both ends using `fade_in_ms` and `fade_out_ms`; see `aixcut-timeline-editing`.
 3. When narration is present, read back the music clip ref and call `aixcut_audio(action="update", target="clip:...", volume=0.2–0.4)` so speech remains clear. Normal volume may be used without narration.
 4. Confirm that music and voice use parallel audio tracks and mix together.
-5. Use beat evidence only when a supported live Tool action returns it. Preserve BPM, confidence, analysis duration, and timestamps as evidence. If no supported action returns beat evidence, report beat alignment as “unable to determine”; do not infer BPM from listening or duration.
+5. Get beat evidence from `aixcut_frontend(action="analyze_music_beats", media_id=...)` on the chosen audio source; proceed with beat-aligned cuts only when `status="available"` and the returned confidence justifies the cut. Preserve `status`, `bpm`, `confidence`, `analyzed_duration_ms`, `truncated` and the returned timestamps as evidence. If it returns `unable_to_determine` (silent, too short, weak or irregular, decode or authorization failure), report beat alignment as “unable to determine” with that reason; do not infer BPM from listening, clip duration or a stuck export.
 6. Read-only analysis does not cut the timeline. Reread the timeline after each beat-based edit.
 
 ## Stage 6: Final review
@@ -147,5 +147,5 @@ Use `aixcut-export` for page export and status polling. Run this stage once, at 
 | Voice exists but captions are missing | Render may be partial, timed out, or not placed; captions also need separate verification | Check per-segment results, placement, and `transcript_status`; regenerate and reread captions only when audio is on the timeline and transcription is available |
 | Abrupt music start or end | Music has no fades | Add fades to the music clip |
 | Narration is hard to hear | Music volume is too high | Lower music `volume` using `aixcut-timeline-editing` |
-| Beat alignment cannot be verified | A supported beat-analysis action returned `unable_to_determine`, or page decoding/authorization failed | Report “unable to determine”; do not invent BPM or beat-matched shots |
+| Beat alignment cannot be verified | `analyze_music_beats` returned `unable_to_determine` (silent, too short, weak or irregular), the confidence is too low to drive cuts, or page decoding/authorization failed | Report “unable to determine” with the returned reason; do not invent BPM or beat-matched shots |
 | Export fails while the page is open | Page export failed or media access expired | Check `export_timeline_status`; ask the user to click the page to restore access if required |

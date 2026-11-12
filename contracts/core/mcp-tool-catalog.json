@@ -1,6 +1,6 @@
 {
   "server_contract_version": "1.4.0",
-  "server_revision": "eba99b5bb151efdecd2bc99414f08c2daea8f155",
+  "server_revision": "8d81b3a7a4a24cea823855b2993f88f3ebb24242",
   "tools": [
     {
       "name": "aixcut_arrange",
@@ -113,6 +113,7 @@
       "name": "aixcut_frontend",
       "actions": [
         "activate_timeline",
+        "analyze_music_beats",
         "capture_source_frames",
         "capture_timeline_frames",
         "export_timeline",
