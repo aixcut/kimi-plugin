@@ -23,7 +23,7 @@ Generation creates a durable Job; it is not a synchronous operation.
 
 ## Warnings
 
-A terminal Job may still not be what the user asked for: `warnings` on the Job and on the envelope name what the model could not honour. `generation_duration_ignored` means the track is longer or shorter than the requested length, and `generation_frame_resized` means the frame is not the requested pixels. Report every warning verbatim with the produced value, and never present the asset as matching the request without it; the request was accepted, the result is what changed.
+A terminal Job may still not be what the user asked for: `warnings` on the Job and on the envelope name what the model could not honour. `generation_duration_ignored` means the track is longer or shorter than the requested length, `generation_frame_resized` means the frame is not the requested pixels, and `generation_layer_decomposition_incomplete` means a layer request came back as a single image. Report every warning verbatim with the produced value, and never present the asset as matching the request without it; the request was accepted, the result is what changed.
 
 For multiple video versions, the assembly Skill first lists and duplicates timelines with `aixcut_timeline(action="list")`. The generation operations create Project-level assets that can be reused by multiple `timeline_id`s. Place and verify the result on each requested timeline.
 
