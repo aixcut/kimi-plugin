@@ -23,7 +23,7 @@ Generation creates a durable Job; it is not a synchronous operation.
 
 ## Warnings
 
-A terminal Job may still not be what the user asked for: `warnings` on the Job and on the envelope name what the model could not honour. `generation_duration_ignored` means the track is longer or shorter than the requested length, and `generation_frame_resized` means the frame is not the requested pixels. Report every warning verbatim with the produced value, and never present the asset as matching the request without it; the request was accepted, the result is what changed.
+A terminal Job may still not be what the user asked for: `warnings` on the Job and on the envelope name what the model could not honour. `generation_duration_ignored` means the track is longer or shorter than the requested length, `generation_frame_resized` means the frame is not the requested pixels, and `generation_layer_decomposition_incomplete` means a layer request came back as a single image. Report every warning verbatim with the produced value, and never present the asset as matching the request without it; the request was accepted, the result is what changed.
 
 For multiple video versions, the assembly Skill first lists and duplicates timelines with `aixcut_timeline(action="list")`. The generation operations create Project-level assets that can be reused by multiple `timeline_id`s. Place and verify the result on each requested timeline.
 
@@ -35,7 +35,8 @@ Resolve only the language choice relevant to the requested asset: visible text f
 
 ## Generation types
 
-- `kind` is `image`, `video`, or `music`; the server processes music as audio.
+- `kind` is `image`, `video`, `music`, or `audio` (Seed Audio); music and audio both reach ClipOS as audio Jobs.
+- Seed Audio writes ambient audio, sound layers, or short voice clips from a prompt: `duration_seconds`, `format`, `sample_rate`, `speech_rate`, `loudness_rate`, `pitch_rate`, `enable_subtitle`, `references`, `import_requested`, and `transcribe` are the supported options, and it can take up to three reference audios and one reference image. It is not music generation; use it when the user asks for a sound, ambience, or an effect rather than a track.
 - If the user does not specify a provider, use the server default. Override only on explicit request.
 - Prompt, style, duration, and language-bearing content should follow the user's brief; do not rewrite the creative direction without reason.
 
