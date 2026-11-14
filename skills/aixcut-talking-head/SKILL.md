@@ -17,6 +17,18 @@ State the current editing stage and next step when useful. Reuse the user's stat
 4. Captions follow the primary speech track. When needed, synchronize or regenerate them with `aixcut_caption(action="regenerate")`.
 5. Read back `timeline` or `speech` to confirm the result.
 
+## Tool selection
+
+| Intent | Tool |
+| --- | --- |
+| Read speech text and timing | `aixcut_read(view="source_lines")`, `aixcut_read(view="speech")` |
+| Remove, trim, replace or reorder speech segments | `aixcut_speech` |
+| Find a phrase's timing or fix a misheard word | `aixcut_transcript` |
+| Synchronize, regenerate or restyle captions | `aixcut_caption` |
+| Add or replace B-roll and overlays | `aixcut_clip` |
+| Add music or sound effects | `aixcut_audio` |
+| Check the result before reporting | `aixcut_review` |
+
 ## Required order
 
 Speech timing anchors downstream work. Keep this order:
