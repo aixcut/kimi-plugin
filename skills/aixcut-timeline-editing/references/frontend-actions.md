@@ -50,7 +50,7 @@ All fields in this table belong inside `params`. Except `media.list` and `media.
 | `media.capture_frame` | `media_id`, `expected_file_revision`, `at_ms` | `destination`, `scope`; saves one JPEG. |
 | `timeline.capture_frame` | `timeline_id`, `expected_revision`, `at_ms` | `render_scope`, `destination`, `scope`; captures the current timeline. |
 | `media.export_range` | `media_id`, `expected_file_revision`, `range` | `output`, `destination`, `scope`. |
-| `timeline.export_range` | `timeline_id`, `expected_revision`, `range` | `render_scope`, `output`, `destination`, `scope`; retain the result in a library, artifact, or disk destination. |
+| `timeline.export_range` | `timeline_id`, `expected_revision`, `range` | `render_scope`, `output`, `destination`, `scope`; `upload` is a field inside `destination`, not a top-level parameter. Retain the result in a library, artifact, or disk destination. |
 
 `range` is `{ "start_ms": 0, "end_ms": 5000 }` with `end_ms > start_ms`. `output` and `destination` have strict schemas; use the live Tool Schema rather than adding undocumented fields.
 

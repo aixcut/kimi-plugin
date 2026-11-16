@@ -9,6 +9,7 @@
     "project_id": { "type": "string", "minLength": 1 },
     "timeline_id": { "type": "string", "minLength": 1 },
     "base_revision": { "type": "integer", "minimum": 0 },
+    "plan_epoch": { "type": "integer", "minimum": 0 },
     "mode": { "enum": ["mechanical", "local_edit", "full_assembly"] },
     "preserve": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true, "maxItems": 500 },
     "delete_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true, "maxItems": 500 },

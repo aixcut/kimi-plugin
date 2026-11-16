@@ -25,11 +25,9 @@
       "minLength": 1
     },
     "host": {
-      "enum": [
-        "codex",
-        "workbuddy",
-        "kimi"
-      ]
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$",
+      "description": "Opaque host adapter identity; never a credential or arbitrary path"
     },
     "project_id": {
       "type": "string",
@@ -50,6 +48,10 @@
       ]
     },
     "last_confirmed_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "plan_epoch": {
       "type": "integer",
       "minimum": 0
     },
@@ -77,6 +79,20 @@
       },
       "uniqueItems": true,
       "maxItems": 500
+    },
+    "relink_assets": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref", "kind"],
+        "properties": {
+          "ref": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^/\\\\]+$" },
+          "kind": { "enum": ["job", "asset", "media"] },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 500 }
+        }
+      }
     },
     "next_step": {
       "type": "string",

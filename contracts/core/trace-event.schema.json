@@ -6,9 +6,11 @@
   "required": ["type", "host", "run_id", "seq"],
   "properties": {
     "type": {"enum": ["intent_received", "skill_candidate", "skill_loaded", "capability_snapshot", "tool_call", "receipt", "job_poll", "checkpoint_saved", "evidence_collected", "delivery_reported"]},
-    "host": {"enum": ["codex", "workbuddy", "kimi"]},
+    "host": {"type": "string", "pattern": "^[a-z][a-z0-9-]{0,31}$"},
     "run_id": {"type": "string", "minLength": 1},
     "seq": {"type": "integer", "minimum": 1},
+    "plan_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "plan_epoch": {"type": "integer", "minimum": 0},
     "tool": {"type": "string", "minLength": 1, "maxLength": 128},
     "action": {"type": "string", "minLength": 1, "maxLength": 128},
     "view": {"type": "string", "minLength": 1, "maxLength": 128},

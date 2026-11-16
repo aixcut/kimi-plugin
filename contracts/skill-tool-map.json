@@ -20,6 +20,7 @@
         "references/conversation-guidance.md",
         "references/language.md",
         "references/model.md",
+        "references/intent-routing.md",
         "references/workflow-host.md"
       ]
     },
@@ -71,14 +72,18 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-timeline-editing",
-        "aixcut-video-assembly"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
-          "aixcut_frontend"
+          "aixcut_read",
+          "aixcut_review",
+          "aixcut_frontend",
+          "aixcut_export"
         ],
-        "optional": [],
+        "optional": [
+          "aixcut_open"
+        ],
         "forbidden": []
       },
       "helper": null,
@@ -92,8 +97,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-basics",
-        "aixcut-timeline-editing"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
@@ -134,8 +138,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-export",
-        "aixcut-timeline-editing"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
@@ -156,7 +159,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-projects"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
@@ -173,7 +176,9 @@
       "surfaces": [
         "kimi"
       ],
-      "requires": [],
+      "requires": [
+        "aixcut-basics"
+      ],
       "tools": {
         "required": [
           "aixcut_logout"
@@ -189,7 +194,9 @@
       "surfaces": [
         "kimi"
       ],
-      "requires": [],
+      "requires": [
+        "aixcut-basics"
+      ],
       "tools": {
         "required": [
           "aixcut_exit_project",
@@ -210,7 +217,10 @@
       "surfaces": [
         "kimi"
       ],
-      "requires": [],
+      "requires": [
+        "aixcut-basics",
+        "aixcut-timeline-editing"
+      ],
       "tools": {
         "required": [
           "aixcut_audio",
@@ -218,6 +228,7 @@
           "aixcut_clip",
           "aixcut_read",
           "aixcut_review",
+          "aixcut_speech",
           "aixcut_transcript"
         ],
         "optional": [],
@@ -234,10 +245,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-captions",
-        "aixcut-export",
-        "aixcut-known-errors",
-        "aixcut-voice"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
@@ -256,7 +264,9 @@
           "aixcut_arrange",
           "aixcut_track"
         ],
-        "optional": [],
+        "optional": [
+          "aixcut_media"
+        ],
         "forbidden": [
           "aixcut_login"
         ]
@@ -273,7 +283,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-timeline-editing"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
@@ -296,11 +306,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-basics",
-        "aixcut-captions",
-        "aixcut-export",
-        "aixcut-timeline-editing",
-        "aixcut-voice"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [
@@ -328,8 +334,7 @@
         "kimi"
       ],
       "requires": [
-        "aixcut-basics",
-        "aixcut-timeline-editing"
+        "aixcut-basics"
       ],
       "tools": {
         "required": [

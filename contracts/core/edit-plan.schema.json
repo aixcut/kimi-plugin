@@ -35,6 +35,11 @@
       "type": "integer",
       "minimum": 0
     },
+    "plan_epoch": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Host-owned plan generation. A revision change does not rewrite it; a gate or structural replan increments it."
+    },
     "intent": {
       "enum": [
         "inspect",
