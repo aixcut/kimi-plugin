@@ -17,6 +17,19 @@ This Skill owns the order and dependencies between stages; each specialist Skill
 
 Use this Skill for multi-stage work, such as turning source media into a 60-second promo with voiceover, captions, and music, or shortening a video and adding narration. For a single caption, clip replacement, or export, use the corresponding specialist Skill directly.
 
+## Tool selection
+
+| Intent | Tool |
+| --- | --- |
+| Read the Project, sources, timeline, audio or captions | `aixcut_read` |
+| Create, duplicate, rename or clear a version | `aixcut_timeline` |
+| Place or replace the main video sequence | `aixcut_primary` |
+| Generate voice, images, video or music | `aixcut_generate` |
+| Place music, effects or rendered voice | `aixcut_audio` |
+| Create or edit captions | `aixcut_caption` |
+| Check structure and renderability before delivery | `aixcut_review` |
+| Open the page, capture frames or export | `aixcut_frontend` |
+
 ## Align before acting
 
 Resolve only relevant decisions that are still missing; treat this list as a guide, not a questionnaire:
@@ -99,7 +112,7 @@ For upload, asynchronous generation, voice rendering, transcription, or export, 
 - **Voice generation does not imply captions exist.** Wait for `transcript_status=available`, regenerate captions, and read them back.
 - **A complete assembly request does not imply voice or music.** Honor the resolved intent state and keep optional or unmentioned music off.
 - **Music needs fades.** Without fades, it can start or stop abruptly.
-- **Do not invent beat-analysis actions.** Use only the published frontend operations. If beat evidence is unavailable, report that beats could not be determined; do not estimate BPM by ear.
+- **Beat evidence comes from `aixcut_frontend(action="analyze_music_beats")`.** Pass the `media_id` of an audio source from `aixcut_read(view="sources")`; it is read-only, the audio never leaves the browser, and it returns `status`, `bpm`, `confidence`, `beats_ms` and `analyzed_duration_ms`. Align cuts only when `status="available"` and the confidence supports it, and use the returned timestamps rather than your own count. When it returns `unable_to_determine`, report that reason and do not estimate BPM by ear or from the clip duration.
 - **Balance voice and music.** Music overpowering narration is a common quality issue.
 - **The browser owns local source files.** Full local video is not uploaded. Audio may be extracted for transcription and visual understanding uses on-demand frame capture. The Project page performs final export; do not treat local originals as missing.
 

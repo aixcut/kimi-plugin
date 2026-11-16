@@ -12,7 +12,7 @@ export function evaluateWorkflow(trace) {
   let readBacks = 0;
   for (const mutation of mutations) {
     const id = mutation.mutation_id || mutation.idempotency_key || mutation.operation_id;
-    if (id) { if (ids.has(id)) duplicateMutations++; ids.add(id); }
+    if (id) { if (ids.has(id) && !mutation.idempotent_replay) duplicateMutations++; ids.add(id); }
     const preserve = Array.isArray(mutation.preserve) ? mutation.preserve : [];
     // A trace that only records the requested scope has not observed whether
     // the preserved object changed. Keep that metric unmeasured instead of
