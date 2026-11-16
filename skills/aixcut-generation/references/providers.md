@@ -7,17 +7,18 @@ This reference lists parameters only. Follow the main Skill for polling, termina
 - `project_id`: optional; omitted means the current Project.
 - `idempotency_key`: optional for `aixcut_generate(action="submit")`; the server creates and returns one if omitted. Reuse it only when retrying the same submission.
 - `provider` and `model`: use server defaults when omitted; override only when explicitly requested.
-- `input`: provider-specific parameters. Unknown keys may be ignored by the provider rather than rejected.
+- `prompt` is always a top-level field. Never put it inside `input`.
+- `input`: model-specific options only. Unknown fields are rejected before a paid Provider call.
 
 ## Kinds and default providers
 
 | kind | Default provider | Default model | Use |
 | --- | --- | --- | --- |
 | `image` | `image2` | `gpt-image-2` | Generate or edit an image. |
-| `video` | `kling` | `kling-3` | Text-to-video or image-to-video; `kling-v3` is a compatibility alias. |
-| `music` | `minimax` | `music-2.5+` | Processed by the server as audio. |
+| `video` | server mapping | catalog model | Text-to-video or reference-to-video; choose a model enabled by `catalog`. |
+| `music` | `minimax` | `music-3.0` | Processed by the server as audio. |
 
-Defaults come from server configuration and may vary by environment. `kind` may also appear in `input.kind` or `input.media_type`; the first non-empty value is used.
+Defaults come from server configuration and may vary by environment. Pass `kind`, `model` and `prompt` at the top level.
 
 ## `input` parameters
 
@@ -25,47 +26,55 @@ Defaults come from server configuration and may vary by environment. `kind` may 
 
 | Key | Required | Description |
 | --- | --- | --- |
-| `prompt` | Yes | Image generation or editing prompt. Follow the requested content language for visible text; state it explicitly when needed. |
 | `mode` | No | `generate` by default, or `edit`. |
-| `reference_images` | Required for `edit` | Array of reference image URLs. |
-| `size` | No | For example, `1536x864`. |
-| `aspect_ratio` | No | `16:9`, `9:16`, `1:1`, `4:3`, or `3:4`; converted to dimensions when `size` is omitted. |
-| `quality` | No | Defaults to `medium`. |
-| `background` | No | Passed through as a background parameter. |
+| `reference_images` | Required for `edit` | 1–10 reference image URLs. |
+| `size` | No | Explicit size such as `1024x1024`, `auto`, or a tier; combinations with `ratio`/`image_size` are resolved, not rejected. |
+| `ratio` / `aspect_ratio` | No | `16:9`, `9:16`, `1:1`, `4:5`, `3:4`, or `4:3`; `ratio` is an alias. |
+| `image_size` | No | `1K`, `2K`, or `4K`. |
+| `purpose` | No | `cover` makes an omitted `quality` default to `high`. |
+| `quality` | No | `auto`, `low`, `medium`, or `high`; defaults to `medium` unless `purpose=cover`. |
+| `style` | No | Advisory style hint; put the concrete style in the prompt for best results. |
+| `background` | No | Background option passed to the image model. |
 
-### `kling`
+### `seedream`
 
-| Key | Required | Description |
-| --- | --- | --- |
-| `prompt` | Yes | Video prompt. Include target language for dialogue or visible text. |
-| `mode` | No | ClipOS unified mode; MCP uses `full_reference` when omitted. Use a supported mode for first/last-frame references. |
-| `first_frame_url` | Required for `i2v` | First-frame image URL. |
-| `last_frame_url` | No | Last-frame image URL. |
-| `aspect_ratio` | No | Defaults to `16:9`. |
-| `resolution` | No | Defaults to `720p`. |
-| `duration_seconds` | No | Defaults to 5. |
-| `generate_audio` | No | Defaults to `false`. |
-| `negative_prompt` | No | Negative prompt. |
-| `audio` | No | Explicitly set `false` to disable audio. |
-
-### `seedance`
+Seedream 5.0 Pro (`seedream-5-pro`) takes the shared image surface plus the fields only it implements. Frame size and ratio are resolved together, so `size`, `image_size` and `aspect_ratio` may be sent in any combination.
 
 | Key | Required | Description |
 | --- | --- | --- |
-| `prompt` | Yes | Video prompt. Include target language for dialogue or visible text. |
-| `first_frame_url` / `last_frame_url` | No | First/last-frame references. |
-| `ref_image_urls` | No | Array of reference image URLs. |
-| `ref_audio_urls` | No | Array of reference audio URLs. |
-| `aspect_ratio` | No | Defaults to `16:9`. |
-| `duration_seconds` | No | Defaults to 5. |
-| `audio` | No | Explicitly set `false` to disable audio. |
-| `watermark` | No | Explicitly set `true` to add a watermark. |
+| `mode` | No | `generate` (default) or `edit`; `edit` needs a reference image. |
+| `image` / `reference_images` | No | Up to 10 public HTTPS reference image URLs; the two names are equivalent. |
+| `size` | No | Defaults to `2K`; `1K`, `1.5K`, `2K`, or a supported `widthxheight`. |
+| `image_size` | No | `1K`, `1.5K`, or `2K`; an alias of the `size` tier. |
+| `aspect_ratio` / `ratio` | No | `16:9`, `9:16`, `1:1`, `4:5`, `3:4`, `4:3`; resolved into explicit pixels. |
+| `purpose` | No | Advisory hint (no quality knob on Seedream). |
+| `quality` | No | Advisory hint (no quality knob on Seedream). |
+| `style` | No | Advisory hint; put the concrete style in the prompt. |
+| `output_format` | No | `jpeg` (default) or `png`. |
+| `watermark` | No | Boolean; defaults to `true`. |
+| `optimize_prompt_options` | No | `{ "mode": "standard" }` by default; `fast` is also supported. |
+| `background` | No | `opaque` (default) or `transparent`; transparency requires one image and PNG output. |
+| `layer_decomposition` | No | Boolean; requires exactly one `image` and non-empty `size` rules from the catalog. |
+
+### `video`
+
+| Key | Required | Description |
+| --- | --- | --- |
+| `mode` | No | `full_reference` or `first_last_frame`; use a scenario exposed by the selected catalog model. |
+| `references` | Depends on scenario | Ordered `{ role, media_id, expected_file_revision }` entries, or the catalog-issued `reference_handle`. `role` is `reference`, `first_frame`, or `last_frame`. |
+| `aspect_ratio` | No | One of the selected model's catalog ratios. |
+| `resolution` | No | One of the selected model's catalog resolutions. |
+| `duration_seconds` | No | One of the selected model's catalog durations, or `-1` only when smart duration is enabled. |
+| `output_format` | No | `mp4` for current adapters. |
+| `generate_audio` | No | Boolean; availability depends on the model's `audio_policy`. |
+| `negative_prompt` | No | Optional negative prompt. |
+
+Do not pass legacy URL fields such as `first_frame_url`, `last_frame_url`, `ref_image_urls`, `ref_audio_urls`, or `audio`. The service resolves project media from `references` and rejects obsolete fields.
 
 ### `minimax`
 
 | Key | Required | Description |
 | --- | --- | --- |
-| `prompt` | No | Music description. |
 | `lyrics` | No | Lyrics in the requested song language. Do not translate supplied lyrics unless requested. |
 | `instrumental` | No | Defaults to instrumental; set `false` for a sung song. |
 | `format` | No | Defaults to `mp3`; also supports `wav` and `pcm`. |
