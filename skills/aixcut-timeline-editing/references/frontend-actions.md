@@ -18,7 +18,7 @@ Every call includes `action` and may include `project_id`, `workspace_id`, and `
 | `capture_source_frames` | `media_id`, `selections` | `timeout_ms`, `workspace_id`; 1–8 selections, each using `times_ms` or `{start_ms,end_ms,count}`. |
 | `capture_timeline_frames` | `selections` | `timeline_id`, `expected_revision`, `timeout_ms`, `workspace_id`; 1–8 selections. |
 | `activate_timeline` | `timeline_id` | Switches the active timeline in the bound Project page. |
-| `playback_check` | `timeline_id`, `expected_revision`, `start_ms`, `target_ms` | Plays at most 10 seconds and restores the playhead; `target_ms` must follow `start_ms`. |
+| `playback_check` | `timeline_id`, `expected_revision`, `start_ms`, `target_ms` | Plays at most 10 seconds and restores the playhead. Times are absolute timeline milliseconds; `target_ms` must be 1–10000 ms after `start_ms`, and there is no `end_ms` field. |
 | `prompt_add_material` | — | Opens the Project media upload area. The user selects files; verify the result with `aixcut_read(view="sources")`. |
 | `prompt_add_document` | — | Opens the Project Documents picker. The user selects the document. |
 | `list_documents` | — | Lists document IDs, names, and parse status; use to verify uploads and parsing. |

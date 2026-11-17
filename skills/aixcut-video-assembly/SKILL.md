@@ -113,7 +113,7 @@ For upload, asynchronous generation, voice rendering, transcription, or export, 
 - **Voice generation does not imply captions exist.** Wait for `transcript_status=available`, regenerate captions, and read them back.
 - **A complete assembly request does not imply voice or music.** Honor the resolved intent state and keep optional or unmentioned music off.
 - **Music needs fades.** Without fades, it can start or stop abruptly.
-- **Beat evidence comes from `aixcut_frontend(action="analyze_music_beats")`.** Pass the `media_id` of an audio source from `aixcut_read(view="sources")`; it is read-only, the audio never leaves the browser, and it returns `status`, `bpm`, `confidence`, `beats_ms` and `analyzed_duration_ms`. Align cuts only when `status="available"` and the confidence supports it, and use the returned timestamps rather than your own count. When it returns `unable_to_determine`, report that reason and do not estimate BPM by ear or from the clip duration.
+- **There is no automatic BPM or beat-analysis action in the current web runtime.** Beat-aligned cuts are allowed only when the user supplies BPM or beat timestamps, or when cuts are aligned to verified action points in the footage. Otherwise describe the pacing as planned or heuristic; do not claim measured BPM or exact beat sync.
 - **Balance voice and music.** Music overpowering narration is a common quality issue.
 - **The browser owns local source files.** Full local video is not uploaded. Audio may be extracted for transcription and visual understanding uses on-demand frame capture. The Project page performs final export; do not treat local originals as missing.
 

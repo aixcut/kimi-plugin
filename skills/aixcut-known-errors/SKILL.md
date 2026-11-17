@@ -32,6 +32,8 @@ Use `error.code`, `error.type`, `error.retryable`, and `error.next_action` to ch
 - `MCP_IDEMPOTENCY_KEY_INVALID`: Generate a new UUID v4 for `idempotency_key`.
 - `MCP_ACTION_UNSUPPORTED`: Choose a Tool that supports the requested action.
 - `MCP_LAYOUT_CLIP_UNSUPPORTED`: The target has no visual content. Layout applies only to video and image clips, not audio or text.
+- `MCP_MOTION_CLIP_UNSUPPORTED`: Object motion applies only to a real video clip without composition content. Do not retry it on text, image composition, or authored Composition clips; use that clip's own animation model instead.
+- `MCP_CANVAS_PRESET_INVALID`: Use one of the returned `supported_presets` or explicit `width` and `height`. Do not guess aliases that are not in the live list.
 
 ## Authorization and project context
 

@@ -1,6 +1,6 @@
 # Export Action Reference
 
-Project export uses `aixcut_frontend(action="export_timeline")` and `aixcut_frontend(action="export_timeline_status")`; do not submit a server-side render job.
+Project export has two explicit paths. Use browser rendering when the target Project page is online and supports `export_timeline`; otherwise use `aixcut_export` only when every source is cloud-readable. Never fall back silently.
 
 ## Common fields
 
@@ -14,7 +14,8 @@ Project export uses `aixcut_frontend(action="export_timeline")` and `aixcut_fron
 | Tool | action | Required fields besides `action` | Optional fields | Behavior |
 | --- | --- | --- | --- | --- |
 | aixcut_frontend(action="export_timeline") | — | — | `timeline_id`, `expected_revision`, `format`, `width`, `height`, `frame_rate`, `timeout_ms`, `workspace_id` | Render and download from the open Project page. A supplied `timeline_id` does not switch the current page tab. Returns when accepted. |
-| aixcut_frontend(action="export_timeline_status") | — | — | `timeout_ms`, `workspace_id` | Read export status from the page. |
+| aixcut_frontend(action="export_timeline_status") | — | — | `timeout_ms`, `workspace_id` | Read browser export status from the page. |
+| `aixcut_export(action="submit")` | `kind` | — | `range`, `output`, `format`, `time_ms`, `idempotency_key` | Submit a headless frame or media render. Poll with `aixcut_export(action="get")`. |
 
 ## Submit example
 
@@ -43,7 +44,11 @@ The accepted result has no file URL. Status results can contain:
 | `export_id` | After acceptance | Export identifier. |
 | `state` | Always | `idle`, `running`, `succeeded`, or `failed`. |
 | `format`, `width`, `height`, `frame_rate` | After acceptance | Actual output settings. |
+| `render_mode` | Always after acceptance | `browser` for page rendering; `headless` is returned by `aixcut_export`. |
+| `delivery` | Browser status | `browser-download` with `state` `pending` or `dispatched` and `file_verified: false`. |
 | `file_name`, `byte_size`, `mime_type`, `elapsed_ms` | On `succeeded` | Downloaded filename, size, MIME type, and elapsed time. |
 | `error_code`, `error_message` | On `failed` | Failure details. |
 
 `format` defaults to `mp4`; omitted dimensions and frame rate use the timeline canvas and frame rate.
+
+Headless success returns a short-lived `result.data.artifacts[].download_url`. A browser `succeeded` result only means the download was dispatched; it does not prove that the file was written to disk or verified.

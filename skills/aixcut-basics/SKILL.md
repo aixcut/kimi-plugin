@@ -5,15 +5,15 @@ description: "Mandatory entry for every Aixcut task: context, intent routing, re
 
 # Aixcut MCP Basics
 
-Follow [language](references/language.md), [conversation guidance](references/conversation-guidance.md), and [ownership](references/model.md). Select exactly one main workflow with [intent routing](references/intent-routing.md), then load specialist Skills only at the stages they own.
+Follow [language](references/language.md), [conversation guidance](references/conversation-guidance.md), and [ownership](references/model.md). Select one main workflow with [intent routing](references/intent-routing.md); load specialist Skills only at their owned stages.
 
 Kimi owns plugin installation and updates through its plugin center. Do not run package-manager or marketplace commands from this Skill. After the user updates the plugin, start a new conversation before relying on newly loaded Skills or MCP tools.
 
-The release package supplies shared Core policy at [orchestration](../../references/core/orchestration.md) and [workflow boundaries](../../references/core/workflow-boundaries.md). Use these for phase budgets, Checkpoint recovery, state ownership and host fallbacks; live schemas and current user authorization remain authoritative.
+Shared Core policy lives in [orchestration](../../references/core/orchestration.md) and [workflow boundaries](../../references/core/workflow-boundaries.md). Live schemas and current user authorization remain authoritative.
 
 Inspect `active_project_id`. If empty, ask for a Project name or `project_id`; never choose the first listed Project.
 
-Before the first edit of a new standalone video or deliverable, do not assume the active Project is the intended target. If the user did not explicitly say to continue the active Project or provide a `project_id`, ask one concise question first: create a new Project or continue the current Project `<title/id>`. Recommend a new Project for a new deliverable. Never silently reuse or overwrite the active Project.
+Before the first edit of a new standalone video or deliverable, do not assume `active_project_id` is the intended target. Unless the user says to continue it or provides a `project_id`, ask once: create a new Project or continue `<title/id>`? Recommend a new Project. Never silently reuse or overwrite it.
 
 Read before writes; use returned refs. Reuse read evidence while Project, timeline, and revision are unchanged. Reread after writes, warnings, conflicts, or external changes; refresh before position-dependent commands.
 
@@ -25,10 +25,10 @@ Kimi handles OAuth; do not call `aixcut_login` first. Never use curl, direct dat
 
 ## Intent and recovery contract
 
-For every request use the short state machine `intent → inspect → plan → execute → verify → deliver`. Mechanical edits remain narrow: do not add voice, music, B-roll, Motion Graphics, or export unless explicitly requested. Heavyweight actions — export, generation or submission, deletion, and overwrite — run only when the user requested or explicitly authorized them, and never as a checkpoint between steps. An assembly request may expand scope only after its `EditPlan` names the requested stages.
+For every request use `intent → inspect → plan → execute → verify → deliver`. Mechanical edits stay narrow: add voice, music, B-roll, Motion Graphics, or export only when requested. Heavyweight actions — export, generation or submission, deletion, and overwrite — require explicit user authorization and never serve as checkpoints. Assembly may expand scope only after `EditPlan` names the stages.
 
-When a mutation returns `status_unknown`, preserve its original `idempotency_key`/`mutation_id` and query `aixcut_read(view="mutation_receipt")` with that identity. Treat `pending`, `unknown`, and `not_found` as unresolved until the receipt says `applied`, `duplicate`, `noop`, or `rejected`; never create a new key merely because a response was lost. Save a `Checkpoint` containing Project, timeline, revision, mutation identity and next action before leaving a recoverable stage.
+On `status_unknown`, keep the original `idempotency_key`/`mutation_id` and query `aixcut_read(view="mutation_receipt")`; `pending`, `unknown`, and `not_found` remain unresolved until `applied`, `duplicate`, `noop`, or `rejected`. Never create a new key for a lost response. Save a `Checkpoint` with Project, timeline, revision, mutation identity, and next action before leaving a recoverable stage.
 
-Use the packaged Core executable `node ${KIMI_SKILL_DIR}/../../scripts/workflow-host.mjs`. Validate the EditPlan before structural writes, attach `plan_context` to each planned mutation, and follow [executable workflow](references/workflow-host.md). After each atomic batch, create and save a Checkpoint with `save --directory <host-owned-workflow-directory>` and `{checkpoint}` on stdin; only `persisted: true` confirms cross-turn storage. On resume, inspect the current Project/timeline/revision first, then pass `{plan_id,current:{project_id,timeline_id,revision}}` to `resume --directory <same-directory>`. Follow `next_step`; never replay `completed_steps`. Without an available host-owned directory, the helper returns `persisted: false` and the workflow is not durable across sessions.
+Use packaged `node ${KIMI_SKILL_DIR}/../../scripts/workflow-host.mjs`. Validate `EditPlan`, attach `plan_context` to every planned mutation, and follow [executable workflow](references/workflow-host.md). After each batch, save a Checkpoint; only `persisted: true` proves cross-turn storage. On resume, inspect Project/timeline/revision, then call `resume` with `{plan_id,current:{project_id,timeline_id,revision}}`. Follow `next_step`; never replay completed steps. Without a host directory, work is not durable.
 
-Use the default repair budget: at most one schema correction, at most two revision-conflict read/replan cycles, and at most two provider attempts for one generation target. Save a Checkpoint when the budget is exhausted and deliver the recoverable state.
+Default repair budget: one schema correction, two revision-conflict read/replan cycles, and two provider attempts per generation target. Save a Checkpoint when exhausted and report the recoverable state.
