@@ -25,6 +25,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 ### Batching writes
 
 - Send one call per published action and track, not one call per element: pass the whole set through `items[]`, or every target through `targets`, in that single call. The add/set operations accept lists.
+- `aixcut_layout(action="update")` accepts exactly one `target`. For a batch of picture clips, use `aixcut_layout(action="set")` with `items[]`; never put `items` on `update`.
 - Never issue one call per clip, per label, or per segment when one supported call can carry the batch.
 - Never merge different actions, different tracks, or different domains into one call; only the live Tool Schema decides what may be combined.
 - Do not run structural writes on the same timeline concurrently.

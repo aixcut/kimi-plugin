@@ -5,6 +5,8 @@ description: "Edit speech-led videos such as interviews, courses, or podcasts, e
 
 # Speech-Led Editing in Aixcut
 
+When source media must be assembled into a new timeline, use `full_assembly` from the first plan. `mechanical` is only for exact cleanup on an already assembled timeline; do not start with it and switch modes later.
+
 ## Conversation guidance
 
 State the current editing stage and next step when useful. Reuse the user's stated editing intent and continue safe inspection or cleanup. Pause only for a choice that materially changes the edit or an operation with important risk. Verify speech and caption state before reporting completion.
