@@ -145,7 +145,7 @@ const REPLACEMENTS = [
     'keep browser handoff and user-selected file uploads in the Kimi host and specialist Skills.',
   ],
   [
-    '- `MCP_LOCAL_MEDIA_BRIDGE_UNREACHABLE`: The local media bridge URL is no longer serving the file. Do not retry the same URL. Either rerun the helper described by `aixcut-timeline-editing` to obtain its newly printed URL, or ask the user to upload through `prompt_add_material`. Never invent a URL.',
+    '- `MCP_LOCAL_MEDIA_BRIDGE_UNREACHABLE`: The bridge URL cannot serve the file because the bridge stopped, expired, moved, or its allowed origin does not match the Project editor origin. Inspect the bridge state and compare `allowed_origin` with the target Project page/editor origin. If they differ, rerun the helper with `--no-reuse --allowed-origin <project-editor-origin>`, then retry the failed import once with the new URL. Ask for manual upload only after that bounded recovery fails. Never invent a URL.',
     '- Uploaded file missing: when a file the user just selected does not appear in `aixcut_read(view="sources")`, wait about 15 seconds and reread `sources` once. If it is still missing, report it and ask the user to select the file again through `aixcut_frontend(action="prompt_add_material")`. Never treat the upload prompt opening as a completed upload.',
   ],
   [

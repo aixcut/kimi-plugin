@@ -22,6 +22,14 @@ const conversationGuidance = readFileSync(
   join(root, "skills/aixcut-basics/references/conversation-guidance.md"),
   "utf8",
 );
+const basicsSkill = readFileSync(
+  join(root, "skills/aixcut-basics/SKILL.md"),
+  "utf8",
+);
+const projectsSkill = readFileSync(
+  join(root, "skills/aixcut-projects/SKILL.md"),
+  "utf8",
+);
 const captionsReference = readFileSync(
   join(root, "skills/aixcut-captions/references/actions.md"),
   "utf8",
@@ -32,6 +40,10 @@ const assemblyGuidance = [
 ]
   .map((file) => readFileSync(join(root, file), "utf8"))
   .join("\n");
+const exportSkill = readFileSync(
+  join(root, "skills/aixcut-export/SKILL.md"),
+  "utf8",
+);
 
 test("music volume guidance names the update action and target", () => {
   assert.match(
@@ -39,6 +51,32 @@ test("music volume guidance names the update action and target", () => {
     /aixcut_audio\(action="update",[^)]*target[^)]*volume/i,
     "volume is only accepted by aixcut_audio update, so the Skill must not imply it belongs on add",
   );
+});
+
+test("new deliverables require an explicit Project choice", () => {
+  for (const skill of [basicsSkill, projectsSkill]) {
+    assert.match(skill, /new standalone|new video|new deliverable/i);
+    assert.match(skill, /active_project_id/);
+    assert.match(skill, /ask/i);
+  }
+  assert.match(projectsSkill, /never silently.*active Project/i);
+});
+
+test("created or duplicated timelines are activated and verified", () => {
+  for (const skill of [timelineSkill, assemblyGuidance]) {
+    assert.match(skill, /create|duplicate/i);
+    assert.match(skill, /activate_timeline/);
+    assert.match(skill, /verify|read back|status.*ready/i);
+  }
+});
+
+test("exports require authorization and capability-based renderer choice", () => {
+  assert.match(exportSkill, /authorization gate/i);
+  assert.match(exportSkill, /capabilities.*export_timeline/is);
+  assert.match(exportSkill, /headless rendering.*only when.*cloud-readable/is);
+  assert.match(exportSkill, /file_verified=false/i);
+  assert.doesNotMatch(exportSkill, /analyze_music_beats/);
+  assert.match(assemblyGuidance, /no automatic BPM|has none/i);
 });
 
 test("video-derived audio guidance uses media.extract_audio", () => {

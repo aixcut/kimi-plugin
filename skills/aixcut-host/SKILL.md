@@ -39,5 +39,8 @@ This Skill owns the boundary between Kimi and the Aixcut MCP server. Load it bef
 
 ## Export delivery
 
-- Aixcut export runs in the bound Project page and hands the finished file to the browser download flow. MCP does not return a server download URL.
-- Report the export filename, format, dimensions, byte size, and host download state. Present a local file only when Kimi provides a verified path.
+- Export requires explicit user authorization. A finished edit can prompt the user to export manually or ask the Agent to export; it is not export authorization.
+- Kimi has a built-in browser, but browser rendering is usable only when the target Project page is online and its `capabilities` include `export_timeline`. Use that page path when available.
+- If browser rendering is unavailable, use headless rendering only when every source is cloud-readable. Browser-local-only sources do not silently fall back to headless; ask the user to open the Project page or upload the originals.
+- Browser export success means the download was dispatched. Report `delivery.state` and `file_verified=false`; present a local path only when Kimi provides a verified path.
+- Do not automatically upload the rendered file, download it back, run ffprobe, or analyze it after export. Do those steps only after a separate user request.

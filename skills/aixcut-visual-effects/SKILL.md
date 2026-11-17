@@ -7,6 +7,8 @@ description: "Edit Aixcut effects, transitions, masks, groups, composition nodes
 
 Read before writing. Use `aixcut_read` views `effect`, `transition`, `mask`, `group`, `node`, `component`, `generator`, `motion` or `keyframe` to obtain stable refs. Query `*_catalog` before choosing a package, preset or parameter. Never guess a preset id or parameter name.
 
+Catalog reads are summary pages by default: use `offset` and `limit`, follow `has_more`/`next_offset`, and request at most 200 ids in one `ids` lookup only when the full definitions are needed. Never ask for a full unbounded catalog.
+
 Every mutation call is one atomic Zero batch. Use a new `idempotency_key` for each new change. If a result is `status_unknown`, read `mutation_receipt` with the original key before any retry.
 
 ## Tool selection
@@ -35,6 +37,8 @@ Use `aixcut_mask` with exactly one source: built-in `preset`, `source_clip`, or 
 Use `aixcut_group` when clips must follow an anchor. The anchor must be a member. Deleting a group does not delete its clips.
 
 Use `aixcut_node`, `aixcut_component` and `aixcut_motion` for authored composition structure. Definitions are property data, not executable code. Composition writes must preserve the existing component type and schema version unless the complete Contract upgrade is explicit.
+
+`aixcut_motion` applies only to a real video clip without composition content. A text clip, image composition, or any clip carrying `composition`/`text-content` is rejected with `MCP_MOTION_CLIP_UNSUPPORTED` before a JSONB write is attempted. Use the text clip's own composition animation model for those clips.
 
 Use `aixcut_generator` for source-free generated clips. Catalog availability is real capability information: an empty catalog means the capability is unavailable in this Project, not an invitation to invent a preset.
 
