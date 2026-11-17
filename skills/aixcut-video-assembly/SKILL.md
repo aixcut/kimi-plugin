@@ -34,6 +34,7 @@ Use this Skill for multi-stage work, such as turning source media into a 60-seco
 
 Resolve only relevant decisions that are still missing; treat this list as a guide, not a questionnaire:
 
+0. **Project target:** if the request is a new standalone video and the user did not explicitly choose the active Project, ask whether to create a new Project or continue the current Project. Recommend a new Project. Never silently assemble a new deliverable into the active Project.
 1. **Video goal:** duration, aspect ratio, platform, and use.
 2. **Audio:** voiceover? Background music? Should music sit below original audio?
 3. **Text:** captions? Should they follow the voice script or source speech?
@@ -44,7 +45,7 @@ Keep spoken captions and visual annotations as separate requirements. Captions f
 
 Visual annotations are a separate stage before caption generation. Classify each requested element as a spoken caption, static art text, or Motion Graph, place it on its dedicated track, and verify its clip kind and track before moving to captions.
 
-If the user requests multiple versions, A/B, portrait/landscape, or platform variants, first call `aixcut_timeline(action="list")` and duplicate a timeline per version. Include each version's `timeline_id` in later reads/writes. Generated assets are Project-scoped and can be reused; do not regenerate them for each version.
+If the user requests multiple versions, A/B, portrait/landscape, or platform variants, first call `aixcut_timeline(action="list")` and duplicate a timeline per version. Include each version's `timeline_id` in later reads/writes. After each create or duplicate, activate the new timeline with `aixcut_frontend(action="activate_timeline")` and verify the page reports it ready; otherwise the user may keep seeing the old timeline. Generated assets are Project-scoped and can be reused; do not regenerate them for each version.
 
 Ask one concise question at a time. If the user requests uninterrupted end-to-end execution, use reasonable reversible defaults for non-blocking choices and report them. Still resolve choices that materially change the content language, incur an unaccepted charge, or risk overwriting existing work.
 

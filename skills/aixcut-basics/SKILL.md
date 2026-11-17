@@ -13,6 +13,8 @@ The release package supplies shared Core policy at [orchestration](../../referen
 
 Inspect `active_project_id`. If empty, ask for a Project name or `project_id`; never choose the first listed Project.
 
+Before the first edit of a new standalone video or deliverable, do not assume the active Project is the intended target. If the user did not explicitly say to continue the active Project or provide a `project_id`, ask one concise question first: create a new Project or continue the current Project `<title/id>`. Recommend a new Project for a new deliverable. Never silently reuse or overwrite the active Project.
+
 Read before writes; use returned refs. Reuse read evidence while Project, timeline, and revision are unchanged. Reread after writes, warnings, conflicts, or external changes; refresh before position-dependent commands.
 
 Keep independent read calls parallel. Structural writes on the same timeline stay serial. Group the same action on the same track into one call using `items[]` or `targets`. Only the live Tool Schema decides what may be combined. Read affected views after each atomic batch.

@@ -45,6 +45,7 @@ Use `error.code`, `error.type`, `error.retryable`, and `error.next_action` to ch
 - `MCP_MUTATION_SERVER_REJECTED`: Read the latest snapshot and regenerate the operation. Do not replay the old payload unchanged.
 - `NLE_IDEMPOTENCY_CONFLICT`: The key is already bound to a different project, timeline, or action. Read the timeline and confirm whether the earlier write already achieved the intent before redoing. A same-key retry against the same target is reported as a replay instead, not as this error.
 - `MCP_TRACK_ENSURE_NOT_APPLIED`: Read-back found no track. Confirm the original receipt and current timeline before correcting anything; an absent projection alone does not authorize a new-key write.
+- `TIMELINE_ACTIVATION_DEFERRED`: The timeline mutation succeeded, but the visible Project page was not switched to the new timeline. Bring the target Project page online if needed, call `aixcut_frontend(action="activate_timeline", timeline_id=...)`, and verify the returned `status` is `ready` before reporting that the new timeline is visible.
 - `MCP_CANVAS_DEFAULTED`: This is a warning, not a failure. A `0×0` canvas was set to `1920×1080`. If portrait or another ratio is required, use `aixcut_project(action="canvas")` to override it.
 - `MCP_MUTATION_LOCAL_REJECTED`: Local validation failed, usually because a ref is stale or a range is out of bounds. Read fresh data and correct the input.
 - `MCP_PROJECTION_BARRIER_TIMEOUT`, `MCP_ZERO_QUERY_UNAVAILABLE`: The read did not finish before timeout. Retry the same read parameters.

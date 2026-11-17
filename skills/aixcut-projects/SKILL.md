@@ -9,6 +9,12 @@ description: "List, create, open, switch, or exit an Aixcut Project. Do not use 
 
 State whether the user is selecting, opening, creating, or leaving a Project and what happens next. After an open or create request, verify the page and active Project state before saying the user is ready to edit. If a required choice is missing, ask one concise question and recommend an option.
 
+## Active Project choice
+
+A new standalone video or deliverable is not permission to reuse the current MCP Project. If `active_project_id` is set and the user did not explicitly choose that Project for this deliverable or provide a `project_id`, ask one concise question before any edit: create a new Project, or continue the current Project `<title/id>`. Recommend creating a new Project for a new standalone video. Never silently edit the active Project because it happens to be open.
+
+After the user chooses, do not edit until the target is established. If they choose the current Project, state which Project will receive the work and verify its existing active binding instead of reopening an already connected page. If they choose a new Project, require a title, create it with `target="new_project"`, and verify the returned `active_project_id`.
+
 ## Session availability
 
 If the current session has no Aixcut tools because OAuth completed after its tool catalog was created, let Kimi finish authorization and start a new conversation before calling `aixcut_open`. Never use a subprocess, subagent, another MCP client, or a plain Project URL as a substitute; `browser_handoff` is bound to the Kimi session that opens it. If the tools remain unavailable, stop before creating a Project.

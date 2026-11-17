@@ -34,6 +34,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 
 - For versions, A/B variants, aspect-ratio adaptations, or “keep the original and make another”, call `aixcut_timeline(action="list")` first.
 - Create a new version with `aixcut_timeline(action="duplicate", source_timeline_id=...)`; use `create` only when the user explicitly wants a blank timeline.
+- Creating or duplicating a timeline does not by itself switch the visible Project page. After the write, require `data.active_timeline_id` to equal the new `timeline_id`; if it is absent, or the result warns `TIMELINE_ACTIVATION_DEFERRED`, call `aixcut_frontend(action="activate_timeline", timeline_id=...)` and verify the returned `status` is `ready` before saying the user is working in the new version.
 - After selecting a `timeline_id`, include it in every later read, edit, capture, and review for that version. Do not mix refs across timelines.
 - Do not create an extra timeline for a single-version request.
 
