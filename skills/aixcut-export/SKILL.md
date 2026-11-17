@@ -41,7 +41,7 @@ Local video is not uploaded in full by default. Browser rendering can use browse
 
 1. Bind the current inspected timeline revision and pass it as `expected_revision`.
 2. Call `aixcut_frontend(action="export_timeline")`. A supplied `timeline_id` does not change the user's current tab.
-3. Accepted does not mean complete. Follow `next_action`, then poll `export_timeline_status` until `succeeded` or `failed`.
+3. Accepted does not mean complete. Follow `next_action`, then poll `export_timeline_status` until `succeeded` or `failed`. It does not accept `export_id`: query the current Project page's singleton export runner with `action` and Project context only, and never pass the accepted `export_id` as a parameter.
 4. A successful result has `render_mode="browser"` and `delivery.kind="browser-download"`. `delivery.state="dispatched"` means the browser download was triggered; `file_verified=false` means the Agent has not read or validated the local file.
 5. Report the filename, byte size, MIME type, and that the file must be checked in the browser download location. Never claim that the file is durably saved or verified.
 6. Do not automatically upload the rendered file, download it back, run `ffprobe`, capture frames, or analyze it. Those actions require a later user request.
