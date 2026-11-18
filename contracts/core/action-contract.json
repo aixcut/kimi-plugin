@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "f05aea0a6558234abf45e2fc629c581fdc6325fdbf50dd240a3a78856ddce9e1",
+  "catalog_sha256": "32b33897a42f26d97d35dad97588a90386e482be2bb7f4e04ad4ee9e66eee457",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
@@ -3193,6 +3193,57 @@
       "example": {
         "target": "x",
         "action": "update"
+      }
+    },
+    {
+      "id": "upload_link.create",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "create"
+      },
+      "effect": "write",
+      "example": {
+        "action": "create"
+      }
+    },
+    {
+      "id": "upload_link.renew",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "renew"
+      },
+      "effect": "write",
+      "example": {
+        "action": "renew",
+        "upload_id": "x"
+      }
+    },
+    {
+      "id": "upload_link.revoke",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "revoke"
+      },
+      "effect": "write",
+      "example": {
+        "action": "revoke",
+        "upload_id": "x"
+      }
+    },
+    {
+      "id": "upload_link.status",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "status",
+        "upload_id": "x"
       }
     }
   ]

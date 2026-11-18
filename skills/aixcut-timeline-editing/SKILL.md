@@ -56,6 +56,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 | Canvas or full cleanup | `aixcut_project(action="canvas")`, `aixcut_project(action="clear")` |
 | Remote browser actions | `aixcut_frontend(action="page_status")`, `aixcut_frontend(action="capture_timeline_frames")` |
 | Upload a file the Agent itself holds | `aixcut_media(action="prepare_upload")`, `aixcut_media(action="complete_upload")` |
+| Upload when no headed browser or bridge can start | `aixcut_upload_link(action="create")`, `aixcut_upload_link(action="status")` |
 
 Send only fields declared by the selected Tool Schema. Speech operations edit the main voice track; text operations do not edit captions. After a structural change, reread before issuing a position-dependent command.
 
@@ -123,7 +124,7 @@ Local video does not require a complete server-side video copy. The browser keep
 
 Use `capture_source_frames` or `capture_timeline_frames` when visual evidence is needed. The result returns temporary JPEG URLs in `result.data.artifacts`. To save them locally, pass the exact JSON Tool result through stdin to `${KIMI_SKILL_DIR}/../../scripts/download-capture-artifacts.mjs <output-directory>`. Report a local path only after the helper succeeds; the remote MCP server does not write files to the local machine.
 
-For `aixcut_clip(action="layout")`, provide exactly one of `preset` or `box`. `box` uses 0–1 canvas ratios; `fit` is `contain`, `cover`, `fill`, or `none`; `opacity` is 0–1. After changing layout, capture one timeline frame and match each composition entry to its ref. Skip capture only when the final visible composition is unchanged; timing edits that change the visible image, subtitle placement or layer relationship require affected timeline frames. Volume and fades need audio evidence; without listening, audio quality is unjudgeable.
+For `aixcut_layout(action="update")`, provide exactly one of `preset` or `box`. `box` uses 0–1 canvas ratios; `fit` is `contain`, `cover`, `fill`, or `none`; `opacity` is 0–1. Use `aixcut_layout(action="set")` with `items` for several picture clips. Never pass layout fields to `aixcut_clip`. After changing layout, capture one timeline frame and match each composition entry to its ref. Skip capture only when the final visible composition is unchanged; timing edits that change the visible image, subtitle placement or layer relationship require affected timeline frames. Volume and fades need audio evidence; without listening, audio quality is unjudgeable.
 
 The editor does not expose reliable zoom, rotation, or anchor edits. Use `box` dimensions or a supported preset instead.
 

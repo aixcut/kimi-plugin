@@ -19,23 +19,25 @@ Finishing an edit is not export authorization. After final review, stop and tell
 | --- | --- |
 | Render and download through a capable Project page | `aixcut_frontend(action="export_timeline")`, `aixcut_frontend(action="export_timeline_status")` |
 | Submit, inspect or cancel a headless render | `aixcut_export` |
+| Acquire source files required by headless rendering | `aixcut_upload_link(action="create")`, `aixcut_upload_link(action="status")` |
 | Read the timeline, sources or captions before exporting | `aixcut_read` |
 | Check structure and renderability | `aixcut_review` |
 | Probe or recover the Project page | `aixcut_open`, `aixcut_frontend(action="page_status")` |
 
 ## Choose the render path after authorization
 
-Never select a path by host name or silently fall back to the other one. Use the available facts:
+Try the paths in order. Do not ask the user to choose between browser and headless rendering.
 
-1. Call `aixcut_frontend(action="page_status")` when a Project page may be available.
-2. Use **browser rendering** only when the target Project page is online and its `capabilities` include `export_timeline`.
-3. Otherwise use **headless rendering** only when every source required by the render is cloud-readable.
-4. If headless inputs are not cloud-readable, stop and explain the missing condition: open the target Project in a browser-capable client, or upload the original sources before retrying.
-5. If neither path is available, report the blocker. Do not submit a job that is known to fail.
+1. Try to start or connect the headed browser and open the target Project page.
+2. Use **browser rendering** when the page is online and its `capabilities` include `export_timeline`.
+3. If the headed browser cannot start, the page cannot be opened, or the capability is unavailable, use **headless rendering**.
+   Use headless rendering only when every source required by the render is cloud-readable.
+4. Headless rendering requires every source to be cloud-readable. If a required source is missing, call `aixcut_upload_link(action="create")`, present the link or QR, follow the same `upload_id`, and retry the original headless render only after the accepted files have `media_id` values.
+5. If neither the headed browser nor headless rendering is available, report the blocker. Do not submit a headless job that is known to lack required cloud-readable sources.
 
 If the target Project page is offline, call `aixcut_open(target="project", ...)`, open the complete `result.browser_handoff.url` once, and verify `presence_connections >= 1`. Do not retry `export_timeline` before the target page is online. After one handoff attempt, stop and ask the user to open the Project page manually.
 
-Local video is not uploaded in full by default. Browser rendering can use browser-local sources. Headless rendering cannot use a source that exists only in the browser.
+Local video is not uploaded in full by default. Browser rendering can use browser-local sources. Headless rendering cannot use a source that exists only in the browser, so use the temporary upload link only to acquire the missing cloud-readable originals before retrying headless rendering.
 
 ## Browser rendering
 
