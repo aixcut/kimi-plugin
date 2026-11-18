@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "32b33897a42f26d97d35dad97588a90386e482be2bb7f4e04ad4ee9e66eee457",
+  "catalog_sha256": "1d66849fdd111b641d49d61ae2854b8e7175ff7b9fc7386376ce8dd61637155d",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
@@ -26,6 +26,19 @@
     }
   },
   "actions": [
+    {
+      "id": "agent_bootstrap.start",
+      "tool": "aixcut_agent_bootstrap",
+      "selector": {
+        "field": "action",
+        "value": "start"
+      },
+      "effect": "write",
+      "example": {
+        "action": "start",
+        "intent": "timeline_editing"
+      }
+    },
     {
       "id": "arrange.close_gaps",
       "tool": "aixcut_arrange",
