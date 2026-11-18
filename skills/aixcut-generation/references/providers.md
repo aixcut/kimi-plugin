@@ -36,26 +36,6 @@ Defaults come from server configuration and may vary by environment. Pass `kind`
 | `style` | No | Advisory style hint; put the concrete style in the prompt for best results. |
 | `background` | No | Background option passed to the image model. |
 
-### `seedream`
-
-Seedream 5.0 Pro (`seedream-5-pro`) takes the shared image surface plus the fields only it implements. Frame size and ratio are resolved together, so `size`, `image_size` and `aspect_ratio` may be sent in any combination.
-
-| Key | Required | Description |
-| --- | --- | --- |
-| `mode` | No | `generate` (default) or `edit`; `edit` needs a reference image. |
-| `image` / `reference_images` | No | Up to 10 public HTTPS reference image URLs; the two names are equivalent. |
-| `size` | No | Defaults to `2K`; `1K`, `1.5K`, `2K`, or a supported `widthxheight`. |
-| `image_size` | No | `1K`, `1.5K`, or `2K`; an alias of the `size` tier. |
-| `aspect_ratio` / `ratio` | No | `16:9`, `9:16`, `1:1`, `4:5`, `3:4`, `4:3`; resolved into explicit pixels. |
-| `purpose` | No | Advisory hint (no quality knob on Seedream). |
-| `quality` | No | Advisory hint (no quality knob on Seedream). |
-| `style` | No | Advisory hint; put the concrete style in the prompt. |
-| `output_format` | No | `jpeg` (default) or `png`. |
-| `watermark` | No | Boolean; defaults to `true`. |
-| `optimize_prompt_options` | No | `{ "mode": "standard" }` by default; `fast` is also supported. |
-| `background` | No | `opaque` (default) or `transparent`; transparency requires one image and PNG output. |
-| `layer_decomposition` | No | Boolean; requires exactly one `image` and non-empty `size` rules from the catalog. |
-
 ### `video`
 
 | Key | Required | Description |
