@@ -5,6 +5,8 @@ description: "Edit speech-led videos such as interviews, courses, or podcasts, e
 
 # Speech-Led Editing in Aixcut
 
+When source media must be assembled into a new timeline, use `full_assembly` from the first plan. `mechanical` is only for exact cleanup on an already assembled timeline; do not start with it and switch modes later.
+
 ## Conversation guidance
 
 State the current editing stage and next step when useful. Reuse the user's stated editing intent and continue safe inspection or cleanup. Pause only for a choice that materially changes the edit or an operation with important risk. Verify speech and caption state before reporting completion.
@@ -39,6 +41,29 @@ Speech timing anchors downstream work. Keep this order:
 4. Add music and sound effects last, fitting them to the final duration.
 
 If an upstream stage changes, revisit dependent stages. Read back after each major stage.
+
+## Single-camera visual coverage
+
+When the speech comes from one fixed camera or one fixed two-shot, do not treat
+the source as two-shot-only. For an interview or podcast edit, a stable
+speaker-focused reframe is the normal single-camera substitute for a real
+single-camera angle.
+
+- Derive at most one stable framing box per speaker from the visible source
+  composition. Keep the speaker's full head, natural headroom, and shoulders.
+- Use the speaker-focused framing for substantive question or answer turns.
+  Keep the full two-shot for the opening, closing, natural interaction, and
+  turns where the speaker is uncertain.
+- A visually distinct shot must change composition, not only the source time.
+  Clips that keep the same framing count as one visual shot even when the
+  timeline contains several clips.
+- Build the speaker map from question/answer structure and at most one
+  representative face frame per distinct speaker. Do not sample every line,
+  compare mouth motion, perform lip-reading, or run exhaustive frame analysis.
+  If identity remains uncertain, keep the two-shot.
+- Before completion, verify every speaker-focused shot shows the correct
+  speaker, keeps natural headroom, and does not clip another person's body into
+  the frame.
 
 ## Speech actions
 

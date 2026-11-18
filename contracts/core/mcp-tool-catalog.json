@@ -1,7 +1,13 @@
 {
   "server_contract_version": "1.4.0",
-  "server_revision": "e72250a9faf80ff27b36613d5203daf5a1bf4e92",
+  "server_revision": "f93d24590125ab1a3256d08ba365186ecf7aa00c",
   "tools": [
+    {
+      "name": "aixcut_agent_bootstrap",
+      "actions": [
+        "start"
+      ]
+    },
     {
       "name": "aixcut_arrange",
       "actions": [
@@ -394,6 +400,15 @@
         "delete",
         "set",
         "update"
+      ]
+    },
+    {
+      "name": "aixcut_upload_link",
+      "actions": [
+        "create",
+        "renew",
+        "revoke",
+        "status"
       ]
     }
   ],

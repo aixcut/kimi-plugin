@@ -49,6 +49,17 @@ If the user requests multiple versions, A/B, portrait/landscape, or platform var
 
 Ask one concise question at a time. If the user requests uninterrupted end-to-end execution, use reasonable reversible defaults for non-blocking choices and report them. Still resolve choices that materially change the content language, incur an unaccepted charge, or risk overwriting existing work.
 
+## Duration and optional Hook
+
+Set the final duration budget before planning shots. A default Hook range in the
+user prompt is conditional, not additive. If the source is a short single
+conversation, or the Hook beats would repeat material used in the body, omit the standalone Hook and use the strongest chronological opening instead. Add a Hook
+only when it has independent highlight material and fits inside the budget
+without duplication. Report the omission instead of extending the deliverable
+with repeated content. Before finalizing the plan, count visually distinct shots
+rather than timeline clip count, and match the primary source frame rate unless
+the user asks otherwise.
+
 ## Audio intent gate
 
 Before choosing any audio action, read the Project, current Timeline, source audio and existing voice or narration, existing music, and each relevant source's `transcript_status`. Do not infer an audio request from the fact that this Skill is being used. Classify the request with these explicit states:

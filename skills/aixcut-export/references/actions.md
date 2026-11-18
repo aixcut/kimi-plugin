@@ -1,6 +1,6 @@
 # Export Action Reference
 
-Project export has two explicit paths. Use browser rendering when the target Project page is online and supports `export_timeline`; otherwise use `aixcut_export` only when every source is cloud-readable. Never fall back silently.
+Project export tries the headed browser first. When the Project page is online and supports `export_timeline`, use browser rendering. If the browser cannot start or the page capability is unavailable, use headless rendering when every source is cloud-readable. If a required source is missing from cloud storage, acquire it through a temporary upload link before retrying headless rendering.
 
 ## Common fields
 
@@ -16,6 +16,8 @@ Project export has two explicit paths. Use browser rendering when the target Pro
 | aixcut_frontend(action="export_timeline") | — | — | `timeline_id`, `expected_revision`, `format`, `width`, `height`, `frame_rate`, `timeout_ms`, `workspace_id` | Render and download from the open Project page. A supplied `timeline_id` does not switch the current page tab. Returns when accepted. |
 | aixcut_frontend(action="export_timeline_status") | — | — | `timeout_ms`, `workspace_id` | Read browser export status from the page. |
 | `aixcut_export(action="submit")` | `kind` | — | `range`, `output`, `format`, `time_ms`, `idempotency_key` | Submit a headless frame or media render. Poll with `aixcut_export(action="get")`. |
+| `aixcut_upload_link(action="create")` | — | — | — | Create a temporary upload link for sources missing from cloud storage |
+| `aixcut_upload_link(action="status")` | — | `upload_id` | — | Follow the same upload link until accepted files have `media_id` |
 
 ## Submit example
 

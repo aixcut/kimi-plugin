@@ -10,7 +10,9 @@
         "required": [
           "aixcut_read"
         ],
-        "optional": [],
+        "optional": [
+          "aixcut_agent_bootstrap"
+        ],
         "forbidden": [
           "aixcut_login"
         ]
@@ -82,7 +84,8 @@
           "aixcut_export"
         ],
         "optional": [
-          "aixcut_open"
+          "aixcut_open",
+          "aixcut_upload_link"
         ],
         "forbidden": []
       },
@@ -265,7 +268,8 @@
           "aixcut_track"
         ],
         "optional": [
-          "aixcut_media"
+          "aixcut_media",
+          "aixcut_upload_link"
         ],
         "forbidden": [
           "aixcut_login"

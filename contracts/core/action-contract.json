@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "f05aea0a6558234abf45e2fc629c581fdc6325fdbf50dd240a3a78856ddce9e1",
+  "catalog_sha256": "1d66849fdd111b641d49d61ae2854b8e7175ff7b9fc7386376ce8dd61637155d",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
@@ -26,6 +26,19 @@
     }
   },
   "actions": [
+    {
+      "id": "agent_bootstrap.start",
+      "tool": "aixcut_agent_bootstrap",
+      "selector": {
+        "field": "action",
+        "value": "start"
+      },
+      "effect": "write",
+      "example": {
+        "action": "start",
+        "intent": "timeline_editing"
+      }
+    },
     {
       "id": "arrange.close_gaps",
       "tool": "aixcut_arrange",
@@ -3193,6 +3206,57 @@
       "example": {
         "target": "x",
         "action": "update"
+      }
+    },
+    {
+      "id": "upload_link.create",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "create"
+      },
+      "effect": "write",
+      "example": {
+        "action": "create"
+      }
+    },
+    {
+      "id": "upload_link.renew",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "renew"
+      },
+      "effect": "write",
+      "example": {
+        "action": "renew",
+        "upload_id": "x"
+      }
+    },
+    {
+      "id": "upload_link.revoke",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "revoke"
+      },
+      "effect": "write",
+      "example": {
+        "action": "revoke",
+        "upload_id": "x"
+      }
+    },
+    {
+      "id": "upload_link.status",
+      "tool": "aixcut_upload_link",
+      "selector": {
+        "field": "action",
+        "value": "status"
+      },
+      "effect": "write",
+      "example": {
+        "action": "status",
+        "upload_id": "x"
       }
     }
   ]

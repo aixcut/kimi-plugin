@@ -7,6 +7,8 @@ description: "Mandatory entry for every Aixcut task: context, intent routing, re
 
 Follow [language](references/language.md), [conversation guidance](references/conversation-guidance.md), and [ownership](references/model.md). Select one main workflow with [intent routing](references/intent-routing.md); load specialist Skills only at their owned stages.
 
+When no installed Aixcut Skill is available, call `aixcut_agent_bootstrap(action="start", intent=...)` before using other Aixcut tools. Installed plugin Skills take precedence and do not need that bootstrap call.
+
 Kimi owns plugin installation and updates through its plugin center. Do not run package-manager or marketplace commands from this Skill. After the user updates the plugin, start a new conversation before relying on newly loaded Skills or MCP tools.
 
 Shared Core policy lives in [orchestration](../../references/core/orchestration.md) and [workflow boundaries](../../references/core/workflow-boundaries.md). Live schemas and current user authorization remain authoritative.
