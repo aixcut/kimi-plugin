@@ -12,6 +12,10 @@ This reference lists fields for each action. Follow the main Skill for workflow,
 - `plan_context`: Required on the protected actions marked in the Required column. Pass it at the Tool's top level, not inside `params`. Build it from the latest read with `project_id`, `timeline_id`, `base_revision`, `mode`, `preserve`, `delete_refs`, and the exact `authorized_actions`; the `aixcut-basics` Skill documents the workflow host contract.
 - Every Tool accepts a strict object. Send only fields listed here; extra fields are rejected.
 
+`kind` is limited to editor-supported values: `video`, `audio`, `text`, `motion-graph`, and `effect`. Images use `kind="video"`. `graphic` and `composition` are not valid public MCP inputs.
+
+`created` contains typed entries `{ id, ref, type }`. Caption and text writes can create both clip and component rows; count `clip:` entries when reporting actual clips.
+
 ## Frontend request shapes
 
 `aixcut_frontend` has two input shapes; follow the live action schema rather than moving fields between them:

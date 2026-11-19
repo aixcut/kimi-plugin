@@ -186,5 +186,7 @@ test("project-level writes require explicit targets and the right action shapes"
   assert.match(timeline, /Never send `items` or `targets` to `update`/i);
   assert.match(timeline, /text tool has no `time` action/i);
   assert.match(timeline, /do not use a `values` wrapper/i);
+  assert.match(timeline, /Images use `kind="video"`/i);
+  assert.match(timeline, /`created` contains typed entries/i);
   assert.match(exportRef, /Never wrap them in `params`/i);
 });

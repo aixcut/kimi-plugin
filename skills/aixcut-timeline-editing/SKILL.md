@@ -64,6 +64,8 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 
 Send only fields declared by the selected Tool Schema. Speech operations edit the main voice track; text operations do not edit captions. After a structural change, reread before issuing a position-dependent command.
 
+Writable clip kinds are `video`, `audio`, `text`, `motion-graph`, and `effect`. Images use `kind="video"`; do not create `graphic` or `composition`, because the editor cannot project, capture, or render those public MCP inputs.
+
 ## Keep visual layers separate
 
 - The caption track is only for text that follows spoken words. Ingredient labels, arrows, circles, callouts, titles, and other visual annotations are not captions.
@@ -85,6 +87,7 @@ Treat every requested visual annotation as a typed timeline element before writi
 ## Idempotency and result states
 
 - Treat `applied`, `noop`, and `applied_with_warning` according to their literal meanings.
+- `created` contains typed entries `{ id, ref, type }`. A caption or text write can create both clip rows and component rows, so count the `clip:` entries when reporting actual clips.
 - `duplicate: true` means the UUID replayed an earlier successful write and did not add another change.
 - For `status_unknown`, preserve every original parameter and reuse the same UUID.
 - Never reuse a UUID for different parameters or intent. A same-key retry against the same project, timeline and action is treated as a replay (`duplicate: true`) even when the re-planned payload drifted; `NLE_IDEMPOTENCY_CONFLICT` means the key was reused for a different target, so check the timeline before redoing with a fresh UUID.
