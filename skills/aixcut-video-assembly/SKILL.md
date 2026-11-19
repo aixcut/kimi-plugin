@@ -60,6 +60,16 @@ with repeated content. Before finalizing the plan, count visually distinct shots
 rather than timeline clip count, and match the primary source frame rate unless
 the user asks otherwise.
 
+## Pre-write freeze
+
+Before the first structural write:
+
+- Read the available transcript and repair obvious ASR fragments or word splits before they become caption work.
+- Freeze the Hook beats, body order, speaker map, visible shot plan, target canvas, and duration budget.
+- Verify every Hook opening beat is understandable without an unseen question. If the first beat begins with a pronoun or depends on missing context, replace the beat before writing.
+- Defer caption regeneration until speech, structure, and layout are frozen. After that, regenerate once and only repair specific caption issues.
+- Do not rebuild the full primary sequence after a local Hook or caption correction; use the narrowest replacement action that achieves the change.
+
 ## Audio intent gate
 
 Before choosing any audio action, read the Project, current Timeline, source audio and existing voice or narration, existing music, and each relevant source's `transcript_status`. Do not infer an audio request from the fact that this Skill is being used. Classify the request with these explicit states:

@@ -17,8 +17,8 @@ This reference maps each published caption operation to its fields. Source selec
 | --- | --- | --- | --- | --- |
 | aixcut_caption(action="mode") | — | `mode` | — | Set caption mode: `auto` follows the primary video track and rebuilds all captions, replacing manual content; `manual` allows direct editing. |
 | aixcut_caption(action="regenerate") | — | — | — | Rebuild the caption track from video-clip transcripts. If no transcript exists, it returns an empty result with a warning. |
-| aixcut_caption(action="set") | — | `items` | — | Replace all captions. |
-| aixcut_caption(action="add") | — | `items` | `start_ms` | Append captions; if no start is supplied, append at the end. |
+| aixcut_caption(action="set") | — | `items` | — | Replace all captions. Each item can carry its own `start_ms`, `duration_ms`, `style`, `x`, `y`, and `highlight_ranges`. |
+| aixcut_caption(action="add") | — | `items` | `start_ms` | Append captions; if no start is supplied, append at the end. Each item can carry its own `start_ms`, `duration_ms`, `style`, `x`, `y`, and `highlight_ranges`. |
 | aixcut_caption(action="update") | — | `target` | `text`, `values`, `style`, `highlight_ranges`, `x`, `y`, `enabled`, `duration_ms` | Update one caption's fields or content. |
 | aixcut_caption(action="delete") | — | `target` | — | Delete one caption. |
 | aixcut_caption(action="split") | — | `target` | `at_ms`, `char_index`, `to_ms` | Split one caption into two by time or character position. |

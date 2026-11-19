@@ -58,6 +58,9 @@ single-camera angle.
   two-shot where identity is genuinely uncertain.
 - Derive at most one stable framing box per speaker from the visible source
   composition. Keep the speaker's full head, natural headroom, and shoulders.
+- Prefer the widest safe crop that excludes the other speaker. If the crop must
+  be enlarged more than 1.5x to the output height, verify final-revision frames
+  and report the sharpness tradeoff instead of treating it as a quality pass.
 - Use the speaker-focused framing for substantive question or answer turns.
   Keep the full two-shot for the opening, closing, natural interaction, and
   turns where the speaker is uncertain.

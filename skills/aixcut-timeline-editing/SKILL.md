@@ -30,12 +30,14 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 - Never merge different actions, different tracks, or different domains into one call; only the live Tool Schema decides what may be combined.
 - Do not run structural writes on the same timeline concurrently.
 - After each write, treat the returned `revision_after` as the next revision. Derived caption writes may advance it even when the root write succeeded.
+- `aixcut_arrange(action="close_gaps")` moves linked tracks. Use it only after the primary structure is frozen, then reread speech and captions because their positions may have changed.
 - Reuse the last read while the timeline is unchanged; reread before a position-dependent command and after each atomic batch.
 
 ## Multiple timelines and versions
 
 - For versions, A/B variants, aspect-ratio adaptations, or “keep the original and make another”, call `aixcut_timeline(action="list")` first.
 - Create a new version with `aixcut_timeline(action="duplicate", source_timeline_id=...)`; use `create` only when the user explicitly wants a blank timeline.
+- When creating a timeline, pass the requested or source-derived aspect ratio/frame rate in the create call. Do not create a default-shaped timeline and correct it after content is placed.
 - Creating or duplicating a timeline does not by itself switch the visible Project page. After the write, require `data.active_timeline_id` to equal the new `timeline_id`; if it is absent, or the result warns `TIMELINE_ACTIVATION_DEFERRED`, call `aixcut_frontend(action="activate_timeline", timeline_id=...)` and verify the returned `status` is `ready` before saying the user is working in the new version.
 - After selecting a `timeline_id`, include it in every later read, edit, capture, and review for that version. Do not mix refs across timelines.
 - Do not create an extra timeline for a single-version request.
@@ -67,6 +69,7 @@ Send only fields declared by the selected Tool Schema. Speech operations edit th
 - The caption track is only for text that follows spoken words. Ingredient labels, arrows, circles, callouts, titles, and other visual annotations are not captions.
 - Add static or editable text annotations with `aixcut_text(action="add")` on a non-caption text track. For an existing Motion Graph asset, add it with `aixcut_clip(action="add")` on a video overlay track and set that item's `kind` to `motion-graph`; the default `video` kind rejects Motion Graph media. Never target a text or caption track with a Motion Graph.
 - Before adding an annotation, read the track list and choose a track whose kind matches the asset. After the write, read back the clip kind and track. If placement fails or lands on the wrong layer, correct or move the requested element; do not silently delete it or count subtitles as a replacement.
+- Before placing a caption plate, badge, sticker, or CTA, define the intended stacking and safe zones. At every overlapping time, the plate must remain below caption text and must not cover a higher-priority overlay; verify the composed frame after the layer order is final.
 - If no supported asset or operation can create the requested animation, report that limitation and preserve it as unfinished work; do not substitute a caption or claim the animation is complete.
 
 ### Motion Graph placement protocol
@@ -102,6 +105,8 @@ Treat every requested visual annotation as a typed timeline element before writi
 Original/source audio or narration, AI-generated voice, BGM/music, and SFX/sound effects are different audio roles. Keep each role on its separate dedicated track; never treat an AI voice clip as a replacement for original audio unless replacement was explicitly requested.
 
 Before every audio write, read the current timeline and track list, then confirm the target track and the intended start/end range. Read the source audio and existing voice state when deciding whether a human voice already covers that range. Reuse a correct existing narration for edit-only requests and skip new voice placement; this prevents double voice or overlapping narration.
+
+Before muting a video item's source audio, inspect its component roster. If the item has no `audio` component or audio payload, it has nothing to mute: report the structural fact and do not call `aixcut_audio(action="update")` or guess an audio ref. Video-only B-roll does not require a mute write.
 
 Only add BGM/music when it is explicitly enabled, requested, or confirmed. When music is enabled, place it on its own track with both fade-in and fade-out; after read-back, lower its volume through `aixcut_audio(action="update", target="clip:...", volume=0.2–0.4)` under voice or narration. Leave optional or unmentioned music off until confirmation. SFX follows the same separate-track and range-confirmation rule.
 

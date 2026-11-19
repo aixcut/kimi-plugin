@@ -17,9 +17,9 @@ Inspect `active_project_id`. If empty, ask for a Project name or `project_id`; n
 
 Before the first edit of a new standalone video or deliverable, do not assume `active_project_id` is the intended target. Unless the user says to continue it or provides a `project_id`, ask once: create a new Project or continue `<title/id>`? Recommend a new Project. Never silently reuse or overwrite it.
 
-Read before writes; use returned refs. Reuse read evidence while Project, timeline, and revision are unchanged. Reread after writes, warnings, conflicts, or external changes; refresh before position-dependent commands.
+Read before writes; use returned refs. Reuse read evidence while Project, timeline, and revision are unchanged. A successful write invalidates `plan_context`; reread the affected Timeline, update `base_revision` from `revision_after`, and rebuild `plan_context` before the next mutation.
 
-Keep independent read calls parallel. Structural writes on the same timeline stay serial. Group the same action on the same track into one call using `items[]` or `targets`. Only the live Tool Schema decides what may be combined. Read affected views after each atomic batch.
+Keep independent read calls parallel. Structural writes on the same timeline stay serial. Group same-action items in one call and keep per-item timing, style, and highlight data inside each item. Only the live Tool Schema decides what may be combined. Read affected views after each atomic batch.
 
 Reuse `idempotency_key` only for identical, explicitly permitted retries. For `status_unknown`, confirm the receipt before taking any dependent write. For `async`, follow `job_id` and `next_action` until terminal. Business fields are in `result`; `noop` is final, `applied_with_warning` requires reporting warnings.
 

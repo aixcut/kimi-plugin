@@ -10,6 +10,7 @@ Guide the user through the whole Aixcut workflow, not only login or project setu
 - Distinguish accepted, running, complete, failed, and unknown. A submitted request is not a completed result.
 - Continue asynchronous work when the Host and tools allow it. If the user must act, name the exact action and ask the user to send one more message when it is done; the Host does not resume a turn that is already waiting.
 - Report only meaningful progress. At completion, summarize verified results, remaining work, and the most useful next action.
+- Tool logging, Checkpoints, and trace reconstruction are bookkeeping, not edit stages. Record outcomes after a batch and continue the edit; never pause to rewrite a journal or trace while the timeline is still being assembled.
 
 ## Keep readiness states separate
 

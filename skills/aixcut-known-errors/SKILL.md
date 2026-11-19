@@ -45,6 +45,9 @@ Use `error.code`, `error.type`, `error.retryable`, and `error.next_action` to ch
 ## Mutation conflicts and uncertain state
 
 - `MCP_MUTATION_SERVER_REJECTED`: Read the latest snapshot and regenerate the operation. Do not replay the old payload unchanged.
+- `MCP_PLAN_REQUIRED`: Attach the complete `plan_context` from `details.example`; use the current Project, Timeline and revision. Do not probe fields one at a time.
+- `MCP_PLAN_SCOPE_CONFLICT`: Correct only the reported refs/actions. For deletion, use `details.missing_delete_refs` or `details.required_delete_refs`; never put the Timeline id in `delete_refs`.
+- `MCP_ARGUMENT_UNKNOWN`: Use `details.accepted_fields` and retry with the declared field names only.
 - `MCP_PLAN_REVISION_STALE`: Re-read once, then retry the same intended change with the current revision. If the prior response included `MCP_CAPTION_AUTO_REGENERATED`, its final `revision_after` is authoritative; never replay the root write.
 - `MCP_CAPTION_AUTO_REGENERATED`: This is a derived-write warning, not a failed edit. Continue from the same response's `revision_after`; do not reuse the plan's pre-write revision.
 - `NLE_IDEMPOTENCY_CONFLICT`: The key is already bound to a different project, timeline, or action. Read the timeline and confirm whether the earlier write already achieved the intent before redoing. A same-key retry against the same target is reported as a replay instead, not as this error.

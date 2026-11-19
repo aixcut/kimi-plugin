@@ -159,3 +159,17 @@ test("caption add guidance shows the items array form", () => {
     "caption add only accepts items[]; a worked example prevents a rejected first call",
   );
 });
+
+test("word highlights and revision recovery stay batch-first", () => {
+  const basics = readFileSync(join(root, "skills/aixcut-basics/SKILL.md"), "utf8");
+  const captions = readFileSync(join(root, "skills/aixcut-captions/SKILL.md"), "utf8");
+  const actions = readFileSync(join(root, "skills/aixcut-captions/references/actions.md"), "utf8");
+  const timeline = readFileSync(join(root, "skills/aixcut-timeline-editing/SKILL.md"), "utf8");
+
+  assert.match(basics, /successful write invalidates.*plan_context/is);
+  assert.match(basics, /rebuild `plan_context` before the next mutation/i);
+  assert.match(captions, /complete sequence in one `set` or `add` call/i);
+  assert.match(captions, /each item carries its own `duration_ms` and `highlight_ranges`/i);
+  assert.match(actions, /`highlight_ranges`/);
+  assert.match(timeline, /no `audio` component.*nothing to mute/is);
+});
