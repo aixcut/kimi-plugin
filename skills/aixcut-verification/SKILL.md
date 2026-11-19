@@ -60,7 +60,7 @@ Do not capture frames for timing-only edits (trim, split, move, or speed), volum
 
 ## 有界播放检查
 
-仅当公开 Schema 包含此动作时，使用 `aixcut_frontend(action="playback_check")`，携带当前页面的 `timeline_id`、最新 `expected_revision`、`start_ms` 和 `target_ms`；一次区间最多 10 秒。它会短时播放并还原播放头，不修改工程；用户正在播放时拒绝接管。只有 `started=true`、`reached_target=true`、`interrupted=false`、`playback_error=null` 才能证明该区间的播放时钟推进。绑定过期时重新读取，用户接管时停止检查。
+仅当公开 Schema 包含此动作时，使用 `aixcut_frontend(action="playback_check")`，携带当前页面的 `timeline_id`、最新 `expected_revision`、`start_ms` 和 `target_ms`；一次区间最多 10 秒。它会短时播放并还原播放头，不修改工程。只有 `playback_state=completed` 才能证明该区间的播放时钟推进；`playback_state=blocked_by_user_playback` 表示用户正在控制播放，不要重试或接管，音频区间保持 `unjudgeable`。绑定过期时重新读取。
 
 `audio_track_present` 仅证明轨道结构，`audio_review=unjudgeable` 仍需实际试听。区间检查不能证明全片可播放、音画同步或声音质量，不能据此把音频证据改成 pass。
 

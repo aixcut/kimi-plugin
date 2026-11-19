@@ -49,6 +49,13 @@ the source as two-shot-only. For an interview or podcast edit, a stable
 speaker-focused reframe is the normal single-camera substitute for a real
 single-camera angle.
 
+- A speaker-focused reframe is not a fabricated camera angle. When the user
+  requires speaker-picture sync, it is the required fallback unless the
+  reframed image quality is unusable. Do not skip it merely because the source
+  has no real camera cuts.
+- Missing diarization does not waive speaker-picture sync. Infer the speaker
+  from the question/answer structure and representative frames, then keep a
+  two-shot where identity is genuinely uncertain.
 - Derive at most one stable framing box per speaker from the visible source
   composition. Keep the speaker's full head, natural headroom, and shoulders.
 - Use the speaker-focused framing for substantive question or answer turns.

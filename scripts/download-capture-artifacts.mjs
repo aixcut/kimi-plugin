@@ -9,17 +9,19 @@ if (!outputDir) throw new Error('Usage: download-capture-artifacts.mjs <output-d
 const chunks = [];
 for await (const chunk of process.stdin) chunks.push(chunk);
 const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-const result = payload?.result;
-if (payload?.status !== 'ok' || payload?.tool !== 'aixcut_frontend' || !String(result?.action).startsWith('capture_') || !Array.isArray(result?.data?.artifacts)) {
+const result = payload?.result ?? payload;
+const action = result?.action ?? payload?.action;
+const artifacts = result?.data?.artifacts ?? result?.artifacts ?? payload?.data?.artifacts ?? payload?.artifacts;
+if ((payload?.tool && payload.tool !== 'aixcut_frontend') || !String(action).startsWith('capture_') || !Array.isArray(artifacts)) {
   throw new Error('Expected a successful aixcut_frontend capture result on stdin');
 }
-if (result.data.artifacts.length < 1 || result.data.artifacts.length > 8) throw new Error('Invalid artifact count');
+if (artifacts.length < 1 || artifacts.length > 8) throw new Error('Invalid artifact count');
 
 const targetDir = resolve(outputDir);
 await mkdir(targetDir, { recursive: true });
 let total = 0;
 const written = [];
-for (const artifact of result.data.artifacts) {
+for (const artifact of artifacts) {
   const url = new URL(artifact.download_url);
   if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Artifact URL must use HTTPS');
   const declared = Number(artifact.byte_size);

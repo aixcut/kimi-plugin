@@ -74,7 +74,9 @@ test("exports require authorization and capability-based renderer choice", () =>
   assert.match(exportSkill, /authorization gate/i);
   assert.match(exportSkill, /capabilities.*export_timeline/is);
   assert.match(exportSkill, /headless rendering.*only when.*cloud-readable/is);
-  assert.match(exportSkill, /file_verified=false/i);
+  assert.match(exportSkill, /prompt_opened=true/i);
+  assert.match(exportSkill, /Do not call `export_timeline_status`/i);
+  assert.match(exportSkill, /user owns the remaining export/i);
   assert.doesNotMatch(exportSkill, /analyze_music_beats/);
   assert.match(assemblyGuidance, /no automatic BPM|has none/i);
 });

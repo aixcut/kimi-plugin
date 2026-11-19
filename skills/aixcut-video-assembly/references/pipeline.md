@@ -48,7 +48,6 @@ For multiple versions, call `aixcut_timeline(action="list")`, then duplicate the
 | aixcut_generate(action="list") | — |
 | aixcut_generate(action="cancel") | — |
 | aixcut_frontend(action="export_timeline") | — |
-| aixcut_frontend(action="export_timeline_status") | — |
 
 ## Stage 0: Confirm source readiness
 
@@ -137,7 +136,7 @@ Compare the result with the agreed script/shot plan and representative visual ev
 
 ## Stage 7: Export
 
-Use `aixcut-export` for page export and status polling. Run this stage once, at the end, and only when the user requested or explicitly authorized an export. Never export between stages or to show progress on an unfinished edit. The finished file is downloaded by the user's browser and has no server download URL. Report only the filename, size, and format returned by the page.
+Use `aixcut-export` to open the page export prompt once, at the end, and only when the user requested or explicitly authorized an export. Stop as soon as `prompt_opened=true`; the user owns the local export and download. Never export between stages or to show progress on an unfinished edit.
 
 ## Common symptoms
 
@@ -148,4 +147,4 @@ Use `aixcut-export` for page export and status polling. Run this stage once, at 
 | Abrupt music start or end | Music has no fades | Add fades to the music clip |
 | Narration is hard to hear | Music volume is too high | Lower music `volume` using `aixcut-timeline-editing` |
 | Beat alignment cannot be verified | No user-supplied BPM/timestamps or verified action points are available, and the web runtime has no beat-analysis action | Report alignment as heuristic; do not invent BPM or beat-matched shots |
-| Export fails while the page is open | Page export failed or media access expired | Check `export_timeline_status`; ask the user to click the page to restore access if required |
+| Export prompt cannot open | The page is offline, lacks `export_timeline`, or media access expired | Follow `aixcut-export` recovery; ask the user to open or click the page if required. Do not poll automatically |

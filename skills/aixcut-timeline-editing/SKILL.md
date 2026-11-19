@@ -29,6 +29,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 - Never issue one call per clip, per label, or per segment when one supported call can carry the batch.
 - Never merge different actions, different tracks, or different domains into one call; only the live Tool Schema decides what may be combined.
 - Do not run structural writes on the same timeline concurrently.
+- After each write, treat the returned `revision_after` as the next revision. Derived caption writes may advance it even when the root write succeeded.
 - Reuse the last read while the timeline is unchanged; reread before a position-dependent command and after each atomic batch.
 
 ## Multiple timelines and versions

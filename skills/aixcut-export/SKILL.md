@@ -7,7 +7,7 @@ description: "Export an Aixcut Project only after explicit user authorization, u
 
 ## Conversation guidance
 
-State the export's current status and next step when useful. Continue checks and polling when possible. Distinguish queued, rendering, completed, failed, and unknown; report an export as complete only after its result is available.
+After the export prompt opens, stop and let the user export locally. Do not poll, wait for a file, or report render completion unless the user later says the export finished.
 
 ## Authorization gate
 
@@ -17,7 +17,7 @@ Finishing an edit is not export authorization. After final review, stop and tell
 
 | Intent | Tool |
 | --- | --- |
-| Render and download through a capable Project page | `aixcut_frontend(action="export_timeline")`, `aixcut_frontend(action="export_timeline_status")` |
+| Open the local browser export dialog | `aixcut_frontend(action="export_timeline")` |
 | Submit, inspect or cancel a headless render | `aixcut_export` |
 | Acquire source files required by headless rendering | `aixcut_upload_link(action="create")`, `aixcut_upload_link(action="status")` |
 | Read the timeline, sources or captions before exporting | `aixcut_read` |
@@ -41,14 +41,10 @@ Local video is not uploaded in full by default. Browser rendering can use browse
 
 ## Browser rendering
 
-1. Bind the current inspected timeline revision and pass it as `expected_revision`.
-2. Call `aixcut_frontend(action="export_timeline")`. A supplied `timeline_id` does not change the user's current tab.
-3. Accepted does not mean complete. Follow `next_action`, then poll `export_timeline_status` until `succeeded` or `failed`. It does not accept `export_id`: query the current Project page's singleton export runner with `action` and Project context only, and never pass the accepted `export_id` as a parameter.
-4. A successful result has `render_mode="browser"` and `delivery.kind="browser-download"`. `delivery.state="dispatched"` means the browser download was triggered; `file_verified=false` means the Agent has not read or validated the local file.
-5. Report the filename, byte size, MIME type, and that the file must be checked in the browser download location. Never claim that the file is durably saved or verified.
-6. Do not automatically upload the rendered file, download it back, run `ffprobe`, capture frames, or analyze it. Those actions require a later user request.
-
-If the user cannot find the file, check the browser download list and blocked-download notice before considering another export.
+1. Call `aixcut_frontend(action="export_timeline")` only after checking that the Project page is online and advertises `export_timeline`.
+2. Stop when the result has `prompt_opened=true`. The page opened the user's export dialog; the Agent's job is finished.
+3. Do not call `export_timeline_status`, wait for rendering, inspect the download location, or claim a file exists.
+4. If the user later says the export is complete and asks for follow-up, continue from that user message.
 
 ## Headless rendering
 
@@ -71,7 +67,7 @@ If the user later asks to analyze or verify the finished file:
 
 | Error | Meaning and action |
 | --- | --- |
-| `MCP_EXPORT_ALREADY_RUNNING` | Do not submit again; call `export_timeline_status`. |
+| `MCP_EXPORT_ALREADY_RUNNING` | The page already has an active export. Tell the user and let them finish it; do not start another or poll automatically. |
 | `MCP_EXPORT_INVALID_INPUT` | Correct the format, dimensions, or frame rate and submit again. |
 | `MCP_EXPORT_FAILED` | Explain `error_message`; retry once only with a justified parameter change. |
 | `MCP_EXPORT_CANCELLED` | Report that the user cancelled the export. Do not retry as a system failure. |
@@ -87,4 +83,4 @@ If the user later asks to analyze or verify the finished file:
 
 ## Completion
 
-Complete only when the chosen path reaches a terminal success: browser status `succeeded` with download dispatched, or headless job `succeeded` with an artifact. Report the actual render mode and delivery state separately.
+For local browser export, complete the Agent action when `prompt_opened=true`. The user owns the remaining export and download. Do not wait for a second signal.
