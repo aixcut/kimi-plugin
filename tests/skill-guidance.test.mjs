@@ -173,3 +173,18 @@ test("word highlights and revision recovery stay batch-first", () => {
   assert.match(actions, /`highlight_ranges`/);
   assert.match(timeline, /no `audio` component.*nothing to mute/is);
 });
+
+test("project-level writes require explicit targets and the right action shapes", () => {
+  const projects = readFileSync(join(root, "skills/aixcut-projects/SKILL.md"), "utf8");
+  const timeline = readFileSync(join(root, "skills/aixcut-timeline-editing/references/actions.md"), "utf8");
+  const exportRef = readFileSync(join(root, "skills/aixcut-export/references/actions.md"), "utf8");
+
+  assert.match(projects, /Do not edit any Project before `new_project` returns/i);
+  assert.match(projects, /canvas also requires the returned `timeline_id`/i);
+  assert.match(projects, /Canvas, clear, and rename operations require their target `project_id` explicitly/i);
+  assert.match(timeline, /aixcut_style\(action="set"\)[\s\S]*items/i);
+  assert.match(timeline, /Never send `items` or `targets` to `update`/i);
+  assert.match(timeline, /text tool has no `time` action/i);
+  assert.match(timeline, /do not use a `values` wrapper/i);
+  assert.match(exportRef, /Never wrap them in `params`/i);
+});

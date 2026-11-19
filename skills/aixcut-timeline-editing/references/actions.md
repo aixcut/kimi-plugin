@@ -230,6 +230,34 @@ For `aixcut_text(action="add")`, per-item `start_ms` and `duration_ms` belong in
 | aixcut_timeline(action="delete") | — | `timeline_id` | — | Delete a timeline; retain at least one |
 | aixcut_timeline(action="reorder") | — | `timeline_ids` | — | Reorder timelines using the complete list |
 | aixcut_timeline(action="update") | — | `timeline_id` | `name`, `preset`, `width`, `height`, `fps` | Update one version's name, canvas or frame rate |
+
+Batch style example:
+
+```json aixcut_style
+{
+  "action": "set",
+  "items": [
+    { "target": "clip:title-one", "style": { "y": 0.925 } },
+    { "target": "clip:title-two", "style": { "y": 0.925 } }
+  ]
+}
+```
+
+`aixcut_style(action="update")` is single-target. Never send `items` or `targets` to `update`; use `set` for several clips.
+
+Text timing and content use top-level update fields:
+
+```json aixcut_text
+{
+  "action": "update",
+  "target": "clip:title-one",
+  "start_ms": 1950,
+  "duration_ms": 2200,
+  "label": "1. Blue Baseball Cap"
+}
+```
+
+The text tool has no `time` action, and these fields do not use a `values` wrapper.
 | aixcut_timeline(action="clear") | — | `timeline_id` | — | Remove every clip from one version, keeping its tracks |
 | aixcut_frontend(action="capture_source_frames") | — | `media_id`, `selections` | `timeout_ms`, `workspace_id` | Capture 1–8 JPEG frames from a source |
 | aixcut_frontend(action="capture_timeline_frames") | — | `selections` | `timeline_id`, `expected_revision`, `timeout_ms`, `workspace_id` | Capture 1–8 JPEG frames from a timeline |

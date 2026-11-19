@@ -40,6 +40,8 @@ Preserve the URL and its one-time `session_token` exactly. Do not compose a plai
 
 `new_project` creates the Project skeleton synchronously, including the default sequence, video/text/audio tracks, and an empty voice document. It can be read or edited immediately; the page itself may still be opening.
 
+- Do not edit any Project before `new_project` returns. Until `active_project_id` equals the returned `project_id`, pass that explicit `project_id` to every subsequent Project or timeline write; canvas also requires the returned `timeline_id`.
+- Canvas, clear, and rename operations require their target `project_id` explicitly. Never let a Project-level mutation resolve its target from the previous active Project.
 - `result.data.project_id`, `result.data.sequence_id`, and `result.data.project` identify the created Project and sequence.
 - `result.page_open_requested: true` means the server requested that the page open; it does not prove the page is connected. A host opening result of `queued` also does not mean it is connected.
 - Top-level `next_action` is usually `wait_then_read`. Wait about 5 seconds, then call `aixcut_frontend(action="page_status")` if the next operation needs the page.
