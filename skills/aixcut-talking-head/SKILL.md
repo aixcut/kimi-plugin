@@ -33,12 +33,12 @@ State the current editing stage and next step when useful. Reuse the user's stat
 
 ## Required order
 
-Speech timing anchors downstream work. Keep this order:
+Speech timing anchors downstream work. Treat the selected and cleaned speech as the A-roll master. Keep this order:
 
 1. Finalize speech structure: remove mistakes, filler, pauses, and repeated takes.
-2. After speech is final, adjust visuals: add/remove B-roll or overlays.
-3. After visuals are final, update captions so their timing follows the final speech.
-4. Add music and sound effects last, fitting them to the final duration.
+2. After the A-roll is final, adjust visuals: add/remove B-roll or overlays.
+3. After visuals are final, update captions so their timing follows the final speech; titles, callouts, and Motion Graphs stay on visual tracks.
+4. Add music and sound effects last, fitting them to the final duration and keeping speech intelligible.
 
 If an upstream stage changes, revisit dependent stages. Read back after each major stage.
 
@@ -99,6 +99,7 @@ single-camera angle.
 ## Common misses
 
 - Do not create captions before the speech edit is final; speech changes can invalidate caption timing.
+- Do not delete a correct line because ASR misheard or misrecognized a word; fix the transcript with `aixcut_transcript(action="update")` instead of cutting the segment.
 - Reread after every structural speech change because later positions move.
 - If visuals are replaced or trimmed, realign captions to the final speech rather than changing speech alone.
 

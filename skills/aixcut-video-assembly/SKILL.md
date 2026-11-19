@@ -17,6 +17,12 @@ This Skill owns the order and dependencies between stages; each specialist Skill
 
 Use this Skill for multi-stage work, such as turning source media into a 60-second promo with voiceover, captions, and music, or shortening a video and adding narration. For a single caption, clip replacement, or export, use the corresponding specialist Skill directly.
 
+## Editorial intent and shot plan
+
+Before choosing clips, state the editorial intent in one short note: the audience, the main subject or claim, the emotional or practical outcome, and the target duration/platform. Then make a small shot plan that gives each shot a job: opening context or hook, development, proof/detail, and closing action or landing. Choose the strongest material that supports the claim; do not add a hook that repeats the body or add B-roll only to fill empty time.
+
+Freeze the intent, shot order, target canvas, duration budget, preserve list, and requested audio state before the first structural write. If a later decision changes the speech timing or shot order, invalidate dependent captions, overlays, music placement, and evidence and rebuild only those affected stages.
+
 ## Tool selection
 
 | Intent | Tool |

@@ -107,6 +107,10 @@ Treat every requested visual annotation as a typed timeline element before writi
 
 Original/source audio or narration, AI-generated voice, BGM/music, and SFX/sound effects are different audio roles. Keep each role on its separate dedicated track; never treat an AI voice clip as a replacement for original audio unless replacement was explicitly requested.
 
+Sound can carry a scene across visual cuts. Let an existing voice, room tone, or music continue when it supports the thought; do not restart BGM or add a new sound effect at every cut. Trim or fade music to the real content end, keep every instance inside its source range, and use a separate audio clip when a J/L-cut or a cross-shot bed is intentional. A natural loop requires a known loop point or actual listening evidence; a duration match alone is not proof.
+
+Add a short sound effect only when it makes an action, transition, or result easier to understand or feel. Do not duplicate a click, whoosh, or impact for every caption or edit point. Before adding one, identify the visual event, the sound's meaningful sync point, and the dedicated SFX track; place the clip so that the embedded sync point lands on the event, then read back its range and listen with the dialogue. If no suitable source or listening evidence exists, report the sound effect as unverified instead of treating its presence as a quality pass.
+
 Before every audio write, read the current timeline and track list, then confirm the target track and the intended start/end range. Read the source audio and existing voice state when deciding whether a human voice already covers that range. Reuse a correct existing narration for edit-only requests and skip new voice placement; this prevents double voice or overlapping narration.
 
 Before muting a video item's source audio, inspect its component roster. If the item has no `audio` component or audio payload, it has nothing to mute: report the structural fact and do not call `aixcut_audio(action="update")` or guess an audio ref. Video-only B-roll does not require a mute write.

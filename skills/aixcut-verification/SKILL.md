@@ -90,4 +90,6 @@ Each user-requested change must have a matching read-back or review result, and 
 
 Final evidence is reported independently for `structure`, `semantic`, `visual`, and `audio`. Each dimension is `pass`, `fail`, or `unjudgeable`; a missing composed frame or actual playback/listening evidence is `unjudgeable`, not a pass. A structural review cannot substitute for a composed timeline frame, transcript evidence, or listening evidence.
 
+The caption track is checked separately from visual packaging: captions contain spoken subtitle copy only, while titles, keyword callouts, arrows, stickers, and Motion Graphs stay on their dedicated visual tracks. A successful write or a readable source thumbnail does not prove the final composition; use a composed timeline frame for visual claims and actual playback/listening for audio claims.
+
 Before reporting the requested deliverable, run the packaged Core gate with `node ${KIMI_SKILL_DIR}/../../scripts/workflow-host.mjs gate` and JSON `{evidence,current:{project_id,timeline_id,revision},deliverable:"report"|"quality"|"export"}` on stdin. `current` must be the latest inspected binding. A failed gate is a stop condition; report its reasons and the next inspection needed. This gate validates claims and revision binding; it does not itself inspect media.

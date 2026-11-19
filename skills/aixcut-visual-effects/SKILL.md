@@ -45,3 +45,5 @@ Use `aixcut_generator` for source-free generated clips. Catalog availability is 
 Use `aixcut_keyframe` for relational animation tracks. The owner may be a clip or an `fx:`, `mask:` or `trn:` ref from read; the owner, property type, base value and keyframe value must agree, and the written `owner_kind` follows the ref you pass. Use `aixcut_motion` for authored phase programs.
 
 After a structural write, read the affected domain again and verify the returned refs and relationships. Structural review cannot prove visual quality: use timeline frames and continuous playback for final visual acceptance.
+
+Animated effects, transitions, motion, and keyframes need evidence from at least two moments across the animated range: a single frame cannot show whether motion, easing, direction, or timing is correct. Capture two or more sampled moments, report the timestamps you used, and mark motion quality `unjudgeable` when only one still frame was checked.
