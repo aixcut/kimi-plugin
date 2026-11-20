@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "server_contract_version": "1.4.0",
   "catalog_path": "contracts/mcp-tool-catalog.json",
-  "catalog_sha256": "959c0dcd7d370be4b034b64a70e349ece36531aca05d04278e09d5796bdcb1b2",
+  "catalog_sha256": "feda56c058eaf0e11468693da178024fc7a051a10028436c714bd0a4cd1cafcf",
   "schemas": {
     "edit_plan": {
       "path": "contracts/edit-plan.schema.json",
