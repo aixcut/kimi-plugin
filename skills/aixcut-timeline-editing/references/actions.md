@@ -12,6 +12,22 @@ This reference lists fields for each action. Follow the main Skill for workflow,
 - `plan_context`: Required on the protected actions marked in the Required column. Pass it at the Tool's top level, not inside `params`. Build it from the latest read with `project_id`, `timeline_id`, `base_revision`, `mode`, `preserve`, `delete_refs`, and the exact `authorized_actions`; the `aixcut-basics` Skill documents the workflow host contract.
 - Every Tool accepts a strict object. Send only fields listed here; extra fields are rejected.
 
+## Time fields
+
+Same-name fields keep the same meaning across Tools:
+
+| Field | Means | Where |
+| --- | --- | --- |
+| `at_ms` | A position on the timeline (a cut point, or the playhead for `arrange.delete_before` / `delete_after`) | split actions, `arrange.delete_before` / `delete_after` |
+| `to_ms` | The destination start of the moved, copied or created clip | `move`, `time`, `arrange.duplicate` / `move` |
+| `start_ms` | Where the item starts on the timeline, or the first millisecond of a range | add/update items, export and capture ranges, `aixcut_frontend` playback ranges |
+| `end_ms` | The end of the range inside the source media, or the last millisecond of an export or capture range | trim fields, export and capture ranges |
+| `source_start_ms` | Offset inside the source media, not the timeline | clip, audio and speech trims |
+| `duration_ms` | Length of the result, always on the timeline | add/update and trim fields |
+| `target_ms` | End of the playback window in `playback_check` | `aixcut_frontend` |
+
+On split actions `to_ms` is only a legacy alias of `at_ms`; pass `at_ms`. A split value below the clip's `start_ms` is read as an offset inside the clip.
+
 `kind` is limited to editor-supported values: `video`, `audio`, `text`, `motion-graph`, and `effect`. Images use `kind="video"`. `graphic` and `composition` are not valid public MCP inputs.
 
 `created` contains typed entries `{ id, ref, type }`. Caption and text writes can create both clip and component rows; count `clip:` entries when reporting actual clips.
