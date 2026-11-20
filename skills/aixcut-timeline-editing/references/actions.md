@@ -8,7 +8,7 @@ This reference lists fields for each action. Follow the main Skill for workflow,
 - `idempotency_key`: Optional; the server generates one when omitted. Reuse it only for an identical retry. A new write intent needs a new key.
 - `target` / `targets`: Stable refs or IDs returned by a read operation such as `aixcut_read(view="clips")`; never guess UUIDs.
 - `items`: Array whose item fields are checked by the live Tool Schema.
-- `timeline_id`: Target timeline UUID. Include it in every read, edit, capture, and review for multi-version work; omit only for a single version using the default timeline.
+- `timeline_id`: Target timeline UUID. Include it in every timeline-scoped read, edit, capture, and review for multi-version work; omit only for a single version using the default timeline. Media- and mutation-scoped reads are the exceptions and reject the field: `aixcut_read(view="sources")`, `view="source"`, `view="source_lines"` and `view="mutation_receipt"`.
 - `plan_context`: Required on the protected actions marked in the Required column. Pass it at the Tool's top level, not inside `params`. Build it from the latest read with `project_id`, `timeline_id`, `base_revision`, `mode`, `preserve`, `delete_refs`, and the exact `authorized_actions`; the `aixcut-basics` Skill documents the workflow host contract.
 - Every Tool accepts a strict object. Send only fields listed here; extra fields are rejected.
 
