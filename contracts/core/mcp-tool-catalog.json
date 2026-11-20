@@ -1,6 +1,6 @@
 {
   "server_contract_version": "1.4.0",
-  "server_revision": "60b02d29e5e90e15a79a7339e60521c64a60995a",
+  "server_revision": "f8e04fe03d5589c03f2eb58352cd43ffb80dbd05",
   "tools": [
     {
       "name": "aixcut_agent_bootstrap",

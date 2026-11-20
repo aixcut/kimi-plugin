@@ -28,6 +28,10 @@ Same-name fields keep the same meaning across Tools:
 
 On split actions `to_ms` is only a legacy alias of `at_ms`; pass `at_ms`. A split value below the clip's `start_ms` is read as an offset inside the clip.
 
+Volume, fade lengths and text style are top-level fields of their action, not `values` entries: `aixcut_audio(action="update", target=…, volume=0.35)` and `aixcut_clip(action="update", target=…, volume=0.35)` for a video clip's own sound. Putting them inside `values` is rejected with a hint. A tool that edits audio clips needs an audio clip: pointing `aixcut_audio` at a video clip is refused with `MCP_REF_KIND_MISMATCH`.
+
+Text style numbers are canvas pixels, except `maxWidth`: a value between 0 and 1 is read as that fraction of the canvas width, so `maxWidth: 0.88` means 88% of the width (writing 0.88px would collapse the text into one character per line).
+
 `kind` is limited to editor-supported values: `video`, `audio`, `text`, `motion-graph`, and `effect`. Images use `kind="video"`. `graphic` and `composition` are not valid public MCP inputs.
 
 `created` contains typed entries `{ id, ref, type }`. Caption and text writes can create both clip and component rows; count `clip:` entries when reporting actual clips.
