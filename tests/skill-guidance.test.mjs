@@ -70,11 +70,22 @@ test("created or duplicated timelines are activated and verified", () => {
   }
 });
 
+test("headless export binds the timeline it renders", () => {
+  assert.match(exportSkill, /aixcut_export\(\s*action="submit"[^)]*timeline_id/i);
+  assert.match(exportSkill, /omit[^.]{0,200}default timeline/i);
+  assert.match(exportSkill, /RENDER_SEQUENCE_NOT_FOUND/);
+  assert.match(exportSkill, /RENDER_CANVAS_SIZE_INVALID/);
+  assert.match(knownErrorsSkill, /RENDER_SEQUENCE_NOT_FOUND/);
+  assert.match(knownErrorsSkill, /RENDER_CANVAS_SIZE_INVALID/);
+});
+
 test("exports require authorization and capability-based renderer choice", () => {
   assert.match(exportSkill, /authorization gate/i);
   assert.match(exportSkill, /capabilities.*export_timeline/is);
   assert.match(exportSkill, /headless rendering.*only when.*cloud-readable/is);
-  assert.match(exportSkill, /file_verified=false/i);
+  assert.match(exportSkill, /prompt_opened=true/i);
+  assert.match(exportSkill, /Do not call `export_timeline_status`/i);
+  assert.match(exportSkill, /user owns the remaining export/i);
   assert.doesNotMatch(exportSkill, /analyze_music_beats/);
   assert.match(assemblyGuidance, /no automatic BPM|has none/i);
 });
@@ -156,4 +167,62 @@ test("caption add guidance shows the items array form", () => {
     /```json aixcut_caption[\s\S]*?"action":\s*"add"[\s\S]*?"items"\s*:\s*\[[\s\S]*?```/,
     "caption add only accepts items[]; a worked example prevents a rejected first call",
   );
+});
+
+test("word highlights and revision recovery stay batch-first", () => {
+  const basics = readFileSync(join(root, "skills/aixcut-basics/SKILL.md"), "utf8");
+  const captions = readFileSync(join(root, "skills/aixcut-captions/SKILL.md"), "utf8");
+  const actions = readFileSync(join(root, "skills/aixcut-captions/references/actions.md"), "utf8");
+  const timeline = readFileSync(join(root, "skills/aixcut-timeline-editing/SKILL.md"), "utf8");
+
+  assert.match(basics, /successful write invalidates.*plan_context/is);
+  assert.match(basics, /rebuild `plan_context` before the next mutation/i);
+  assert.match(captions, /complete sequence in one `set` or `add` call/i);
+  assert.match(captions, /each item carries its own `duration_ms` and `highlight_ranges`/i);
+  assert.match(actions, /`highlight_ranges`/);
+  assert.match(timeline, /no `audio` component.*nothing to mute/is);
+});
+
+test("keeps the editing policy layered across speech, captions, visuals, and evidence", () => {
+  const talking = readFileSync(join(root, "skills/aixcut-talking-head/SKILL.md"), "utf8");
+  const captions = readFileSync(join(root, "skills/aixcut-captions/SKILL.md"), "utf8");
+  const visuals = readFileSync(join(root, "skills/aixcut-visual-effects/SKILL.md"), "utf8");
+  const verification = readFileSync(join(root, "skills/aixcut-verification/SKILL.md"), "utf8");
+  const assembly = readFileSync(join(root, "skills/aixcut-video-assembly/SKILL.md"), "utf8");
+
+  assert.match(talking, /A-roll master/i);
+  assert.match(talking, /complete correct take/i);
+  assert.match(talking, /negation, conditions, numbers, names/i);
+  assert.match(talking, /A-roll[\s\S]{0,200}B-roll/i);
+  assert.match(captions, /Visual annotations[\s\S]*dedicated visual tracks/i);
+  assert.match(captions, /transcript_status=available/);
+  assert.match(visuals, /at least two moments|multiple moments|多个时刻/i);
+  assert.match(verification, /composed frame/i);
+  assert.match(verification, /actual playback|listening evidence|试听/i);
+  assert.match(assembly, /captions and visual annotations independently/i);
+});
+
+test("treats sound continuity and purposeful effects as editing decisions", () => {
+  const timeline = readFileSync(join(root, "skills/aixcut-timeline-editing/SKILL.md"), "utf8");
+  assert.match(timeline, /Sound can carry a scene across visual cuts/i);
+  assert.match(timeline, /do not restart BGM or add a new sound effect at every cut/i);
+  assert.match(timeline, /short sound effect only when[\s\S]{0,80}easier to understand/i);
+  assert.match(timeline, /meaningful sync point[\s\S]{0,80}dedicated SFX track/i);
+});
+
+test("project-level writes require explicit targets and the right action shapes", () => {
+  const projects = readFileSync(join(root, "skills/aixcut-projects/SKILL.md"), "utf8");
+  const timeline = readFileSync(join(root, "skills/aixcut-timeline-editing/references/actions.md"), "utf8");
+  const exportRef = readFileSync(join(root, "skills/aixcut-export/references/actions.md"), "utf8");
+
+  assert.match(projects, /Do not edit any Project before `new_project` returns/i);
+  assert.match(projects, /canvas also requires the returned `timeline_id`/i);
+  assert.match(projects, /Canvas, clear, and rename operations require their target `project_id` explicitly/i);
+  assert.match(timeline, /aixcut_style\(action="set"\)[\s\S]*items/i);
+  assert.match(timeline, /Never send `items` or `targets` to `update`/i);
+  assert.match(timeline, /text tool has no `time` action/i);
+  assert.match(timeline, /do not use a `values` wrapper/i);
+  assert.match(timeline, /Images use `kind="video"`/i);
+  assert.match(timeline, /`created` contains typed entries/i);
+  assert.match(exportRef, /Never wrap them in `params`/i);
 });

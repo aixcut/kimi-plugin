@@ -7,7 +7,7 @@ description: "Export an Aixcut Project only after explicit user authorization, u
 
 ## Conversation guidance
 
-State the export's current status and next step when useful. Continue checks and polling when possible. Distinguish queued, rendering, completed, failed, and unknown; report an export as complete only after its result is available.
+After the export prompt opens, stop and let the user export locally. Do not poll, wait for a file, or report render completion unless the user later says the export finished.
 
 ## Authorization gate
 
@@ -17,7 +17,7 @@ Finishing an edit is not export authorization. After final review, stop and tell
 
 | Intent | Tool |
 | --- | --- |
-| Render and download through a capable Project page | `aixcut_frontend(action="export_timeline")`, `aixcut_frontend(action="export_timeline_status")` |
+| Open the local browser export dialog | `aixcut_frontend(action="export_timeline")` |
 | Submit, inspect or cancel a headless render | `aixcut_export` |
 | Acquire source files required by headless rendering | `aixcut_upload_link(action="create")`, `aixcut_upload_link(action="status")` |
 | Read the timeline, sources or captions before exporting | `aixcut_read` |
@@ -41,21 +41,19 @@ Local video is not uploaded in full by default. Browser rendering can use browse
 
 ## Browser rendering
 
-1. Bind the current inspected timeline revision and pass it as `expected_revision`.
-2. Call `aixcut_frontend(action="export_timeline")`. A supplied `timeline_id` does not change the user's current tab.
-3. Accepted does not mean complete. Follow `next_action`, then poll `export_timeline_status` until `succeeded` or `failed`. It does not accept `export_id`: query the current Project page's singleton export runner with `action` and Project context only, and never pass the accepted `export_id` as a parameter.
-4. A successful result has `render_mode="browser"` and `delivery.kind="browser-download"`. `delivery.state="dispatched"` means the browser download was triggered; `file_verified=false` means the Agent has not read or validated the local file.
-5. Report the filename, byte size, MIME type, and that the file must be checked in the browser download location. Never claim that the file is durably saved or verified.
-6. Do not automatically upload the rendered file, download it back, run `ffprobe`, capture frames, or analyze it. Those actions require a later user request.
-
-If the user cannot find the file, check the browser download list and blocked-download notice before considering another export.
+1. Call `aixcut_frontend(action="export_timeline")` only after checking that the Project page is online and advertises `export_timeline`.
+2. Stop when the result has `prompt_opened=true`. The page opened the user's export dialog; the Agent's job is finished.
+3. Do not call `export_timeline_status`, wait for rendering, inspect the download location, or claim a file exists.
+4. If the user later says the export is complete and asks for follow-up, continue from that user message.
 
 ## Headless rendering
 
-1. Call `aixcut_export(action="submit")`. Use `kind="frame"` for one still or `kind="export"` with `range`, `output`, and a media `format` for a file.
-2. Poll `aixcut_export(action="get", job_id=...)` until terminal.
-3. A successful result has `render_mode="headless"` and a short-lived artifact `download_url`. Report its format, content type, byte size, and expiry. Never present it as a permanent link.
-4. `cancel` stops a queued or running job; report the returned status instead of assuming it stopped.
+1. Call `aixcut_export(action="submit", timeline_id="<inspected timeline>")` and bind the timeline you inspected and edited. The render snapshot resolves that timeline's media, so omitting `timeline_id` renders the Project **default** timeline instead — omit it only when the user explicitly asks for the project default timeline.
+2. Use `kind="frame"` for one still or `kind="export"` with `range`, `output`, and a media `format` for a file.
+3. Poll `aixcut_export(action="get", job_id=...)` until terminal.
+4. A successful result has `render_mode="headless"` and a short-lived artifact `download_url`. Report its format, content type, byte size, and expiry. Never present it as a permanent link.
+5. `cancel` stops a queued or running job; report the returned status instead of assuming it stopped.
+6. A terminal failure names why the render could not start: `RENDER_SEQUENCE_NOT_FOUND` means the bound `timeline_id` does not exist in this Project and `RENDER_CANVAS_SIZE_INVALID` means the bound timeline has no canvas size. Both are binding errors: re-bind `timeline_id` to a timeline you actually inspected and submit once more instead of replaying the same id.
 
 ## Analysis after export
 
@@ -71,11 +69,13 @@ If the user later asks to analyze or verify the finished file:
 
 | Error | Meaning and action |
 | --- | --- |
-| `MCP_EXPORT_ALREADY_RUNNING` | Do not submit again; call `export_timeline_status`. |
+| `MCP_EXPORT_ALREADY_RUNNING` | The page already has an active export. Tell the user and let them finish it; do not start another or poll automatically. |
 | `MCP_EXPORT_INVALID_INPUT` | Correct the format, dimensions, or frame rate and submit again. |
 | `MCP_EXPORT_FAILED` | Explain `error_message`; retry once only with a justified parameter change. |
 | `MCP_EXPORT_CANCELLED` | Report that the user cancelled the export. Do not retry as a system failure. |
 | `MCP_FRONTEND_NOT_BOUND`, `MCP_FRONTEND_CLIENT_OFFLINE`, `MCP_FRONTEND_PAGE_NOT_ACTIVE` | Follow `error.next_action`; perform at most one bounded page handoff and then stop. |
+| `RENDER_SEQUENCE_NOT_FOUND`, `RENDER_CANVAS_SIZE_INVALID` | The headless job's target timeline is missing or has no canvas size. Re-bind `timeline_id` to the inspected timeline and submit once more; do not repeat the same id. |
+| `MEDIA_NOT_CLOUD_READY` | A source of the bound timeline has no cloud-readable original. Follow the upload-link step above, then retry the same headless render. |
 | `CAPTURE_PERMISSION_REQUIRED` | Ask the user to click the Project page once, then retry the original browser-render request. Do not reimport media. |
 
 ## Boundaries
@@ -87,4 +87,4 @@ If the user later asks to analyze or verify the finished file:
 
 ## Completion
 
-Complete only when the chosen path reaches a terminal success: browser status `succeeded` with download dispatched, or headless job `succeeded` with an artifact. Report the actual render mode and delivery state separately.
+For local browser export, complete the Agent action when `prompt_opened=true`. The user owns the remaining export and download. Do not wait for a second signal.

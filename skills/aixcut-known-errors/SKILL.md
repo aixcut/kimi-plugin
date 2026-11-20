@@ -45,6 +45,11 @@ Use `error.code`, `error.type`, `error.retryable`, and `error.next_action` to ch
 ## Mutation conflicts and uncertain state
 
 - `MCP_MUTATION_SERVER_REJECTED`: Read the latest snapshot and regenerate the operation. Do not replay the old payload unchanged.
+- `MCP_PLAN_REQUIRED`: Attach the complete `plan_context` from `details.example`; use the current Project, Timeline and revision. Do not probe fields one at a time.
+- `MCP_PLAN_SCOPE_CONFLICT`: Correct only the reported refs/actions. For deletion, use `details.missing_delete_refs` or `details.required_delete_refs`; never put the Timeline id in `delete_refs`.
+- `MCP_ARGUMENT_UNKNOWN`: Use `details.accepted_fields` and retry with the declared field names only.
+- `MCP_PLAN_REVISION_STALE`: Re-read once, then retry the same intended change with the current revision. If the prior response included `MCP_CAPTION_AUTO_REGENERATED`, its final `revision_after` is authoritative; never replay the root write.
+- `MCP_CAPTION_AUTO_REGENERATED`: This is a derived-write warning, not a failed edit. Continue from the same response's `revision_after`; do not reuse the plan's pre-write revision.
 - `NLE_IDEMPOTENCY_CONFLICT`: The key is already bound to a different project, timeline, or action. Read the timeline and confirm whether the earlier write already achieved the intent before redoing. A same-key retry against the same target is reported as a replay instead, not as this error.
 - `MCP_TRACK_ENSURE_NOT_APPLIED`: Read-back found no track. Confirm the original receipt and current timeline before correcting anything; an absent projection alone does not authorize a new-key write.
 - `TIMELINE_ACTIVATION_DEFERRED`: The timeline mutation succeeded, but the visible Project page was not switched to the new timeline. Bring the target Project page online if needed, call `aixcut_frontend(action="activate_timeline", timeline_id=...)`, and verify the returned `status` is `ready` before reporting that the new timeline is visible.
@@ -63,14 +68,17 @@ Use `error.code`, `error.type`, `error.retryable`, and `error.next_action` to ch
 - If the browser failure is unclear, call the read-only probe `aixcut_frontend(action="page_status")`. It returns `bound_frontend_client_id`, `binding_error`, `presence_connections`, `online_project_pages`, `online_studio_pages`, and `pages` without throwing an offline error. Use the result to decide whether the user must open a page, switch Projects, or wait.
 - Do not repeatedly resubmit the same request for any of the four browser states above. Do not loop through project opens while offline or use another Tool to pretend a page-only action succeeded.
 - `MCP_FRONTEND_TIMELINE_STALE`: The timeline changed. Read it again before capturing frames.
+- `playback_state=blocked_by_user_playback`: The user is controlling playback. Do not retry it as a tool failure and do not take over playback; keep the audio interval unjudgeable unless separate playback/listening evidence exists.
 - `MCP_FRONTEND_EXPORT_INVALID`, `MCP_EXPORT_INVALID_INPUT`: Page export parameters are invalid (format, dimensions, or frame rate). Correct the parameters and retry once; do not replay unchanged input.
-- `MCP_EXPORT_ALREADY_RUNNING`: Do not start another export. Check the existing run with `aixcut_frontend(action="export_timeline_status")`.
+- `MCP_EXPORT_ALREADY_RUNNING`: Do not start another export and do not poll automatically. Tell the user an export is already active so they can finish or cancel it in the page.
 - `MCP_EXPORT_FAILED`: Page rendering failed. Report `error_message`; do not replay unchanged input. If one corrected retry fails, stop and report it.
 - `MCP_EXPORT_CANCELLED`: The user cancelled the page export. Report cancellation; do not retry it as a failure.
+- `RENDER_SEQUENCE_NOT_FOUND`: The headless render job bound a `timeline_id` that does not exist in this Project. Re-read the Project, bind `timeline_id` to the timeline you actually inspected, and submit once; never replay the same id.
+- `RENDER_CANVAS_SIZE_INVALID`: The bound timeline has no canvas size, so the render would produce a black frame. Report the timeline and ask the user to set its canvas size in the editor; do not submit the same export again.
 - `CAPTURE_PERMISSION_REQUIRED`: Browser permission for local media expired after a refresh or browser change. Ask the user to click anywhere in the Project page (or use its “Fix now” control), then retry the original request. Do not re-import the media or bypass the page.
 - Uploaded file missing: when a file the user just selected does not appear in `aixcut_read(view="sources")`, wait about 15 seconds and reread `sources` once. If it is still missing, report it and ask the user to select the file again through `aixcut_frontend(action="prompt_add_material")`. Never treat the upload prompt opening as a completed upload.
 
-Page-export failures appear as `error_code` in `export_timeline_status`, not as a rejected Tool call. Follow `aixcut-export` for those results.
+Read `export_timeline_status` only if the user explicitly asks to inspect an export they already started. The default export flow ends when the user-facing prompt opens.
 
 ## Server and rate-limit errors
 

@@ -33,12 +33,12 @@ State the current editing stage and next step when useful. Reuse the user's stat
 
 ## Required order
 
-Speech timing anchors downstream work. Keep this order:
+Speech timing anchors downstream work. Treat the selected and cleaned speech as the A-roll master. Keep this order:
 
 1. Finalize speech structure: remove mistakes, filler, pauses, and repeated takes.
-2. After speech is final, adjust visuals: add/remove B-roll or overlays.
-3. After visuals are final, update captions so their timing follows the final speech.
-4. Add music and sound effects last, fitting them to the final duration.
+2. After the A-roll is final, adjust visuals: add/remove B-roll or overlays.
+3. After visuals are final, update captions so their timing follows the final speech; titles, callouts, and Motion Graphs stay on visual tracks.
+4. Add music and sound effects last, fitting them to the final duration and keeping speech intelligible.
 
 If an upstream stage changes, revisit dependent stages. Read back after each major stage.
 
@@ -49,8 +49,18 @@ the source as two-shot-only. For an interview or podcast edit, a stable
 speaker-focused reframe is the normal single-camera substitute for a real
 single-camera angle.
 
+- A speaker-focused reframe is not a fabricated camera angle. When the user
+  requires speaker-picture sync, it is the required fallback unless the
+  reframed image quality is unusable. Do not skip it merely because the source
+  has no real camera cuts.
+- Missing diarization does not waive speaker-picture sync. Infer the speaker
+  from the question/answer structure and representative frames, then keep a
+  two-shot where identity is genuinely uncertain.
 - Derive at most one stable framing box per speaker from the visible source
   composition. Keep the speaker's full head, natural headroom, and shoulders.
+- Prefer the widest safe crop that excludes the other speaker. If the crop must
+  be enlarged more than 1.5x to the output height, verify final-revision frames
+  and report the sharpness tradeoff instead of treating it as a quality pass.
 - Use the speaker-focused framing for substantive question or answer turns.
   Keep the full two-shot for the opening, closing, natural interaction, and
   turns where the speaker is uncertain.
@@ -89,6 +99,7 @@ single-camera angle.
 ## Common misses
 
 - Do not create captions before the speech edit is final; speech changes can invalidate caption timing.
+- Do not delete a correct line because ASR misheard or misrecognized a word; fix the transcript with `aixcut_transcript(action="update")` instead of cutting the segment.
 - Reread after every structural speech change because later positions move.
 - If visuals are replaced or trimmed, realign captions to the final speech rather than changing speech alone.
 

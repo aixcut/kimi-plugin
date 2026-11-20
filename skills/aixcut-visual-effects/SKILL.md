@@ -44,4 +44,25 @@ Use `aixcut_generator` for source-free generated clips. Catalog availability is 
 
 Use `aixcut_keyframe` for relational animation tracks. The owner may be a clip or an `fx:`, `mask:` or `trn:` ref from read; the owner, property type, base value and keyframe value must agree, and the written `owner_kind` follows the ref you pass. Use `aixcut_motion` for authored phase programs.
 
+## Ref prefixes
+
+Read views and create results return the canonical prefix; write calls also accept the historical aliases in the third column.
+
+| Object | Canonical ref | Also accepted |
+| --- | --- | --- |
+| Clip | `clip:<uuid>` | `tl:` |
+| Track | `track:<uuid>` | `track-component:` for track components |
+| Timeline | `timeline:<uuid>` | `sequence:` |
+| Effect | `fx:<uuid>` | `effect:`, `nle_effect_instances:` |
+| Transition | `trn:<uuid>` | `transition:`, `nle_transitions:` |
+| Mask | `mask:<uuid>` | — |
+| Keyframe | `kf:<uuid>` | `keyframe:`, `nle_keyframes:` |
+| Animation track | `anim:<uuid>` | `animation-track:`, `nle_animation_tracks:` |
+| Group | `group:<uuid>` | — |
+| Component | `component:<uuid>` | — |
+
+A ref that a create result returned is always usable on the matching update or delete; never rewrite it into another prefix by hand.
+
 After a structural write, read the affected domain again and verify the returned refs and relationships. Structural review cannot prove visual quality: use timeline frames and continuous playback for final visual acceptance.
+
+Animated effects, transitions, motion, and keyframes need evidence from at least two moments across the animated range: a single frame cannot show whether motion, easing, direction, or timing is correct. Capture two or more sampled moments, report the timestamps you used, and mark motion quality `unjudgeable` when only one still frame was checked.

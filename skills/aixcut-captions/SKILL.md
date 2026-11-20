@@ -45,12 +45,23 @@ Use the language the user requested for the finished captions, not the language 
 - Align captions to speech, not to visual cuts alone.
 - Keep each caption to at most two lines. Split long sentences at punctuation or semantic boundaries.
 - Do not leave gaps or overlaps between adjacent captions after splitting.
+- For animated word-by-word highlighting, calculate each segment's end from the next segment's start and create the complete sequence in one `set` or `add` call. Each item carries its own `duration_ms` and `highlight_ranges`; do not create one caption per word and then patch the timing afterward.
 - If voiceover placement changes, rebuild or realign captions too.
+
+## Readable grouping
+
+Server-derived captions already group adjacent transcript fragments when they belong to the same speaker, source media, and uninterrupted source speech. A visual cut is allowed inside that group when the audio is continuous. Do not merge them again merely because the source transcript used several lines.
+
+- Read the derived track once and check for a fragment that is unreadably short or that splits one spoken sentence from its completion.
+- Repair all residual grouping problems in one batched call. Never issue one merge call per caption.
+- Never merge across a speaker change, a different source clip, or a pause that is already a meaningful sentence boundary.
+- With an active `plan_context`, list the exact existing caption clip refs in `delete_refs`. Never put the timeline id there; re-read caption refs after any structural revision so stale refs are not reused.
 
 ## Writing and editing
 
 - Replace the whole track with the set action; append new captions with the add action. `add` takes `items` and has no top-level `text`; see the append example in [references/actions.md](references/actions.md).
-- Use the corresponding action for wording, splitting, styling, and highlights.
+- Per-item `style`, `x`, `y`, and `highlight_ranges` belong inside the `items[]` entry when the track is created or replaced. Use `update`, `style`, or `highlight` only to correct an already-created caption.
+- For a repeated-text word highlight, batch all visual states in one `set` or `add`; the `highlight` action is not a loop primitive.
 - Use a new `idempotency_key` for each structural write and reread after each one. Position edits require the latest ref.
 - See [references/actions.md](references/actions.md) for fields and actions.
 
