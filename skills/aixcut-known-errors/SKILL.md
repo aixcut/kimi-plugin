@@ -73,6 +73,8 @@ Use `error.code`, `error.type`, `error.retryable`, and `error.next_action` to ch
 - `MCP_EXPORT_ALREADY_RUNNING`: Do not start another export and do not poll automatically. Tell the user an export is already active so they can finish or cancel it in the page.
 - `MCP_EXPORT_FAILED`: Page rendering failed. Report `error_message`; do not replay unchanged input. If one corrected retry fails, stop and report it.
 - `MCP_EXPORT_CANCELLED`: The user cancelled the page export. Report cancellation; do not retry it as a failure.
+- `RENDER_SEQUENCE_NOT_FOUND`: The headless render job bound a `timeline_id` that does not exist in this Project. Re-read the Project, bind `timeline_id` to the timeline you actually inspected, and submit once; never replay the same id.
+- `RENDER_CANVAS_SIZE_INVALID`: The bound timeline has no canvas size, so the render would produce a black frame. Report the timeline and ask the user to set its canvas size in the editor; do not submit the same export again.
 - `CAPTURE_PERMISSION_REQUIRED`: Browser permission for local media expired after a refresh or browser change. Ask the user to click anywhere in the Project page (or use its “Fix now” control), then retry the original request. Do not re-import the media or bypass the page.
 - Uploaded file missing: when a file the user just selected does not appear in `aixcut_read(view="sources")`, wait about 15 seconds and reread `sources` once. If it is still missing, report it and ask the user to select the file again through `aixcut_frontend(action="prompt_add_material")`. Never treat the upload prompt opening as a completed upload.
 

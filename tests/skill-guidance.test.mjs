@@ -70,6 +70,15 @@ test("created or duplicated timelines are activated and verified", () => {
   }
 });
 
+test("headless export binds the timeline it renders", () => {
+  assert.match(exportSkill, /aixcut_export\(\s*action="submit"[^)]*timeline_id/i);
+  assert.match(exportSkill, /omit[^.]{0,200}default timeline/i);
+  assert.match(exportSkill, /RENDER_SEQUENCE_NOT_FOUND/);
+  assert.match(exportSkill, /RENDER_CANVAS_SIZE_INVALID/);
+  assert.match(knownErrorsSkill, /RENDER_SEQUENCE_NOT_FOUND/);
+  assert.match(knownErrorsSkill, /RENDER_CANVAS_SIZE_INVALID/);
+});
+
 test("exports require authorization and capability-based renderer choice", () => {
   assert.match(exportSkill, /authorization gate/i);
   assert.match(exportSkill, /capabilities.*export_timeline/is);

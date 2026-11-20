@@ -48,10 +48,12 @@ Local video is not uploaded in full by default. Browser rendering can use browse
 
 ## Headless rendering
 
-1. Call `aixcut_export(action="submit")`. Use `kind="frame"` for one still or `kind="export"` with `range`, `output`, and a media `format` for a file.
-2. Poll `aixcut_export(action="get", job_id=...)` until terminal.
-3. A successful result has `render_mode="headless"` and a short-lived artifact `download_url`. Report its format, content type, byte size, and expiry. Never present it as a permanent link.
-4. `cancel` stops a queued or running job; report the returned status instead of assuming it stopped.
+1. Call `aixcut_export(action="submit", timeline_id="<inspected timeline>")` and bind the timeline you inspected and edited. The render snapshot resolves that timeline's media, so omitting `timeline_id` renders the Project **default** timeline instead — omit it only when the user explicitly asks for the project default timeline.
+2. Use `kind="frame"` for one still or `kind="export"` with `range`, `output`, and a media `format` for a file.
+3. Poll `aixcut_export(action="get", job_id=...)` until terminal.
+4. A successful result has `render_mode="headless"` and a short-lived artifact `download_url`. Report its format, content type, byte size, and expiry. Never present it as a permanent link.
+5. `cancel` stops a queued or running job; report the returned status instead of assuming it stopped.
+6. A terminal failure names why the render could not start: `RENDER_SEQUENCE_NOT_FOUND` means the bound `timeline_id` does not exist in this Project and `RENDER_CANVAS_SIZE_INVALID` means the bound timeline has no canvas size. Both are binding errors: re-bind `timeline_id` to a timeline you actually inspected and submit once more instead of replaying the same id.
 
 ## Analysis after export
 
@@ -72,6 +74,8 @@ If the user later asks to analyze or verify the finished file:
 | `MCP_EXPORT_FAILED` | Explain `error_message`; retry once only with a justified parameter change. |
 | `MCP_EXPORT_CANCELLED` | Report that the user cancelled the export. Do not retry as a system failure. |
 | `MCP_FRONTEND_NOT_BOUND`, `MCP_FRONTEND_CLIENT_OFFLINE`, `MCP_FRONTEND_PAGE_NOT_ACTIVE` | Follow `error.next_action`; perform at most one bounded page handoff and then stop. |
+| `RENDER_SEQUENCE_NOT_FOUND`, `RENDER_CANVAS_SIZE_INVALID` | The headless job's target timeline is missing or has no canvas size. Re-bind `timeline_id` to the inspected timeline and submit once more; do not repeat the same id. |
+| `MEDIA_NOT_CLOUD_READY` | A source of the bound timeline has no cloud-readable original. Follow the upload-link step above, then retry the same headless render. |
 | `CAPTURE_PERMISSION_REQUIRED` | Ask the user to click the Project page once, then retry the original browser-render request. Do not reimport media. |
 
 ## Boundaries
