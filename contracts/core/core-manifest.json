@@ -4,11 +4,11 @@
   "server_contract_version": "1.4.0",
   "helper_schema_version": "1.0.0",
   "files": {
-    "contracts/action-contract.json": "a4188e6c745bc583113d093c08be27ba44baa1d8bf1351e5a82c0ec5e20cf799",
+    "contracts/action-contract.json": "38bb0e7a0ff6c0302de44ff8bfdf7b0e0495fc2b227b949cae9abf22145149d0",
     "contracts/checkpoint.schema.json": "d33d6167e05d1cf61af0e41498c9a81479a44104292b75d387afad0bc2d2a799",
     "contracts/edit-plan.schema.json": "cd85711bef68dc22e122ee9ff3e77f259604eae9bf1728f5a21e7edcb815afaa",
     "contracts/error-taxonomy.json": "ded2f1c2b3aed6c83e57a392bb4c5e1ce228dfbc46e51d52b28eae571c47a3d2",
-    "contracts/mcp-tool-catalog.json": "1d66849fdd111b641d49d61ae2854b8e7175ff7b9fc7386376ce8dd61637155d",
+    "contracts/mcp-tool-catalog.json": "5896286846cd68b4e46c6145d15f4b177fa57813b8f1df9506f3cd727074f6a6",
     "contracts/operation-receipt.schema.json": "f29ded34eec4078cf39693344804250c6b988058a338d79f12b6bd54845b93f6",
     "contracts/plan-context.schema.json": "14a35aebab3a63d203248a70ef18f2672a57efe7cbee149683d9282e11245991",
     "contracts/review-evidence.schema.json": "7b0910c8d54c1ca5fef852f7f0f28bc8b2746867ee8938dd7fbcd0f5c98c9df8",
