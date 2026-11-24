@@ -60,7 +60,7 @@ Server-derived captions already group adjacent transcript fragments when they be
 ## Writing and editing
 
 - Replace the whole track with the set action; append new captions with the add action. `add` takes `items` and has no top-level `text`; see the append example in [references/actions.md](references/actions.md).
-- Per-item `style`, `x`, `y`, and `highlight_ranges` belong inside the `items[]` entry when the track is created or replaced. Use `update`, `style`, or `highlight` only to correct an already-created caption.
+- Per-item `style`, `x`, `y`, and `highlight_ranges` belong inside the `items[]` entry when the track is created or replaced. When uniformly restyling, highlighting, or deleting multiple already-created captions, pass `targets: [...]` in one atomic call (`style`, `highlight`, and `delete` accept `target` or `targets`) instead of looping one caption at a time.
 - For a repeated-text word highlight, batch all visual states in one `set` or `add`; the `highlight` action is not a loop primitive.
 - Use a new `idempotency_key` for each structural write and reread after each one. Position edits require the latest ref.
 - See [references/actions.md](references/actions.md) for fields and actions.
