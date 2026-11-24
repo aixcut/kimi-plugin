@@ -28,9 +28,9 @@ Every mutation call is one atomic Zero batch. Use a new `idempotency_key` for ea
 | Add, patch, replace or delete keyframes | `aixcut_keyframe` |
 | Capture frames or check playback after a structural write | `aixcut_frontend` |
 
-Use `aixcut_effect` on one clip. Reorder only with the complete effect list for that owner. Prefer `add`, `update`, and `delete` when identity matters; use `set` only when replacing the owner's complete list.
+Use `aixcut_effect` on one clip (`owner`) or atomically across clips (`owners` / `items` on `add`; `targets` on `update` and `delete`). Reorder only with the complete effect list for that owner. Prefer `add`, `update`, and `delete` when identity matters; use `set` only when replacing the owner's complete list.
 
-Use `aixcut_transition` only between contiguous clips on the same track. Transition duration must fit both the clips and available source handles. Read back and use returned `adjustments`; do not silently present a shortened transition as the requested duration.
+Use `aixcut_transition` only between contiguous clips on the same track — pass `(from, to)` for one cut or `items[]` (with optional top-level `preset_id` / `duration_ms` defaults) to add transitions across multiple cuts in one atomic call, and `targets` on `update`/`delete`. Transition duration must fit both the clips and available source handles. Read back and use returned `adjustments`; do not silently present a shortened transition as the requested duration.
 
 Use `aixcut_mask` with exactly one source: built-in `preset`, `source_clip`, or `path`. Coordinate spaces are semantic (`clip`, `source`, `composition`) and must not be replaced by guessed storage keys.
 
@@ -38,7 +38,7 @@ Use `aixcut_group` when clips must follow an anchor. The anchor must be a member
 
 Use `aixcut_node`, `aixcut_component` and `aixcut_motion` for authored composition structure. Definitions are property data, not executable code. Composition writes must preserve the existing component type and schema version unless the complete Contract upgrade is explicit.
 
-`aixcut_motion` applies only to a real video clip without composition content. A text clip, image composition, or any clip carrying `composition`/`text-content` is rejected with `MCP_MOTION_CLIP_UNSUPPORTED` before a JSONB write is attempted. Use the text clip's own composition animation model for those clips.
+`aixcut_motion` applies only to real video clips without composition content; pass `owner` for one clip or `owners` to set/update/delete/reset/clear the same motion phase across multiple clips in one atomic call. A text clip, image composition, or any clip carrying `composition`/`text-content` is rejected with `MCP_MOTION_CLIP_UNSUPPORTED` before a JSONB write is attempted. Use the text clip's own composition animation model for those clips.
 
 Use `aixcut_generator` for source-free generated clips. Catalog availability is real capability information: an empty catalog means the capability is unavailable in this Project, not an invitation to invent a preset.
 

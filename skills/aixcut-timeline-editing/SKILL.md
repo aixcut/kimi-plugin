@@ -31,7 +31,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 - Do not run structural writes on the same timeline concurrently.
 - After each write, treat the returned `revision_after` as the next revision. Derived caption writes may advance it even when the root write succeeded.
 - `aixcut_arrange(action="close_gaps")` moves linked tracks. Use it only after the primary structure is frozen, then reread speech and captions because their positions may have changed.
-- Reuse the last read while the timeline is unchanged; reread before a position-dependent command and after each atomic batch.
+- Reuse the last read while the timeline is unchanged; write responses return compact `created` and `updated` summaries (including `ref`, `start_ms`, `duration_ms`, `track_id` when applicable) alongside `revision_after`, so reuse them directly instead of issuing redundant reads between consecutive edits, and reread only when you need full surrounding timeline state.
 
 ## Multiple timelines and versions
 
