@@ -4,15 +4,15 @@ All mutation rows use `action` as the discriminator and require a UUID `idempote
 
 | Tool | action | Input and effect |
 |---|---|---|
-| aixcut_effect | add | Add one effect or an `items` batch to a resolved clip owner. |
-| aixcut_effect | update | Patch one effect by stable `target`; omitted fields stay unchanged. |
+| aixcut_effect | add | Add one effect (`owner`), same effect to many clips (`owners`), or an `items` batch. |
+| aixcut_effect | update | Patch one or many effects (`target` / `targets`); omitted fields stay unchanged. |
 | aixcut_effect | set | Replace the complete effect list for `owner`; empty items clears it. |
-| aixcut_effect | delete | Delete one explicitly selected effect. |
+| aixcut_effect | delete | Delete one or many explicitly selected effects (`target` / `targets`). |
 | aixcut_effect | reorder | Set the complete effect order for one owner with `ids`. |
-| aixcut_transition | add | Add one transition across an adjacent, contiguous cut. |
-| aixcut_transition | update | Patch one transition's preset, duration, alignment, easing or parameters. |
+| aixcut_transition | add | Add one transition (`from`/`to`) or an atomic batch (`items`) across contiguous cuts. |
+| aixcut_transition | update | Patch one or many transitions (`target` / `targets`). |
 | aixcut_transition | set | Define or clear the transition for one clip pair. |
-| aixcut_transition | delete | Delete one explicitly selected transition. |
+| aixcut_transition | delete | Delete one or many explicitly selected transitions (`target` / `targets`). |
 | aixcut_mask | add | Add a shape, path or clip-matte mask to a clip. |
 | aixcut_mask | update | Patch one mask while preserving its explicit source. |
 | aixcut_mask | set | Replace the complete mask list for one clip. |
@@ -35,11 +35,11 @@ All mutation rows use `action` as the discriminator and require a UUID `idempote
 | aixcut_generator | update | Patch a generator binding, parameters or clip timing. |
 | aixcut_generator | set | Replace all generators on one video track. |
 | aixcut_generator | delete | Delete one generated clip. |
-| aixcut_motion | set | Set one authored motion phase from a complete definition. |
-| aixcut_motion | update | Patch an existing motion phase. |
-| aixcut_motion | delete | Delete one motion phase. |
-| aixcut_motion | reset | Remove phase overrides from one motion phase. |
-| aixcut_motion | clear | Clear all authored object motion on one clip. |
+| aixcut_motion | set | Set one authored motion phase on one or many clips (`owner` / `owners`). |
+| aixcut_motion | update | Patch an existing motion phase on one or many clips (`owner` / `owners`). |
+| aixcut_motion | delete | Delete one motion phase on one or many clips (`owner` / `owners`). |
+| aixcut_motion | reset | Remove phase overrides from one motion phase (`owner` / `owners`). |
+| aixcut_motion | clear | Clear all authored object motion on one or many clips (`owner` / `owners`). |
 | aixcut_keyframe | add | Add one keyframe and create its track when needed. |
 | aixcut_keyframe | update | Patch one keyframe. |
 | aixcut_keyframe | set | Replace all keyframes for one owner property. |

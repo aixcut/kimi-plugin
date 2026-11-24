@@ -14,12 +14,14 @@ Generation creates a durable Job; it is not a synchronous operation.
 ## Short path
 
 1. Confirm the target Project; read `aixcut_read(view="project")` if needed.
-2. If generation may consume credits and the user has not accepted a quoted amount, call `aixcut_generate(action="quote")`. It does not create a Job. If the quote is nonzero, explain the amount and wait for the user's acceptance before submitting; pass the accepted amount as `accepted_quoted_credits`.
-3. Submit using `aixcut_generate(action="submit")` only after required creative choices are clear and any quoted charge is accepted.
-4. If the envelope returns `status: "async"`, retain its top-level `job_id` and use `aixcut_generate(action="get")` to read the durable Job; ClipOS runs accepted Jobs independently of polling or the browser connection. Never resubmit a queued or running Job.
-5. Use top-level `next_action.after_seconds` for the next poll. Stop when top-level `terminal` is true.
-6. Report `result.data.job.phase`: `waiting` (queued), `processing` (generating), or `finalizing` (publishing to the Project). Do not report only “in progress.”
-7. After generation, place the result on a timeline when the user asked for it.
+2. Read the kind's catalog first and keep only `selectable: true` models; for every other model say which `locked_reason` applies, so the user learns what is usable here.
+3. Quote the candidate models with `aixcut_generate(action="quote")`. It does not create a Job and it now echoes the `model` and `provider` the quote is for.
+4. If the user already named a model (or already rejected one), do not ask again: quote that model and go straight to submit. Only when they left it open, offer the options as **model + quoted price** and ask exactly once — never split it into repeated questions, never pick a model for them, and never fall back to a default silently. State that the quote is an estimate and that the charge happens on submit.
+5. Submit only the model the user picked, passing that quote's amount as `accepted_quoted_credits` (and `quote_confirmation` when the quote returned one). This applies to every kind — image, video, music, audio and speech — and to quote-driven retries too.
+6. If the envelope returns `status: "async"`, retain its top-level `job_id` and use `aixcut_generate(action="get")` to read the durable Job; ClipOS runs accepted Jobs independently of polling or the browser connection. Never resubmit a queued or running Job.
+7. Use top-level `next_action.after_seconds` for the next poll. Stop when top-level `terminal` is true.
+8. Report `result.data.job.phase`: `waiting` (queued), `processing` (generating), or `finalizing` (publishing to the Project). Do not report only “in progress.”
+9. After generation, place the result on a timeline when the user asked for it.
 
 ## Warnings
 

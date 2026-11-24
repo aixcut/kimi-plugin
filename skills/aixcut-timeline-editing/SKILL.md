@@ -24,14 +24,15 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 
 ### Batching writes
 
-- Send one call per published action and track, not one call per element: pass the whole set through `items[]`, or every target through `targets`, in that single call. The add/set operations accept lists.
+- Send one call per published action and track, not one call per element: pass the whole set through `items[]`, or every target through `targets`, in that single call. Both `add`/`set` lists and atomic `targets: [...]` batch actions (`aixcut_text` `style`/`delete`, `aixcut_clip` `fade`/`delete`, `aixcut_audio` `fade`/`update`/`delete`) apply to all targets in one mutation.
 - `aixcut_layout(action="update")` accepts exactly one `target`. For a batch of picture clips, use `aixcut_layout(action="set")` with `items[]`; never put `items` on `update`.
 - Never issue one call per clip, per label, or per segment when one supported call can carry the batch.
 - Never merge different actions, different tracks, or different domains into one call; only the live Tool Schema decides what may be combined.
 - Do not run structural writes on the same timeline concurrently.
 - After each write, treat the returned `revision_after` as the next revision. Derived caption writes may advance it even when the root write succeeded.
 - `aixcut_arrange(action="close_gaps")` moves linked tracks. Use it only after the primary structure is frozen, then reread speech and captions because their positions may have changed.
-- Reuse the last read while the timeline is unchanged; reread before a position-dependent command and after each atomic batch.
+- Reuse the last read while the timeline is unchanged; write responses return compact `created` and `updated` summaries (including `ref`, `start_ms`, `duration_ms`, `track_id` when applicable) alongside `revision_after`, so reuse them directly instead of issuing redundant reads between consecutive edits, and reread only when you need full surrounding timeline state.
+- Reuse the existing primary video track instead of creating duplicate empty tracks; before final review or delivery, run `aixcut_track(action="cleanup")` so no stray empty non-system tracks remain on the timeline.
 
 ## Multiple timelines and versions
 

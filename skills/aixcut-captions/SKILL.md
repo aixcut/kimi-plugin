@@ -25,7 +25,7 @@ Visual source clips usually do not have a usable transcript. For narrated videos
 
 ## Short path
 
-1. Read `aixcut_read(view="captions")` for current captions and stable refs. Also read `speech` or `timeline` to confirm the voiceover audio is placed.
+1. Read `aixcut_read(view="captions")` for current captions and stable refs. When adding a transcribed talking-head or voice clip returns `data.auto_captions` (`status="ready"`), captions are already derived — read them directly instead of calling `aixcut_caption(action="regenerate")` redundantly. Also read `speech` or `timeline` to confirm the voiceover audio is placed.
 2. For narration, reread the audio source's `transcript_status`. Regenerate only when it is `available`; if pending, wait and reread; report missing, outdated, or empty transcripts accurately.
 3. Read `captions` again to confirm the count, first/last timing, and that generated text came from the transcript.
 4. Before reporting captions complete, verify the caption track has no Motion Graph, `art-text`, or other visual annotation clips. Those elements must remain on their dedicated tracks.
@@ -60,7 +60,7 @@ Server-derived captions already group adjacent transcript fragments when they be
 ## Writing and editing
 
 - Replace the whole track with the set action; append new captions with the add action. `add` takes `items` and has no top-level `text`; see the append example in [references/actions.md](references/actions.md).
-- Per-item `style`, `x`, `y`, and `highlight_ranges` belong inside the `items[]` entry when the track is created or replaced. Use `update`, `style`, or `highlight` only to correct an already-created caption.
+- Per-item `style`, `x`, `y`, and `highlight_ranges` belong inside the `items[]` entry when the track is created or replaced. When uniformly restyling, highlighting, or deleting multiple already-created captions, pass `targets: [...]` in one atomic call (`style`, `highlight`, and `delete` accept `target` or `targets`) instead of looping one caption at a time.
 - For a repeated-text word highlight, batch all visual states in one `set` or `add`; the `highlight` action is not a loop primitive.
 - Use a new `idempotency_key` for each structural write and reread after each one. Position edits require the latest ref.
 - See [references/actions.md](references/actions.md) for fields and actions.
