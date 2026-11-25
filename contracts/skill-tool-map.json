@@ -411,6 +411,48 @@
       "references": [
         "references/actions.md"
       ]
+    },
+    {
+      "skill": "aixcut-scenarios",
+      "surfaces": [
+        "kimi"
+      ],
+      "requires": [
+        "aixcut-basics"
+      ],
+      "tools": {
+        "required": [
+          "aixcut_read"
+        ],
+        "optional": [
+          "aixcut_timeline",
+          "aixcut_clip",
+          "aixcut_caption",
+          "aixcut_style",
+          "aixcut_audio",
+          "aixcut_generate",
+          "aixcut_frontend",
+          "aixcut_upload_link",
+          "aixcut_text",
+          "aixcut_layout",
+          "aixcut_primary",
+          "aixcut_review",
+          "aixcut_transition",
+          "aixcut_effect",
+          "aixcut_motion",
+          "aixcut_track",
+          "aixcut_project",
+          "aixcut_speech"
+        ],
+        "forbidden": []
+      },
+      "helper": null,
+      "references": [
+        "references/ecommerce-feed.md",
+        "references/livestream-clips.md",
+        "references/matrix-batch.md",
+        "references/tvc-commercial.md"
+      ]
     }
   ]
 }

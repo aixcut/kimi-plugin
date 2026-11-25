@@ -55,13 +55,17 @@
       "displayName": "Projects",
       "description": "List, create, open, switch, or exit Aixcut projects."
     },
+    "aixcut-scenarios": {
+      "displayName": "Editing Scenarios",
+      "description": "Standard editing playbooks and QA checklists for talking-head cuts, livestream clips, e-commerce feed ads, TVC commercials, and matrix batch production."
+    },
     "aixcut-talking-head": {
       "displayName": "Talking-Head Editing",
       "description": "Edit speech-led videos such as interviews, courses, and podcasts, removing mistakes and pauses."
     },
     "aixcut-timeline-editing": {
       "displayName": "Timeline Editing",
-      "description": "Edit Aixcut clips, text, audio, tracks, and canvas, and import local media."
+      "description": "Edit Aixcut clips, text, audio, tracks, and canvas, and upload media through the Project page."
     },
     "aixcut-verification": {
       "displayName": "Verification",
@@ -71,10 +75,10 @@
       "displayName": "Video Assembly",
       "description": "Assemble a complete video by coordinating visuals, voiceover, captions, music, and export."
     },
-  "aixcut-visual-effects": {
-    "displayName": "Visual Effects",
-    "description": "Edit effects, transitions, masks, groups, composition nodes, components, generators, object motion, and keyframes, then verify the result with frames and playback."
-  },
+    "aixcut-visual-effects": {
+      "displayName": "Visual Effects",
+      "description": "Edit effects, transitions, masks, groups, composition nodes, components, generators, object motion, and keyframes, then verify the result with frames and playback."
+    },
     "aixcut-voice": {
       "displayName": "Voiceover",
       "description": "Write voiceover scripts, select a voice, synthesize speech, and optionally place it on the timeline."

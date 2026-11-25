@@ -28,6 +28,7 @@ const hostOwned = new Set([
   'aixcut-projects',
   'aixcut-login',
   'aixcut-mcp-logout',
+  'aixcut-scenarios',
 ]);
 
 /** Kimi 没有本机路径导入能力，本 Skill 的 description 必须反映这一点。 */
@@ -110,6 +111,14 @@ const REPLACEMENTS = [
   [
     '| aixcut_frontend(action="import_status") | — | `import_ids` | `timeout_ms`, `workspace_id` | Check imports until settled and `private_copy` is not `copying` |\n',
     '',
+  ],
+  [
+    'Create a temporary upload link after headed-browser or bridge startup fails',
+    'Create a temporary upload link when uploading from a browser or mobile device',
+  ],
+  [
+    'Upload when no headed browser or bridge can start',
+    'Upload through a temporary upload link',
   ],
   [
     'This includes `page_status`, `playback_check`, frame capture, local-media import/status, Project document actions',

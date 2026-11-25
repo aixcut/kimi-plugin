@@ -61,7 +61,7 @@ Voice, captions, and export have dedicated Skills: `aixcut-voice`, `aixcut-capti
 | Canvas or full cleanup | `aixcut_project(action="canvas")`, `aixcut_project(action="clear")` |
 | Remote browser actions | `aixcut_frontend(action="page_status")`, `aixcut_frontend(action="capture_timeline_frames")` |
 | Upload a file the Agent itself holds | `aixcut_media(action="prepare_upload")`, `aixcut_media(action="complete_upload")` |
-| Upload when no headed browser or bridge can start | `aixcut_upload_link(action="create")`, `aixcut_upload_link(action="status")` |
+| Upload through a temporary upload link | `aixcut_upload_link(action="create")`, `aixcut_upload_link(action="status")` |
 
 Send only fields declared by the selected Tool Schema. Speech operations edit the main voice track; text operations do not edit captions. After a structural change, reread before issuing a position-dependent command.
 

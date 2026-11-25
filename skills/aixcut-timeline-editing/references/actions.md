@@ -286,7 +286,7 @@ The text tool has no `time` action, and these fields do not use a `values` wrapp
 | aixcut_frontend(action="capture_source_frames") | — | `media_id`, `selections` | `timeout_ms`, `workspace_id` | Capture 1–8 JPEG frames from a source |
 | aixcut_frontend(action="capture_timeline_frames") | — | `selections` | `timeline_id`, `expected_revision`, `timeout_ms`, `workspace_id` | Capture 1–8 JPEG frames from a timeline |
 | aixcut_frontend(action="prompt_add_material") | — | — | `timeout_ms`, `workspace_id` | Show the user upload area |
-| aixcut_upload_link(action="create") | — | — | — | Create a temporary upload link after headed-browser or bridge startup fails |
+| aixcut_upload_link(action="create") | — | — | — | Create a temporary upload link when uploading from a browser or mobile device |
 | aixcut_upload_link(action="status") | — | `upload_id` | — | Read files accepted by the same upload link |
 | aixcut_upload_link(action="renew") | — | `upload_id` | — | Extend the same upload link |
 | aixcut_upload_link(action="revoke") | — | `upload_id` | — | Close the same upload link |

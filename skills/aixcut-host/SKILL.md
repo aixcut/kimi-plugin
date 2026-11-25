@@ -26,6 +26,7 @@ This Skill owns the boundary between Kimi and the Aixcut MCP server. Load it bef
 
 ## Local media and files
 
+- Never start a local HTTP server, loopback file server, or background process for local files in Kimi. Kimi does not allow launching local file-serving processes.
 - Kimi's only supported local-media route is `aixcut_frontend(action="prompt_add_material")`, even when the user provides an absolute file path. A path written in the conversation is not by itself a readable file.
 - After the upload area opens, tell the user to select or drag the files in the Project page and wait for the user's confirmation. Then call `aixcut_read(view="sources")` and match the uploaded source by `file_name`. Do not reopen the upload prompt for the same upload.
 - If the uploaded file is not listed yet, wait about 15 seconds and reread `sources` once. If it is still absent, report that state and ask the user to select the file again in the Project page.
